@@ -21,7 +21,12 @@
       "WebFetch(domain:aasp.mcjobboard.net)",
       "WebFetch(domain:careers.case.org)",
       "WebFetch(domain:www.foundationlist.org)",
-      "WebFetch(domain:www.councilofnonprofits.org)"
+      "WebFetch(domain:www.councilofnonprofits.org)",
+      "WebFetch(domain:www.itjobsinhighered.com)",
+      "WebFetch(domain:www.higheredjobs.com)",
+      "WebFetch(domain:www.hercjobs.org)",
+      "WebFetch(domain:main.hercjobs.org)",
+      "WebFetch(domain:careers.insidehighered.com)"
     ]
   }
 }

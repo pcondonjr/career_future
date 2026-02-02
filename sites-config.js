@@ -30,7 +30,8 @@ export async function loadSitesFromCSV(csvPath = './companies.csv', onlyEnabled 
     const records = parse(fileContent, {
       columns: true,
       skip_empty_lines: true,
-      trim: true
+      trim: true,
+      comment: '#'
     });
 
     const sites = records
@@ -103,7 +104,8 @@ export async function validateCSV(csvPath = './companies.csv') {
     const fileContent = await fs.readFile(csvPath, 'utf-8');
     const records = parse(fileContent, {
       columns: true,
-      skip_empty_lines: true
+      skip_empty_lines: true,
+      comment: '#'
     });
 
     const errors = [];

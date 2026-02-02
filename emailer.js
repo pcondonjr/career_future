@@ -11,29 +11,33 @@ export class JobEmailer {
     });
   }
 
-  async sendJobAlert(jobs, stats) {
+  async sendJobAlert(jobs, stats, mode = 'daily') {
     if (jobs.length === 0) {
       console.log('No new jobs to send');
       return;
     }
 
-    const html = this.generateEmailHTML(jobs, stats);
-    
+    const isWeekly = mode === 'weekly';
+    const html = this.generateEmailHTML(jobs, stats, isWeekly);
+    const subject = isWeekly
+      ? `📅 Weekly: ${jobs.length} New Salesforce Job${jobs.length > 1 ? 's' : ''} (Not in Daily List)`
+      : `🎯 ${jobs.length} New Salesforce Job${jobs.length > 1 ? 's' : ''} Found`;
+
     try {
       await this.transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: process.env.EMAIL_USER,
-        subject: `🎯 ${jobs.length} New Salesforce Job${jobs.length > 1 ? 's' : ''} Found`,
+        subject: subject,
         html: html
       });
-      
-      console.log(`Email sent with ${jobs.length} jobs`);
+
+      console.log(`Email sent with ${jobs.length} jobs (${mode} mode)`);
     } catch (error) {
       console.error('Failed to send email:', error.message);
     }
   }
 
-  generateEmailHTML(jobs, stats) {
+  generateEmailHTML(jobs, stats, isWeekly = false) {
     // Group jobs by company
     const grouped = jobs.reduce((acc, job) => {
       if (!acc[job.company]) {
@@ -58,8 +62,8 @@ export class JobEmailer {
                 📍 ${job.location || 'Location not specified'}
               </p>
               <p style="margin: 8px 0 0 0;">
-                <a href="${job.url}" 
-                   style="display: inline-block; padding: 8px 16px; background: #0176D3; 
+                <a href="${job.url}"
+                   style="display: inline-block; padding: 8px 16px; background: #0176D3;
                           color: white; text-decoration: none; border-radius: 4px; font-size: 14px;">
                   View Job →
                 </a>
@@ -69,6 +73,18 @@ export class JobEmailer {
         </div>
       `).join('');
 
+    const headerGradient = isWeekly
+      ? 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)'
+      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+
+    const headerTitle = isWeekly
+      ? '📅 Weekly Salesforce Jobs Alert'
+      : '🎯 New Salesforce Jobs Alert';
+
+    const headerSubtitle = isWeekly
+      ? `Found ${jobs.length} new position${jobs.length > 1 ? 's' : ''} not in your daily list`
+      : `Found ${jobs.length} new position${jobs.length > 1 ? 's' : ''} matching your criteria`;
+
     return `
       <!DOCTYPE html>
       <html>
@@ -76,16 +92,16 @@ export class JobEmailer {
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
       </head>
-      <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                    line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px;">
-        
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+
+        <div style="background: ${headerGradient};
                     padding: 30px; border-radius: 8px; margin-bottom: 30px;">
           <h1 style="color: white; margin: 0; font-size: 28px;">
-            🎯 New Salesforce Jobs Alert
+            ${headerTitle}
           </h1>
           <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">
-            Found ${jobs.length} new position${jobs.length > 1 ? 's' : ''} matching your criteria
+            ${headerSubtitle}
           </p>
         </div>
 

@@ -8,7 +8,9 @@
     "start": "node index.js",
     "dashboard": "node dashboard.js",
     "test": "node index.js --now",
+    "test:weekly": "node index.js --now --weekly",
     "validate": "node index.js --validate",
+    "validate:weekly": "node index.js --validate --weekly",
     "add-company": "node add-company.js",
     "export": "node export-jobs.js"
   },

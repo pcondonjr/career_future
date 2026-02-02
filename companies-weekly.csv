@@ -1,0 +1,66 @@
+company_name,careers_url,job_card_selector,title_selector,location_selector,link_selector,enabled,notes
+# Weekly scraper company list - customize this list with companies to check weekly
+# These jobs will only be reported if NOT already found by the daily scraper
+#
+# Example entries (uncomment and modify as needed):
+# Company Name,https://example.com/careers,.job-card,h3,.location,a,true,Notes about this company
+company_name,careers_url,job_card_selector,title_selector,location_selector,link_selector,enabled,notes
+Accenture,https://www.accenture.com/us-en/careers/jobsearch?jk=salesforce,".job-item, [data-job-id]",.job-title,.job-location,a,true,Major consulting firm
+Silverline,https://www.silverlinecrm.com/careers/,.career-opening,"h3, .position-title",.location,a,true,SF Partner
+Perficientficient,https://careers.perficient.com/us/en/search-results?keywords=salesforce,.job-tile,.job-title,.job-location,a,true,SF consulting
+HubSpot,https://www.hubspot.com/careers/jobs?page=1&query=salesforce,"[data-test=""job-card""]",h3,"[data-test=""location""]",a,true,Tech company
+Zoom,https://careers.zoom.us/jobs/search?query=salesforce,.job-card,.job-title,.location,a,true,Tech company
+DocuSign,https://www.docusign.com/company/careers/open-positions?search=salesforce,[data-jobid],.job-title,.job-location,a,true,Tech company
+Michelin,https://jobs.michelinman.com/search/?q=salesforce,"tr.data-row, .job-listing","a.jobTitle-link, .job-title",".jobLocation, .location",a.jobTitle-link,true,Local - Greenville SC
+Prisma Health,https://careers.prismahealth.org/search/?q=salesforce,tr[data-job-id],a.jobTitle,.jobLocation,a.jobTitle,true,Local - Greenville SC
+Indeed,https://www.indeed.com/jobs?q=salesforce+administrator&l=Remote,".job_seen_beacon, .jobsearch-SerpJobCard","h2.jobTitle, .jobTitle",.companyLocation,"h2.jobTitle a, a.jcs-JobTitle",false,Job board
+Dice,https://www.dice.com/jobs?q=salesforce%20administrator&location=Remote,"[data-cy=""card-title-link""]","a[data-cy=""card-title-link""]","[data-cy=""job-card-location""]","a[data-cy=""card-title-link""]",false,Tech job board
+Heller Consulting,https://www.hellerconsulting.com/careers/,.job-opening,h3,.location,a,true,Nonprofit focus
+Fíonta,https://www.fionta.com/careers/,.career-opportunity,"h3, .title",.location,a,true,Nonprofit focus
+Newsela,https://newsela.com/about/careers/,"[data-job-id], .job-listing",".job-title, h3",.location,a,true,EdTech - Education Cloud
+Instructure,https://www.instructure.com/about/careers?search=salesforce,.job-card,.job-title,.location,a,true,EdTech - Canvas LMS
+Robert Half,https://www.roberthalf.com/us/en/jobs?keywords=salesforce,.job-tile,.job-title,.job-location,a,true,Staffing agency
+Apex Systems,https://www.apexsystems.com/jobs/search?q=salesforce,.job-result,.job-title,.location,a,true,Staffing agency
+Stripe,https://stripe.com/jobs/search?query=salesforce,[data-job-id],h3,.location,a,true,Tech company
+Airtable,https://www.airtable.com/company/careers?search=salesforce,.job-posting,.job-title,.location,a,true,Tech company
+Wiz,https://www.wiz.io/careers,"[class*=""job""]",.job-title,.location,a,true,Cloud security
+Zenkraft,https://zenkraft.com/careers/,.career-listing,.position-title,.location,a,true,Trailblazer company
+Strong Missions,https://www.strongmissions.com/about/careers,.job-card,h3,.location,a,false,Career 
+BHHS Cambridge Realty,https://www.bhhs.com/join-us,.job-card,h3,.location,a,false,Career 
+Upstate Workforce Future's,https://www.upstateworkforceboard.org/opportunities,.job-card,h3,.location,a,false,Career 
+Piedmont Imaging,https://www.piedmontimaging.com/careers/,.job-card,h3,.location,a,false,Career 
+Smoky Mountain Steel Horses's,https://www.smokymountainsteelhorses.com/careers,.job-card,h3,.location,a,false,Career 
+Unique Financial Solutions,https://www.uniquefinancialsolutionsllc.com/careers,.job-card,h3,.location,a,false,Career 
+Grove Medical,https://www.grovemedical.com/?page=customer&file=customer/grmein/customerpages/About/Careers.htm,.job-card,h3,.location,a,false,Career 
+The Cargo Agency,https://www.thecargoagency.com/careers/,.job-card,h3,.location,a,false,Career 
+HW Resources,https://www.hwresources.net/careers,.job-card,h3,.location,a,false,Career 
+The Willows Of Easley,https://www.thewillowsofeasley.com/careers/,.job-card,h3,.location,a,false,Career 
+Industrial Fabricators,https://www.ifabrication.com/en/careers,.job-card,h3,.location,a,false,Career 
+Sfrep,https://www.wca-inc.com/careers,.job-card,h3,.location,a,false,Career 
+#Sunset Finance,https://sunsetfinance.net/careers/,.job-card,h3,.location,a,false,Career 
+J M Smith Corporation,https://www.smithdrug.com/contact/employment-opportunities,.job-card,h3,.location,a,false,Career 
+Spectrum,https://jobs.spectrum.com/,.job-card,h3,.location,a,false,Career 
+A One ATM,https://www.aoneatm.com/about/careers,.job-card,h3,.location,a,false,Career 
+Innovative Solar Systems,https://innovativesolarsystemsllc.com/careers/,.job-card,h3,.location,a,false,Career 
+Bullman Heating & Air,https://bullmanheating.com/careers/,.job-card,h3,.location,a,false,Career 
+Kellar Lawrence Real Estate,https://kellarlawrence.com/real-estate-careers/,.job-card,h3,.location,a,false,Career 
+French Broad Chocolates,https://frenchbroadchocolates.com/pages/work-with-us,.job-card,h3,.location,a,false,Career 
+Robojuice,https://robojuice.com/careers/,.job-card,h3,.location,a,false,Career 
+Animal Hospital of Waynesville,https://www.animalhosp.com/careers,.job-card,h3,.location,a,false,Career 
+First Responders Healthcare Services,https://1strespondershealthcare.applytojob.com/apply,.job-card,h3,.location,a,false,Career 
+Premier Pain Solutions,https://recruiting.paylocity.com/recruiting/jobs/All/42101e7b-b16e-40f6-8fe8-894f3d865541/Premier-Pain-Solutions-PLLC,.job-card,h3,.location,a,false,Career 
+NewBold,https://newboldtech.com/careers/,.job-card,h3,.location,a,false,Career 
+North Carolina School for the Deaf,https://nc.wd108.myworkdayjobs.com/NC_Careers?hiringCompany=4c5533ba0a02100160ee4aeb0cfb0000,.job-card,h3,.location,a,false,Career 
+Community Credit,https://mycommunitycredit.com/careers/,.job-card,h3,.location,a,false,Career 
+Allergic Disease & Asthma Center,https://allergicdisease.com/careers,.job-card,h3,.location,a,false,Career 
+WNC Nonprofit Pathways,https://nonprofitpathways.org/resources/jobs/,.job-card,h3,.location,a,false,Career 
+AFG Distribution,https://www.afgdistribution.com/brand/job,.job-card,h3,.location,a,false,Career 
+Ponce Realty Group,https://www.theponcerealtygroup.com/recruit.php,.job-card,h3,.location,a,false,Career 
+Gaia Herbs,https://www.gaiaherbs.com/pages/careers,.job-card,h3,.location,a,false,Career 
+The Dry Sink,https://www.thedrysink.com/careers,.job-card,h3,.location,a,false,Career 
+Proactive MD,https://proactive-md.com/careers/,.job-card,h3,.location,a,false,Career 
+EnCode Wireless,https://www.encodewireless.com/contact.html,.job-card,h3,.location,a,false,Career 
+Excel Fire Sprinklers,https://careers.pyebarkerfs.com/,.job-card,h3,.location,a,false,Career 
+Ahead Start,https://aheadstart-sc.com/career-opportunities/,.job-card,h3,.location,a,false,Career 
+McKinney Mazda,https://sites.hireology.com/mckinneyautomotive1,.job-card,h3,.location,a,false,Career 
+

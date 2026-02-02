@@ -1,29 +1,35 @@
 import fs from 'fs/promises';
 
-const DB_FILE = './jobs_database.json';
+const DEFAULT_DB_FILE = './jobs_database.json';
 
 export class JobDatabase {
-  constructor() {
+  constructor(dbPath = DEFAULT_DB_FILE) {
+    this.dbPath = dbPath;
     this.jobs = new Map();
   }
 
   async load() {
     try {
-      const data = await fs.readFile(DB_FILE, 'utf8');
+      const data = await fs.readFile(this.dbPath, 'utf8');
       const parsed = JSON.parse(data);
       this.jobs = new Map(Object.entries(parsed));
-      console.log(`Loaded ${this.jobs.size} jobs from database`);
+      console.log(`Loaded ${this.jobs.size} jobs from ${this.dbPath}`);
     } catch (error) {
       // File doesn't exist yet, start fresh
-      console.log('Starting with empty database');
+      console.log(`Starting with empty database (${this.dbPath})`);
       this.jobs = new Map();
     }
   }
 
   async save() {
     const obj = Object.fromEntries(this.jobs);
-    await fs.writeFile(DB_FILE, JSON.stringify(obj, null, 2));
-    console.log(`Saved ${this.jobs.size} jobs to database`);
+    await fs.writeFile(this.dbPath, JSON.stringify(obj, null, 2));
+    console.log(`Saved ${this.jobs.size} jobs to ${this.dbPath}`);
+  }
+
+  hasJob(job) {
+    const key = this.generateKey(job);
+    return this.jobs.has(key);
   }
 
   addJob(job) {
