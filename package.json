@@ -22,6 +22,7 @@
   "author": "Patrick Condon",
   "license": "MIT",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.72.1",
     "csv-parse": "^5.5.0",
     "dotenv": "^16.0.0",
     "ejs": "^3.1.0",

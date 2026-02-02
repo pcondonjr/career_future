@@ -12,7 +12,16 @@
       "WebFetch(domain:techjobsforgood.com)",
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
-      "Bash(timeout /t:*)"
+      "Bash(timeout /t:*)",
+      "Bash(dir:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dashboard:*)",
+      "Bash(npx kill-port:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:aasp.mcjobboard.net)",
+      "WebFetch(domain:careers.case.org)",
+      "WebFetch(domain:www.foundationlist.org)",
+      "WebFetch(domain:www.councilofnonprofits.org)"
     ]
   }
 }

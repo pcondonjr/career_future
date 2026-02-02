@@ -1,0 +1,150 @@
+<!-- 
+  Example integration for your existing dashboard
+  Add this to your jobs display template
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Dashboard with Resume Optimization</title>
+  
+  <!-- Your existing styles -->
+  <link rel="stylesheet" href="/css/dashboard.css">
+  
+  <!-- Resume Optimizer styles -->
+  <link rel="stylesheet" href="/css/resume_optimizer_styles.css">
+</head>
+<body>
+  
+  <div class="container">
+    <header>
+      <h1>🎯 Salesforce Job Opportunities</h1>
+      <p>Smart job tracking with AI-powered resume optimization</p>
+    </header>
+
+    <!-- Example job card structure -->
+    <div class="jobs-grid">
+      <% jobs.forEach(job => { %>
+        <div class="job-card" 
+             data-description="<%= job.description %>"
+             data-url="<%= job.url %>"
+             data-source="<%= job.source %>">
+          
+          <div class="job-header">
+            <h3 class="job-title"><%= job.title %></h3>
+            <span class="job-source"><%= job.source %></span>
+          </div>
+
+          <div class="job-details">
+            <p class="job-company">🏢 <%= job.company %></p>
+            <p class="job-location">📍 <%= job.location %></p>
+            <p class="job-posted">📅 <%= job.posted || 'Recently' %></p>
+          </div>
+
+          <div class="job-description">
+            <%= job.description.substring(0, 200) %>...
+          </div>
+
+          <div class="job-actions">
+            <!-- NEW: Optimize Resume button -->
+            <button class="btn-optimize-resume">
+              Optimize Resume
+            </button>
+            
+            <!-- NEW: Generate Cover Letter button -->
+            <button class="btn-generate-cover-letter btn btn-secondary">
+              📝 Cover Letter
+            </button>
+
+            <a href="<%= job.url %>" target="_blank" class="btn btn-secondary">
+              View Job
+            </a>
+          </div>
+
+          <!-- Optional: Show compatibility score if already analyzed -->
+          <% if (job.compatibilityScore) { %>
+            <div class="compatibility-badge score-<%= job.compatibilityScore >= 70 ? 'high' : 'medium' %>">
+              <%= job.compatibilityScore %>% Match
+            </div>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Batch Actions Section -->
+    <div class="batch-actions">
+      <h3>Batch Operations</h3>
+      <button id="analyze-selected" class="btn btn-primary">
+        Analyze Selected Jobs
+      </button>
+      <button id="analyze-all-high-priority" class="btn btn-secondary">
+        Analyze All (70%+ matches only)
+      </button>
+    </div>
+  </div>
+
+  <!-- Your existing scripts -->
+  <script src="/js/dashboard.js"></script>
+  
+  <!-- Resume Optimizer scripts -->
+  <script src="/js/public_resume_optimizer.js"></script>
+
+  <!-- Optional: Batch operations script -->
+  <script>
+    document.getElementById('analyze-selected')?.addEventListener('click', async () => {
+      const selectedJobs = Array.from(document.querySelectorAll('.job-card'))
+        .filter(card => card.querySelector('input[type="checkbox"]')?.checked)
+        .map(card => ({
+          jobTitle: card.querySelector('.job-title').textContent,
+          company: card.querySelector('.job-company').textContent,
+          jobDescription: card.dataset.description,
+          url: card.dataset.url
+        }));
+
+      if (selectedJobs.length === 0) {
+        alert('Please select jobs to analyze');
+        return;
+      }
+
+      if (selectedJobs.length > 10) {
+        alert('Maximum 10 jobs per batch. Please reduce selection.');
+        return;
+      }
+
+      // Show loading indicator
+      const button = document.getElementById('analyze-selected');
+      const originalText = button.textContent;
+      button.textContent = 'Analyzing...';
+      button.disabled = true;
+
+      try {
+        const response = await fetch('/api/batch-analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jobs: selectedJobs })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // Display results or refresh page
+          alert(`Analyzed ${result.successfulAnalyses} jobs. Check console for details.`);
+          console.log('Batch analysis results:', result);
+          
+          // Optionally reload to show compatibility scores
+          location.reload();
+        } else {
+          throw new Error(result.error);
+        }
+      } catch (error) {
+        alert(`Analysis failed: ${error.message}`);
+      } finally {
+        button.textContent = originalText;
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

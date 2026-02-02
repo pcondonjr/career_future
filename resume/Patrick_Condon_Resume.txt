@@ -1,0 +1,94 @@
+Patrick L. Condon, Jr
+Greenville, SC 29615
+pcondonjr@gmail.com
+864.392.3070
+www.linkedin.com/in/patcondon/
+
+PROFILE SUMMARY
+
+Salesforce Trailblazer and operational excellence leader with 10+ years of hands-on experience optimizing business operations, implementing scalable processes, and serving as the Salesforce platform owner across Sales, Marketing, Customer Success, and Finance functions. Expert in Flow automation, Experience Cloud community management, Service Cloud configuration, and Knowledge Base implementation. Proven track record designing workflows, dashboards, and KPIs that drive data-informed decision-making and revenue operations. Skilled at translating business requirements into technical solutions while ensuring cross-functional alignment and driving operational efficiency. Holds 10 Salesforce certifications including Advanced Administrator, Business Analyst, Education Cloud Consultant, and Nonprofit Cloud Consultant.
+
+CORE COMPETENCIES
+
+Flow Automation & Workflow Optimization | Experience Cloud Administration | Service Cloud Configuration | Salesforce Knowledge Base | Business Operations & Process Design | Revenue Operations (Pipeline, Renewals, Forecasting) | KPI & Dashboard Development | Data Models & Security Permissions | Advanced Formulas & Validation Rules | Release Management & Multi-Environment Management | Cross-Functional Stakeholder Collaboration | Requirements Gathering & Documentation | Quality Assurance & Testing | User Adoption & Training
+
+PROFESSIONAL EXPERIENCE
+
+Maryville University
+Greenville, SC
+Apr 2025 -- current
+Senior Business Analyst
+
+- Serve as Salesforce platform owner, ensuring alignment between business operations, systems, and strategy across Sales, Marketing, and Customer Success functions while continuously optimizing core operational processes.
+- Design and implement Flow automation solutions to streamline workflows, improve operational efficiency, and support revenue growth through automated pipeline management and forecasting accuracy.
+- Partner with leadership to define KPIs, build executive dashboards, and create metrics that drive data-informed decision-making and operational visibility across the organization.
+- Translate business requirements into scalable Salesforce solutions, including advanced formulas, validation rules, and security permissions that support organizational growth.
+- Lead cross-functional initiatives with full accountability, managing project timelines, budgets, and resources while ensuring timely execution and quality deliverables.
+- Conduct quality assurance testing and coordinate UAT activities to validate functionality, usability, and performance of Salesforce enhancements.
+
+Mercy Ships
+Greenville, SC
+Jan 2024 - Apr 2025
+Senior Project Manager
+
+- Led Salesforce platform expansion initiative, serving as primary liaison between business stakeholders and technical teams to optimize operational processes and improve cross-functional visibility.
+- Implemented Flow-based automation workflows to streamline case management, documentation updates, and reporting processes, reducing manual effort and improving data accuracy.
+- Established quality assurance protocols and testing processes to validate platform functionality, security, and performance, proactively identifying and resolving issues.
+- Designed dashboards and reports to support operational decision-making, providing visibility into key metrics and process inefficiencies.
+- Gathered detailed business requirements across departments and translated them into technical specifications, ensuring solutions aligned with strategic objectives.
+- Collaborated with development team to integrate new Salesforce features while maintaining system stability and user adoption.
+
+The Cloud for You
+Greenville, SC
+Oct 2018 -- Jan 2023; Aug 2023 -- Jan 2024
+Process Improvement Consultant; Consultant
+
+- Implemented Experience Cloud communities with multi-language support using Custom Metadata Types, enabling customer self-service and improving operational efficiency for 700+ customer community members.
+- Designed and configured Service Cloud solutions including custom Help objects, case management workflows, and Knowledge Base articles to streamline customer support operations.
+- Built automated Flow solutions to replace manual processes, including Screen Flows for student success plans that eliminated the need for costly third-party applications.
+- Created comprehensive dashboards and reports to track operational metrics, including Help Request resolution (averaging 50 requests per week) and provide visibility into process performance.
+- Optimized revenue operations by configuring pipeline management workflows, renewal tracking, and forecasting capabilities within Sales Cloud.
+- Led business process redesign initiatives across Sales, Marketing, and Customer Success functions to maximize operational efficiency and support organizational growth.
+- Partnered with cross-functional teams to gather requirements, design solutions, and drive user adoption through comprehensive training and change management strategies.
+
+CrossPeak Solutions
+Greenville, SC
+Jan 2023 -- Aug 2023
+Senior Business Analyst
+
+- Served as Salesforce operations lead for 4-7 MSA clients, managing platform administration, Flow automation, and operational process optimization across multiple Salesforce orgs.
+- Led implementations of Sales Cloud, Service Cloud, and Experience Cloud, including Experience Cloud rebranding initiatives that improved customer engagement and operational workflows.
+- Designed KPIs, dashboards, and reporting structures to provide clients with visibility into revenue operations, pipeline health, and key business metrics.
+- Coordinated multi-platform integrations and data migrations while ensuring data quality, security permissions, and system performance.
+- Translated client business requirements into technical specifications and scalable Salesforce solutions, ensuring alignment with strategic growth objectives.
+- Managed project budgets, timelines, and scope while maintaining high service delivery standards and client satisfaction.
+
+Metropolitan State University of Denver
+Denver, CO
+Jun 2012 -- Sep 2018
+Business Systems Project Manager
+
+- Implemented Salesforce CRM to optimize operational efficiency for managing 20,000+ admission applications, replacing traditional paper processes with automated workflows.
+- Designed and deployed operational dashboards and reporting structures to provide visibility into application pipeline, conversion rates, and process bottlenecks.
+- Introduced Atlassian Confluence and JIRA for project management, improving cross-functional collaboration and workflow efficiency.
+- Served as technical systems administrator, managing platform configurations, security permissions, and user access across multiple business systems.
+
+EDUCATION & PROFESSIONAL DEVELOPMENT
+
+Master of Business Administration, Business Administration and Management | Clemson University - Clemson, SC
+Software Engineering Certificate | Regis University
+Bachelor of Engineering in Industrial Engineering | Clemson University - Clemson, SC
+
+CERTIFICATIONS
+
+Salesforce Certified Advanced Administrator (SCAA) | Salesforce (Jul 2023)
+Salesforce Certified Business Analyst | Salesforce (Jan 2024)
+Salesforce Certified Education Cloud Consultant | Salesforce (Oct 2023)
+Salesforce Certified Nonprofit Cloud Consultant | Salesforce (Nov 2019)
+Salesforce Certified Administrator (SCA) | Salesforce (Apr 2018)
+Project Management Professional | Project Management Institute (Expires Jun 2025)
+Professional Scrum Master | Scrum.org (Sep 2023)
+
+TECHNICAL SKILLS
+
+Salesforce Flow Builder | Experience Cloud | Service Cloud | Sales Cloud | CPQ | Salesforce Knowledge | Data Loader | Salesforce Inspector | Workbench | Microsoft Project | ServiceNow | Asana | Jira | Confluence | Slack | Power Query | Google Suite | MS Office (Word, Excel, PowerPoint, Teams)

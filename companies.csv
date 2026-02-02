@@ -67,3 +67,6 @@ Index Ventures Job Board,https://www.indexventures.com/startup-jobs?query=salesf
 Sequoia Capital Job Board,https://jobs.sequoiacap.com/jobs?q=salesforce,.job-card,"[itemprop=""title""]","[itemprop=""addressLocality""]","[itemprop=""title""]",true,Ashby - schema.org markup
 Lightspeed Job Board,https://jobs.lsvp.com/jobs?q=salesforce,.job-card,"[itemprop=""title""]","[itemprop=""addressLocality""]","[itemprop=""title""]",true,Ashby - schema.org markup
 Tech Jobs for Good,https://techjobsforgood.com/?q=salesforce,.job-card,.job-title,.location,a,true,Selectors verified working
+AASP,https://aasp.mcjobboard.net/jobs,"mat-card, .job",.title,.location,a,true,mcjobboard.net - Angular Material
+CASE,https://careers.case.org/jobs/,".job-card, .job-listing",".job-title, h3",".location, .job-location",a,true,May need selector adjustment
+Foundation List,https://www.foundationlist.org/jobs/advanced-search/?query=salesforce&results=1,".job_listing, .job-listing, li.job_listing",".job_listing-title, h3, .position",".job-location, .location",a,true,Nonprofit jobs - WordPress

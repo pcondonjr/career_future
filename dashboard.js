@@ -1,8 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
 import { JobDatabase } from './database.js';
 import { loadSitesFromCSV, validateCSV } from './sites-config.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import resumeRoutes from './resume_api_routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -96,12 +98,15 @@ app.get('/companies', async (req, res) => {
   try {
     const validation = await validateCSV();
     const sites = await loadSitesFromCSV('./companies.csv', false);
-    
+
     res.render('companies', { sites, validation });
   } catch (error) {
     res.status(500).send('Error loading companies: ' + error.message);
   }
 });
+
+// Resume optimizer API routes
+app.use('/api', resumeRoutes);
 
 app.listen(PORT, () => {
   console.log(`\n🌐 Dashboard running at http://localhost:${PORT}`);

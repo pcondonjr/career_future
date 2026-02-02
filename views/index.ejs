@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <title>Salesforce Job Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="/css/resume_optimizer_styles.css">
 </head>
 <body>
     <main class="container">
-        <h1>🎯 Salesforce Job Dashboard</h1>
+        <h1>Salesforce Job Dashboard</h1>
         <div class="grid">
             <div><strong>Total Jobs:</strong> <%= stats.total %></div>
             <div><strong>Last 24h:</strong> <%= stats.last24Hours %></div>
@@ -16,23 +17,27 @@
         </div>
         <hr>
         <div class="grid">
-            <button onclick="location.href='/api/export'">📥 Export CSV</button>
-            <button onclick="location.href='/companies'">⚙️ Manage Companies</button>
+            <button onclick="location.href='/api/export'">Export CSV</button>
+            <button onclick="location.href='/companies'">Manage Companies</button>
         </div>
         <hr>
         <% if (jobs.length === 0) { %>
             <p>No jobs found yet. Run the scraper to start finding jobs!</p>
         <% } else { %>
             <% jobs.forEach(job => { %>
-                <article>
-                    <h3><%= job.title %></h3>
-                    <p><strong><%= job.company %></strong></p>
-                    <p>📍 <%= job.location || 'Location not specified' %></p>
-                    <p>📅 Found: <%= new Date(job.firstSeen).toLocaleDateString() %></p>
-                    <a href="<%= job.url %>" target="_blank" role="button">View Job →</a>
+                <article class="job-card" data-url="<%= job.url %>">
+                    <h3 class="job-title"><%= job.title %></h3>
+                    <p class="job-company"><strong><%= job.company %></strong></p>
+                    <p class="job-location"><%= job.location || 'Location not specified' %></p>
+                    <p>Found: <%= new Date(job.firstSeen).toLocaleDateString() %></p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <a href="<%= job.url %>" target="_blank" role="button">View Job</a>
+                        <button class="btn-optimize-resume" type="button">Optimize Resume</button>
+                    </div>
                 </article>
             <% }); %>
         <% } %>
     </main>
+    <script src="/js/public_resume_optimizer.js"></script>
 </body>
 </html>
