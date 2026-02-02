@@ -1,0 +1,118 @@
+company_name,careers_url,job_card_selector,title_selector,location_selector,link_selector,enabled,notes
+Studio 511,https://www.st511.com,.job-card,h3,.location,a,false,Error: net::ERR_NAME_NOT_RESOLVED at https://www.st511.com
+Strong Missions,https://www.strongmissions.com/about/careers,.job-card,h3,.location,a,false,Career path guessed
+BHHS Cambridge Realty,https://www.bhhs.com/join-us,.job-card,h3,.location,a,false,Career page found
+T & S Food Services,https://www.tsfoodservices.com,.job-card,h3,.location,a,false,Error: net::ERR_NAME_NOT_RESOLVED at https://www.tsfoodservices.com
+Axcent Realty,https://www.axcentrealty.com,.job-card,h3,.location,a,false,Home page only
+The Powell Group,https://www.thepowellgroup.net,.job-card,h3,.location,a,false,Home page only
+Upstate Workforce Future's,https://www.upstateworkforceboard.org/opportunities,.job-card,h3,.location,a,false,Career page found
+Smith Contracting Services,https://Inc",.job-card,h3,.location,a,false,Error: net::ERR_NAME_NOT_RESOLVED at https://Inc"
+Piedmont Imaging,https://www.piedmontimaging.com/careers/,.job-card,h3,.location,a,false,Career page found
+Ii5,https://www.ii5.com,.job-card,h3,.location,a,false,Error: Navigation timeout of 15000 ms exceeded
+Miertec,https://www.miertec.com,.job-card,h3,.location,a,false,Error: net::ERR_CONNECTION_RESET at https://www.miertec.com
+Benjamin Hardy,https://www.benjaminhardy.com,.job-card,h3,.location,a,false,Home page only
+Grass Tenders,https://www.grasstenders.com,.job-card,h3,.location,a,false,Home page only
+Pins Fast,https://www.pinsfast.com,.job-card,h3,.location,a,false,Home page only
+Sullivan's Metropolitan Grill,https://www.sullivansmetrogrill.com,.job-card,h3,.location,a,false,Home page only
+Dover Cylinder Head Service Inc,https://www.doverheads.com,.job-card,h3,.location,a,false,Home page only
+Gaston Garage Door,https://www.cliffsgastoniagaragedoor.com,.job-card,h3,.location,a,false,Home page only
+Rims Usa,https://www.rimsusa.net,.job-card,h3,.location,a,false,Error: net::ERR_NAME_NOT_RESOLVED at https://www.rimsusa.net
+Warth Construction,https://Inc.",.job-card,h3,.location,a,false,Error: net::ERR_NAME_NOT_RESOLVED at https://Inc."
+Mustang Medicine Works,https://www.mustangmedicineworks.com,.job-card,h3,.location,a,false,Error: net::ERR_CONNECTION_CLOSED at https://www.mustangmedicineworks.com
+DOT Tiedown,https://www.dottiedown.com,.job-card,h3,.location,a,false,Home page only
+Smoky Mountain Steel Horses's,https://www.smokymountainsteelhorses.com/careers,.job-card,h3,.location,a,false,Career path guessed
+EIT Networks,https://www.epignosysit.com,.job-card,h3,.location,a,false,Error: Navigation timeout of 15000 ms exceeded
+Corson Rubber Products,https://www.corsonrubber.com,.job-card,h3,.location,a,false,Home page only
+Greenville Convention Center Gallery,https://www.greenvilleconventioncenter.com,.job-card,h3,.location,a,false,Home page only
+Unique Financial Solutions,https://www.uniquefinancialsolutionsllc.com/careers,.job-card,h3,.location,a,false,Career path guessed
+Vaughn Construction and Renovation LLC,https://www.vaughncustomhomes.com,.job-card,h3,.location,a,false,Home page only
+Rising Technology Solutions,https://www.risinginc.net,.job-card,h3,.location,a,false,Error: Execution context was destroyed, most likely because of a navigation.
+Sitter's Registry,https://www.sittersregistry.com,.job-card,h3,.location,a,false,Home page only
+Oasis Scientific Inc,https://www.oasisscientific.com,.job-card,h3,.location,a,false,Home page only
+Modern Drywall Co,https://www.moderndrywall.com,.job-card,h3,.location,a,false,Home page only
+Jolly Realty Group,https://www.jollyrealtygroup.com,.job-card,h3,.location,a,false,Home page only
+Manello Construction,https://www.manelloconstruction.com,.job-card,h3,.location,a,false,Home page only
+Patrick Yarn Mill,https://www.patrickyarns.com,.job-card,h3,.location,a,false,Error: net::ERR_NAME_NOT_RESOLVED at https://www.patrickyarns.com
+Grove Medical,https://www.grovemedical.com/?page=customer&file=customer/grmein/customerpages/About/Careers.htm,.job-card,h3,.location,a,false,Career page found
+The Cargo Agency,https://www.thecargoagency.com/careers/,.job-card,h3,.location,a,false,Career page found
+HW Resources,https://www.hwresources.net/careers,.job-card,h3,.location,a,false,Career path guessed
+Welcome Home Group,https://www.welcomehomesc.com,.job-card,h3,.location,a,false,Home page only
+American Quality Foods,https://www.americanqualityfoods.com,.job-card,h3,.location,a,false,Error: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH at https://www.americanqualityfoods.com
+The Willows Of Easley,https://www.thewillowsofeasley.com/careers/,.job-card,h3,.location,a,false,Career page found
+Industrial Fabricators,https://www.ifabrication.com/en/careers,.job-card,h3,.location,a,false,Career page found
+Sfrep,https://www.wca-inc.com/careers,.job-card,h3,.location,a,false,Career path guessed
+Palmetto Digital Solutions,https://www.palmettodigitalsolutions.com,.job-card,h3,.location,a,false,Home page only
+Southern Belle Marketing,https://www.southernbellemarketing.com,.job-card,h3,.location,a,false,Home page only
+Sunset Finance,https://sunsetfinance.net/careers/,.job-card,h3,.location,a,false,Career page found
+Aberdeen Funding,https://www.aberdeenfunding.com,.job-card,h3,.location,a,false,Error: Execution context was destroyed, most likely because of a navigation.
+J M Smith Corporation,https://www.smithdrug.com/contact/employment-opportunities,.job-card,h3,.location,a,false,Career page found
+Enlow Marketing,https://www.clearonhold.com,.job-card,h3,.location,a,false,Home page only
+The Brigman Group,https://www.thebrigmangroup.com,.job-card,h3,.location,a,false,Home page only
+Spectrum,https://jobs.spectrum.com/,.job-card,h3,.location,a,false,Career page found
+AOne ATM,https://www.aoneatm.com/about/careers,.job-card,h3,.location,a,false,Career path guessed
+Innovative Solar Systems,https://innovativesolarsystemsllc.com/careers/,.job-card,h3,.location,a,false,Career page found
+Griffin Architects,https://www.griffinarchitectspa.com,.job-card,h3,.location,a,false,Home page only
+Summit Solar,https://www.mysummitsolar.com,.job-card,h3,.location,a,false,Error: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH at https://www.mysummitsolar.com
+Champion Plumbing,https://www.championplumbingllc.com,.job-card,h3,.location,a,false,Error: Execution context was destroyed, most likely because of a navigation.
+Bullman Heating & Air,https://bullmanheating.com/careers/,.job-card,h3,.location,a,false,Career page found
+Kellar Lawrence Real Estate,https://kellarlawrence.com/real-estate-careers/,.job-card,h3,.location,a,false,Career page found
+French Broad Chocolates,https://frenchbroadchocolates.com/pages/work-with-us,.job-card,h3,.location,a,false,Career page found
+Caldwell Computer Consulting,https://www.gastoniapc.com,.job-card,h3,.location,a,false,Home page only
+Robojuice,https://robojuice.com/careers/,.job-card,h3,.location,a,false,Career page found
+Animal Hospital of Waynesville,https://www.animalhosp.com/careers,.job-card,h3,.location,a,false,Career page found
+Vinyl Services,https://www.vinylservices.net,.job-card,h3,.location,a,false,Error: Navigation timeout of 15000 ms exceeded
+Reed Construction,https://www.reedconstructionco.com,.job-card,h3,.location,a,false,Home page only
+Gaston Together,https://www.gastontogether.org,.job-card,h3,.location,a,false,Home page only
+All Skilled Construction,https://www.allskilledconstruction.com,.job-card,h3,.location,a,false,Home page only
+First Responders Healthcare Services,https://1strespondershealthcare.applytojob.com/apply,.job-card,h3,.location,a,false,Career page found
+Talisman Group,https://www.talismancamps.com,.job-card,h3,.location,a,false,Home page only
+Premier Pain Solutions,https://recruiting.paylocity.com/recruiting/jobs/All/42101e7b-b16e-40f6-8fe8-894f3d865541/Premier-Pain-Solutions-PLLC,.job-card,h3,.location,a,false,Career page found
+Great Outdoors Play Systems,https://www.greatoutdoorsplay.com,.job-card,h3,.location,a,false,Home page only
+NewBold,https://newboldtech.com/careers/,.job-card,h3,.location,a,false,Career page found
+North Carolina School for the Deaf,https://nc.wd108.myworkdayjobs.com/NC_Careers?hiringCompany=4c5533ba0a02100160ee4aeb0cfb0000,.job-card,h3,.location,a,false,Career page found
+Professional Help Computer Services,https://www.professionalhelp.com,.job-card,h3,.location,a,false,Home page only
+Community Credit,https://mycommunitycredit.com/careers/,.job-card,h3,.location,a,false,Career page found
+Sapphire Leadership Group,https://www.theslg.com,.job-card,h3,.location,a,false,Home page only
+Everything Computers of Sc,https://www.everythingcomputersofsc.com,.job-card,h3,.location,a,false,Home page only
+Mold Inspection Network,https://www.moldinspectionnetwork.com,.job-card,h3,.location,a,false,Home page only
+Moonstruck & Monograms,https://www.moonstruckonline.com,.job-card,h3,.location,a,false,Error: net::ERR_NAME_NOT_RESOLVED at https://www.moonstruckonline.com
+Allergic Disease & Asthma Center,https://allergicdisease.com/careers,.job-card,h3,.location,a,false,Career page found
+Sen Platform,https://www.smartedunow.com,.job-card,h3,.location,a,false,Error: Execution context was destroyed, most likely because of a navigation.
+Gault-Kent Manufactured Homes,https://www.kentgault.com,.job-card,h3,.location,a,false,Home page only
+WNC Nonprofit Pathways,https://nonprofitpathways.org/resources/jobs/,.job-card,h3,.location,a,false,Career page found
+Quality Care Provder,https://www.qualitycareprovider.com,.job-card,h3,.location,a,false,Error: net::ERR_CERT_DATE_INVALID at https://www.qualitycareprovider.com
+AFG Distribution,https://www.afgdistribution.com/brand/job,.job-card,h3,.location,a,false,Career page found
+Fitzgerald Nursery,https://www.fitzgeraldnursery.net,.job-card,h3,.location,a,false,Home page only
+Thunder Contracting,https://www.thundercontractinginc.com,.job-card,h3,.location,a,false,Home page only
+Mascoe,https://www.mascoe.com,.job-card,h3,.location,a,false,Error: net::ERR_CERT_AUTHORITY_INVALID at https://www.mascoe.com
+JAWS Fundraising,https://www.jawsfundraising.com,.job-card,h3,.location,a,false,Home page only
+Moss & Associates Real Estate,https://www.callmoss.com,.job-card,h3,.location,a,false,Error: net::ERR_NAME_NOT_RESOLVED at https://www.callmoss.com
+Family Physicians,https://www.familyphysiciansspartanburg.com,.job-card,h3,.location,a,false,Home page only
+Ponce Realty Group,https://www.theponcerealtygroup.com/recruit.php,.job-card,h3,.location,a,false,Career page found
+Albertson Construction Inc,https://www.albertsonconstruction.com,.job-card,h3,.location,a,false,Home page only
+Maintenance & Inspection Services,https://www.misnc.com,.job-card,h3,.location,a,false,Error: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH at https://www.misnc.com
+South Eastern Machining,https://www.semachining.com,.job-card,h3,.location,a,false,Error: net::ERR_CERT_COMMON_NAME_INVALID at https://www.semachining.com
+AshevilleAndBeyond,https://www.ashevilleandbeyond.com,.job-card,h3,.location,a,false,Error: net::ERR_CERT_AUTHORITY_INVALID at https://www.ashevilleandbeyond.com
+Dallas Electrical Contractors,https://www.dallasncelectric.com,.job-card,h3,.location,a,false,Home page only
+Gaia Herbs,https://www.gaiaherbs.com/pages/careers,.job-card,h3,.location,a,false,Career page found
+Greenville Convention Center,https://www.greenvilleconventioncenter.com,.job-card,h3,.location,a,false,Home page only
+Lifoam Industries,https://www.lifoam.com,.job-card,h3,.location,a,false,Home page only
+Package InSight,https://www.packageinsight.com,.job-card,h3,.location,a,false,Home page only
+The Dry Sink,https://www.thedrysink.com/careers,.job-card,h3,.location,a,false,Career path guessed
+AnMed Health Cannon Hospital,https://www.anmedhealthcannon.org,.job-card,h3,.location,a,false,Error: Navigation timeout of 15000 ms exceeded
+Stoneledge,https://www.stoneledgehoa.com,.job-card,h3,.location,a,false,Home page only
+Ditch Witch Of The Carolinas,https://www.dwotc.com,.job-card,h3,.location,a,false,Home page only
+Fyg,https://www.fuyaona.com,.job-card,h3,.location,a,false,Error: net::ERR_CERT_COMMON_NAME_INVALID at https://www.fuyaona.com
+Proactive MD,https://proactive-md.com/careers/,.job-card,h3,.location,a,false,Career page found
+Conner Financial Group,https://www.retiretag.com,.job-card,h3,.location,a,false,Home page only
+EnCode Wireless,https://www.encodewireless.com/contact.html,.job-card,h3,.location,a,false,Career page found
+Panthera,https://www.pantherallc.biz,.job-card,h3,.location,a,false,Error: net::ERR_NAME_NOT_RESOLVED at https://www.pantherallc.biz
+Championship Networks,https://www.ihaveanitdept.com,.job-card,h3,.location,a,false,Home page only
+Whitmire Real Estate Agency,https://www.thewhitmireagency.com,.job-card,h3,.location,a,false,Home page only
+Excel Fire Sprinklers,https://careers.pyebarkerfs.com/,.job-card,h3,.location,a,false,Career page found
+Ahead Start,https://aheadstart-sc.com/career-opportunities/,.job-card,h3,.location,a,false,Career page found
+EX Contractor,https://www.excontractor.com,.job-card,h3,.location,a,false,Home page only
+Ayres Stucco,https://www.ayresstucco.com,.job-card,h3,.location,a,false,Error: net::ERR_CONNECTION_REFUSED at https://www.ayresstucco.com
+McKinney Mazda,https://sites.hireology.com/mckinneyautomotive1,.job-card,h3,.location,a,false,Career page found
+Labtech Diagnostics,https://www.labtechdiagnostics.net,.job-card,h3,.location,a,false,Error: net::ERR_CERT_COMMON_NAME_INVALID at https://www.labtechdiagnostics.net
+Meditari,https://www.meditari.com,.job-card,h3,.location,a,false,Home page only

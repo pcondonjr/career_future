@@ -1,0 +1,33 @@
+{
+  "name": "salesforce-job-scraper",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Automated Salesforce job scraper with email notifications and web dashboard",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dashboard": "node dashboard.js",
+    "test": "node index.js --now",
+    "validate": "node index.js --validate",
+    "add-company": "node add-company.js",
+    "export": "node export-jobs.js"
+  },
+  "keywords": [
+    "salesforce",
+    "job-scraper",
+    "puppeteer",
+    "automation",
+    "job-search"
+  ],
+  "author": "Patrick Condon",
+  "license": "MIT",
+  "dependencies": {
+    "csv-parse": "^5.5.0",
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.0",
+    "express": "^4.18.0",
+    "node-cron": "^3.0.0",
+    "nodemailer": "^7.0.13",
+    "puppeteer": "^24.36.1"
+  }
+}
