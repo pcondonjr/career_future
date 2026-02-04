@@ -28,23 +28,36 @@ export class JobScraper {
   isRelevantJob(title, location) {
     const titleLower = title.toLowerCase();
     const locationLower = (location || '').toLowerCase();
-    
+
     // Must match at least one keyword
-    const hasKeyword = KEYWORDS.some(keyword => 
+    const hasKeyword = KEYWORDS.some(keyword =>
       titleLower.includes(keyword.toLowerCase())
     );
-    
+
     if (!hasKeyword) return false;
-    
+
     // If location specified, check if it matches preferences
     if (location && locationLower) {
-      const hasLocation = LOCATIONS.some(loc => 
+      const hasLocation = LOCATIONS.some(loc =>
         locationLower.includes(loc.toLowerCase())
       );
       return hasLocation;
     }
-    
+
     return true; // Include if no location specified
+  }
+
+  isRelevantLocation(location) {
+    const locationLower = (location || '').toLowerCase();
+
+    // If no location specified, include the job
+    if (!location || !locationLower) return true;
+
+    // Check if location matches preferences
+    const hasLocation = LOCATIONS.some(loc =>
+      locationLower.includes(loc.toLowerCase())
+    );
+    return hasLocation;
   }
 
   async scrapeSite(siteConfig) {
@@ -144,12 +157,12 @@ export class JobScraper {
         return results;
       }, siteConfig);
       
-      // Filter for relevant jobs
-      const relevantJobs = jobs.filter(job => 
-        this.isRelevantJob(job.title, job.location)
-      );
-      
-      console.log(`  Found ${relevantJobs.length} relevant jobs out of ${jobs.length} total`);
+      // Filter for relevant jobs (skip keyword filter if site is marked to skip)
+      const relevantJobs = siteConfig.skipKeywordFilter
+        ? jobs.filter(job => this.isRelevantLocation(job.location))
+        : jobs.filter(job => this.isRelevantJob(job.title, job.location));
+
+      console.log(`  Found ${relevantJobs.length} relevant jobs out of ${jobs.length} total${siteConfig.skipKeywordFilter ? ' (keyword filter skipped)' : ''}`);
       
       await page.close();
       return relevantJobs;

@@ -19,6 +19,14 @@ class ResumeOptimizerUI {
       }
     });
 
+    // Listen for "Analyze External Job" button click
+    document.addEventListener('click', (e) => {
+      if (e.target.id === 'analyze-external-job-btn') {
+        e.preventDefault();
+        this.showExternalJobForm();
+      }
+    });
+
     // Close modal when clicking outside content
     document.addEventListener('click', (e) => {
       if (e.target.classList.contains('modal')) {
@@ -137,6 +145,125 @@ Include:
   }
 
   /**
+   * Show form for analyzing external job postings
+   */
+  showExternalJobForm() {
+    // Create modal if it doesn't exist
+    if (!document.getElementById('optimization-modal')) {
+      this.createOptimizationModal();
+    }
+
+    const modal = document.getElementById('optimization-modal');
+    const modalBody = modal.querySelector('.modal-body');
+
+    modal.classList.add('active');
+    modal.querySelector('.modal-title').textContent = 'Analyze External Job Posting';
+
+    modalBody.innerHTML = `
+      <div class="description-input-form">
+        <p style="margin-bottom: 20px;">
+          Enter job details from any job posting to analyze compatibility with your resume.
+        </p>
+
+        <div style="display: grid; gap: 15px;">
+          <div>
+            <label for="external-job-title"><strong>Job Title:</strong></label>
+            <input
+              type="text"
+              id="external-job-title"
+              placeholder="e.g., Salesforce Administrator"
+              style="width: 100%;"
+            />
+          </div>
+
+          <div>
+            <label for="external-company"><strong>Company:</strong></label>
+            <input
+              type="text"
+              id="external-company"
+              placeholder="e.g., Acme Corporation"
+              style="width: 100%;"
+            />
+          </div>
+
+          <div>
+            <label for="external-job-url"><strong>Job URL (optional):</strong></label>
+            <input
+              type="url"
+              id="external-job-url"
+              placeholder="https://..."
+              style="width: 100%;"
+            />
+          </div>
+
+          <div>
+            <label for="external-job-description"><strong>Job Description:</strong></label>
+            <textarea
+              id="external-job-description"
+              rows="12"
+              placeholder="Paste the full job description here...
+
+Include:
+- Job responsibilities
+- Required qualifications
+- Preferred qualifications
+- Skills and certifications mentioned"
+              style="width: 100%; font-family: inherit; font-size: 0.95rem; resize: vertical;"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="action-buttons" style="margin-top: 20px;">
+          <button id="analyze-external-btn" class="btn btn-primary">
+            Analyze Job Match
+          </button>
+          <button onclick="document.getElementById('optimization-modal').classList.remove('active')"
+                  class="btn btn-secondary">
+            Cancel
+          </button>
+        </div>
+
+        <div class="metadata" style="margin-top: 15px;">
+          <small>Analysis uses Claude AI and costs approximately $0.02-0.05 per request</small>
+        </div>
+      </div>
+    `;
+
+    // Add event listener for analyze button
+    document.getElementById('analyze-external-btn').addEventListener('click', () => {
+      const title = document.getElementById('external-job-title').value.trim();
+      const company = document.getElementById('external-company').value.trim();
+      const url = document.getElementById('external-job-url').value.trim();
+      const description = document.getElementById('external-job-description').value.trim();
+
+      if (!title) {
+        alert('Please enter the job title.');
+        return;
+      }
+      if (!company) {
+        alert('Please enter the company name.');
+        return;
+      }
+      if (!description) {
+        alert('Please paste the job description.');
+        return;
+      }
+
+      const jobData = {
+        title: title,
+        company: company,
+        url: url || '#',
+        description: description,
+        location: '',
+        source: 'external'
+      };
+
+      modal.querySelector('.modal-title').textContent = `Optimize for: ${title} at ${company}`;
+      this.runAnalysis(jobData);
+    });
+  }
+
+  /**
    * Run the actual analysis API call
    */
   async runAnalysis(jobData) {
@@ -233,6 +360,17 @@ Include:
             <h4>⚠️ Gaps to Address</h4>
             <ul>
               ${analysis.gaps.map(gap => `<li>${gap}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+
+        <!-- Questions to Explore -->
+        ${analysis.questionsToExplore && analysis.questionsToExplore.length > 0 ? `
+          <div class="questions-section" style="background: #f0f7ff; border-left: 4px solid #3b82f6; padding: 15px; border-radius: 4px; margin: 15px 0;">
+            <h4>❓ Questions to Explore</h4>
+            <p style="font-size: 0.9rem; color: #555; margin-bottom: 10px;">You may have experience not captured in your resume. Consider these before generating an optimized resume:</p>
+            <ul>
+              ${analysis.questionsToExplore.map(q => `<li>${q}</li>`).join('')}
             </ul>
           </div>
         ` : ''}

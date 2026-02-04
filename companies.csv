@@ -1,17 +1,19 @@
-company_name,careers_url,job_card_selector,title_selector,location_selector,link_selector,enabled,notes
-Salesforce,https://careers.salesforce.com/en/jobs/?search=administrator,"[data-ph-at-id=""job-link""]",h3,"[data-ph-at-id=""job-location""]",a,true,Main Salesforce careers page
-Cloud for Good,https://www.cloudforgood.com/careers/,.career-opportunity,"h3, h2",.location,a,true,SF consulting firm
-Mason Frank,https://www.masonfrank.com/salesforce-jobs,".job-result, [class*='job-card']",".job-title, h3",.location,a,true,SF recruiting agency
-Salesforce Ben,https://www.salesforceben.com/category/jobs/,article,"h2 a, h3 a",.post-meta,"h2 a, h3 a",true,SF community job board
-Insight Partners Talent Network,https://jobs.insightpartners.com/jobs?q=salesforce,.job-card,"[itemprop=""title""]","[itemprop=""addressLocality""]","[itemprop=""title""]",true,Ashby - schema.org markup
-Index Ventures Job Board,https://www.indexventures.com/startup-jobs?query=salesforce,li,.job-title,.location,a,true,Vue.js - may need adjustment
-Sequoia Capital Job Board,https://jobs.sequoiacap.com/jobs?q=salesforce,.job-card,"[itemprop=""title""]","[itemprop=""addressLocality""]","[itemprop=""title""]",true,Ashby - schema.org markup
-Lightspeed Job Board,https://jobs.lsvp.com/jobs?q=salesforce,.job-card,"[itemprop=""title""]","[itemprop=""addressLocality""]","[itemprop=""title""]",true,Ashby - schema.org markup
-Tech Jobs for Good,https://techjobsforgood.com/?q=salesforce,.job-card,.job-title,.location,a,true,Selectors verified working
-AASP,https://aasp.mcjobboard.net/jobs,"mat-card, .job",.title,.location,a,true,mcjobboard.net - Angular Material
-CASE,https://careers.case.org/jobs/,".job-card, .job-listing",".job-title, h3",".location, .job-location",a,true,May need selector adjustment
-Foundation List,https://www.foundationlist.org/jobs/advanced-search/?query=salesforce&results=1,".job_listing, .job-listing, li.job_listing",".job_listing-title, h3, .position",".job-location, .location",a,true,Nonprofit jobs - WordPress
-IT Jobs in Higher Ed,https://www.itjobsinhighered.com/,.item-box,".title h3, h3",".location, p",a,true,Higher Ed IT jobs
-Higher Ed Jobs,https://www.higheredjobs.com/search/?Keywords=salesforce,".job-item, .result-item, tr",".job-title, a.title, h3",".location, .job-location",a,true,Higher Ed - may need selector update
-HERC Jobs,https://main.hercjobs.org/jobs/?keywords=salesforce,".job-listing, .job-item","h2, .job-title",".location, .job-location",a,true,Higher Ed Recruitment Consortium
-Inside Higher Ed,https://careers.insidehighered.com/jobs/?keywords=salesforce,li,"h3 a, h3",".location, li",a,true,Higher Ed careers
+company_name,careers_url,job_card_selector,title_selector,location_selector,link_selector,enabled,skip_keyword_filter,notes
+Salesforce,https://careers.salesforce.com/en/jobs/?search=administrator,"[data-ph-at-id=""job-link""]",h3,"[data-ph-at-id=""job-location""]",a,true,false,Main Salesforce careers page
+Cloud for Good,https://www.cloudforgood.com/careers/,.career-opportunity,"h3, h2",.location,a,true,false,SF consulting firm
+Mason Frank,https://www.masonfrank.com/salesforce-jobs,".job-result, [class*='job-card']",".job-title, h3",.location,a,true,false,SF recruiting agency
+Salesforce Ben,https://www.salesforceben.com/category/jobs/,article,"h2 a, h3 a",.post-meta,"h2 a, h3 a",true,false,SF community job board
+Insight Partners Talent Network,https://jobs.insightpartners.com/jobs?q=salesforce,.job-card,"[itemprop=""title""]","[itemprop=""addressLocality""]","[itemprop=""title""]",true,false,Ashby - schema.org markup
+Index Ventures Job Board,https://www.indexventures.com/startup-jobs?query=salesforce,li,.job-title,.location,a,true,false,Vue.js - may need adjustment
+Sequoia Capital Job Board,https://jobs.sequoiacap.com/jobs?q=salesforce,.job-card,"[itemprop=""title""]","[itemprop=""addressLocality""]","[itemprop=""title""]",true,false,Ashby - schema.org markup
+Lightspeed Job Board,https://jobs.lsvp.com/jobs?q=salesforce,.job-card,"[itemprop=""title""]","[itemprop=""addressLocality""]","[itemprop=""title""]",true,false,Ashby - schema.org markup
+Tech Jobs for Good,https://techjobsforgood.com/?q=salesforce,.job-card,.job-title,.location,a,true,false,Selectors verified working
+AASP,https://aasp.mcjobboard.net/jobs,"mat-card, .job",.title,.location,a,true,false,mcjobboard.net - Angular Material
+CASE,https://careers.case.org/jobs/,".job-card, .job-listing",".job-title, h3",".location, .job-location",a,true,false,May need selector adjustment
+Foundation List,https://www.foundationlist.org/jobs/advanced-search/?query=salesforce&results=1,".job_listing, .job-listing, li.job_listing",".job_listing-title, h3, .position",".job-location, .location",a,true,false,Nonprofit jobs - WordPress
+IT Jobs in Higher Ed,https://www.itjobsinhighered.com/,.item-box,".title h3, h3",".location, p",a,true,false,Higher Ed IT jobs
+Higher Ed Jobs,https://www.higheredjobs.com/search/?Keywords=salesforce,".job-item, .result-item, tr",".job-title, a.title, h3",".location, .job-location",a,true,false,Higher Ed - may need selector update
+HERC Jobs,https://main.hercjobs.org/jobs/?keywords=salesforce,".job-listing, .job-item","h2, .job-title",".location, .job-location",a,true,false,Higher Ed Recruitment Consortium
+Inside Higher Ed,https://careers.insidehighered.com/jobs/?keywords=salesforce,li,"h3 a, h3",".location, li",a,true,false,Higher Ed careers
+Watt's List - Non-profit,https://wattslist.info/salesforce-nonprofit-jobs,.github-markdown-body p[data-v-md-line],a strong,.no-location,a,true,false,Nonprofit SF jobs
+Watt's List,https://wattslist.info/consulting-jobs,.github-markdown-body ul li,a,br,a,true,false,Consulting SF jobs

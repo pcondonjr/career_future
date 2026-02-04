@@ -23,6 +23,13 @@ class ResumeOptimizer {
   async analyzeJobMatch(jobDescription, resumeText) {
     const prompt = `You are a resume optimization expert helping a Salesforce professional tailor their resume for specific job opportunities.
 
+CRITICAL RULES:
+- NEVER add skills, tools, technologies, or experience that are NOT already in the resume.
+- NEVER fabricate or invent accomplishments, metrics, or capabilities.
+- ONLY recommend reframing, reordering, or emphasizing content that ALREADY EXISTS in the resume.
+- If the job requires something the candidate does not have, list it as a genuine gap — do NOT silently add it to recommendations.
+- Keywords to emphasize must ONLY come from skills/experience already present in the resume that also appear in the job description.
+
 CURRENT RESUME:
 ${resumeText}
 
@@ -31,21 +38,23 @@ ${jobDescription}
 
 Please analyze this job posting and provide:
 
-1. COMPATIBILITY SCORE (0-100%): Overall match between candidate's experience and job requirements
+1. COMPATIBILITY SCORE (0-100%): Overall match between candidate's ACTUAL experience and job requirements. Be honest — do not inflate the score.
 
-2. KEY REQUIREMENTS: Extract the 5-7 most important qualifications, skills, or experiences mentioned
+2. KEY REQUIREMENTS: Extract the 5-7 most important qualifications, skills, or experiences the job requires.
 
-3. MATCHING STRENGTHS: Which parts of the resume align well with the job requirements
+3. MATCHING STRENGTHS: Which parts of the resume ALREADY align well with the job requirements. Reference specific resume content.
 
-4. GAPS TO ADDRESS: What's missing or could be emphasized more
+4. GAPS TO ADDRESS: Requirements from the job description that are NOT reflected in the resume. Be specific about what is missing.
 
-5. RESUME OPTIMIZATION RECOMMENDATIONS:
-   - Specific bullet points to add or modify
-   - Skills/certifications to emphasize
-   - Keywords to incorporate for ATS optimization
-   - Experience to reframe or highlight
+5. QUESTIONS TO EXPLORE: For each gap, suggest a question to ask the candidate — they may have relevant experience not captured in the current resume. For example: "The job requires Pardot experience. Have you worked with Pardot or any marketing automation tools that could be highlighted?"
 
-6. PRIORITY ADJUSTMENTS: Top 3-5 concrete changes to make for maximum impact
+6. RESUME OPTIMIZATION RECOMMENDATIONS:
+   - Existing bullet points to reword or reorder to better match the job (reference the original bullet)
+   - Skills already in the resume that should be moved higher or emphasized
+   - Keywords that appear in BOTH the resume AND the job description (overlap only)
+   - Ways to reframe existing experience to better align with the job's language
+
+7. PRIORITY ADJUSTMENTS: Top 3-5 concrete changes using ONLY existing resume content
 
 Format your response as valid JSON with this structure:
 {
@@ -53,10 +62,11 @@ Format your response as valid JSON with this structure:
   "keyRequirements": ["requirement 1", "requirement 2", ...],
   "matchingStrengths": ["strength 1", "strength 2", ...],
   "gaps": ["gap 1", "gap 2", ...],
+  "questionsToExplore": ["question about gap 1", "question about gap 2", ...],
   "recommendations": {
-    "bulletPoints": ["new/modified bullet 1", ...],
-    "skillsToEmphasize": ["skill 1", "skill 2", ...],
-    "keywords": ["keyword 1", "keyword 2", ...],
+    "bulletPoints": ["reworded existing bullet 1", ...],
+    "skillsToEmphasize": ["existing skill 1", "existing skill 2", ...],
+    "keywords": ["overlapping keyword 1", "overlapping keyword 2", ...],
     "experienceReframing": ["reframing suggestion 1", ...]
   },
   "priorityAdjustments": ["adjustment 1", "adjustment 2", ...]
@@ -103,6 +113,13 @@ Format your response as valid JSON with this structure:
     
     const prompt = `You are helping a Salesforce professional craft a compelling cover letter.
 
+CRITICAL RULES:
+- ONLY reference accomplishments, skills, tools, and experience that are EXPLICITLY stated in the resume below.
+- NEVER add skills, certifications, or tools the candidate does not have.
+- NEVER fabricate metrics, numbers, or achievements. If a specific metric is in the resume, you may use it. If not, describe the accomplishment without inventing numbers.
+- If the job requires something not in the resume, do NOT mention it in the cover letter. Focus on what the candidate CAN offer.
+- The cover letter should authentically represent this specific candidate, not a generic ideal candidate.
+
 RESUME:
 ${resumeText}
 
@@ -115,13 +132,13 @@ ${hiringManager ? `HIRING MANAGER: ${hiringManager}` : ''}
 
 Write a professional cover letter that:
 1. Opens with genuine enthusiasm for the specific role and company
-2. Highlights 2-3 most relevant accomplishments that match job requirements
-3. Demonstrates understanding of the company's needs
+2. Highlights 2-3 most relevant accomplishments FROM THE RESUME that match job requirements
+3. Connects the candidate's actual experience to the company's needs
 4. Shows personality while maintaining professionalism
 5. Closes with a strong call to action
 6. Keeps length to 3-4 paragraphs, around 300-350 words
 
-Use specific metrics and achievements from the resume where relevant. Make it compelling and ATS-friendly.`;
+Every claim in the cover letter must be traceable back to the resume. Do not embellish or add capabilities beyond what is documented.`;
 
     try {
       const message = await this.client.messages.create({
@@ -159,13 +176,14 @@ ${currentBullets}
 ${context.roleTitle ? `ROLE BEING DESCRIBED: ${context.roleTitle}` : ''}
 ${context.company ? `COMPANY: ${context.company}` : ''}
 
-Rewrite these bullet points to:
-1. Emphasize skills and experience that match the job requirements
-2. Incorporate relevant keywords from the job description naturally
-3. Quantify achievements with metrics where possible
+Rewrite these bullet points to better align with the job requirements. Follow these rules strictly:
+1. ONLY use information already present in the original bullet points — do not add skills, tools, or achievements that are not there
+2. Reframe and reword to emphasize aspects that match the job requirements
+3. Use metrics ONLY if they already exist in the original bullets — never invent numbers
 4. Start with strong action verbs
 5. Keep each bullet to 1-2 lines for readability
-6. Maintain truthfulness - don't fabricate experience
+6. Do NOT add keywords from the job description unless the candidate's bullet already demonstrates that capability
+7. The number of output bullets should match the number of input bullets
 
 Return ONLY the optimized bullet points as a JSON array of strings.
 Example: ["Bullet point 1", "Bullet point 2", ...]`;
@@ -213,6 +231,14 @@ PREVIOUS ANALYSIS:
 
     const prompt = `You are a professional resume writer helping a Salesforce professional optimize their resume for a specific job opportunity.
 
+CRITICAL RULES — YOU MUST FOLLOW THESE:
+- NEVER add skills, tools, technologies, certifications, or experience that are NOT in the original resume.
+- NEVER fabricate or invent metrics, numbers, or accomplishments.
+- NEVER insert keywords from the job description unless the resume already demonstrates that capability.
+- You may REWORD, REORDER, and EMPHASIZE existing content to better align with the job — but you must not add new content.
+- If a job requirement is not reflected in the resume, leave it out. Do not try to fill gaps with invented content.
+- The output resume must be a truthful representation of this specific candidate.
+
 CURRENT RESUME:
 ${resumeText}
 
@@ -222,29 +248,27 @@ ${analysisContext}
 
 Please rewrite and optimize the resume to better match this job opportunity. Follow these guidelines:
 
-1. MAINTAIN TRUTHFULNESS - Do not fabricate experience, skills, or achievements. Only reframe and emphasize existing content.
-
-2. STRUCTURE - Keep a clean, professional format with clear sections:
+1. STRUCTURE - Keep a clean, professional format with clear sections:
    - Contact info (keep as-is)
-   - Professional Summary (tailored to this role)
-   - Skills (reorganized to highlight relevant skills first)
-   - Experience (bullet points rewritten to emphasize relevant achievements)
-   - Certifications (relevant ones first)
-   - Education
+   - Professional Summary (tailored to this role using ONLY existing experience and skills)
+   - Core Competencies (reorganized to list job-relevant skills FIRST, but only skills already present)
+   - Experience (bullet points reworded to emphasize job-relevant aspects of existing achievements)
+   - Certifications (reordered with most relevant to this job listed first)
+   - Education (keep as-is)
 
-3. OPTIMIZATION TECHNIQUES:
-   - Incorporate keywords from the job description naturally
-   - Quantify achievements where possible
+2. OPTIMIZATION TECHNIQUES:
+   - Reorder bullet points within each role to lead with the most relevant accomplishments
+   - Reword bullets to use language that mirrors the job description WHERE the underlying experience supports it
+   - Emphasize existing metrics and quantified results
    - Use strong action verbs
-   - Emphasize skills and experience that match job requirements
-   - Reorder bullet points to lead with most relevant accomplishments
+   - Move the most job-relevant roles and experiences higher when possible
 
-4. ATS OPTIMIZATION:
+3. ATS OPTIMIZATION:
    - Use standard section headings
-   - Include exact keyword matches from the job posting
+   - Use keywords that overlap between the resume and job description (not job-only keywords)
    - Avoid tables, graphics, or complex formatting
 
-5. LENGTH - Keep it concise (ideally 1-2 pages worth of content)
+4. LENGTH - Keep it concise (ideally 1-2 pages worth of content)
 
 Return ONLY the optimized resume text, ready to be copied into a document. Do not include any commentary or explanations.`;
 
