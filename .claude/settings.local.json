@@ -64,7 +64,15 @@
       "WebFetch(domain:wattslist.info)",
       "WebSearch",
       "WebFetch(domain:docs.anthropic.com)",
-      "Bash(npm start)"
+      "Bash(npm start)",
+      "Bash(pm2 start:*)",
+      "Bash(pm2 save:*)",
+      "Bash(schtasks:*)",
+      "Bash(cmd /c schtasks /create /tn \"PM2 Job Scraper\" /tr \"cmd /c pm2 resurrect\" /sc onlogon /rl highest /f)",
+      "Bash(powershell -Command \"schtasks /create /tn ''PM2 Job Scraper'' /tr ''cmd /c pm2 resurrect'' /sc onlogon /rl highest /f\")",
+      "Bash(powershell -Command \"schtasks /create /tn ''PM2 Job Scraper'' /tr ''cmd /c pm2 resurrect'' /sc onlogon /f\")",
+      "Bash(powershell -Command \"echo $env:APPDATA\")",
+      "Bash(powershell -Command:*)"
     ]
   }
 }
