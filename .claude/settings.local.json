@@ -63,7 +63,8 @@
       "WebFetch(domain:www.perdue.com)",
       "WebFetch(domain:wattslist.info)",
       "WebSearch",
-      "WebFetch(domain:docs.anthropic.com)"
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(npm start)"
     ]
   }
 }

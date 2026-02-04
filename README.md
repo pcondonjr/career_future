@@ -70,22 +70,25 @@ You should see browser windows opening, sites being scraped, and (if jobs found)
 
 ## 🎮 Usage
 
-### Run the Scheduler (Background Mode)
+### Run the Scheduler + Dashboard
 
 ```powershell
 npm start
 ```
 
-Runs at 8 AM and 5 PM daily. Press Ctrl+C to stop.
+Starts the cron scheduler (8 AM and 5 PM daily) **and** the web dashboard together in a single process.
 
-### View the Dashboard
+Then visit: **http://localhost:3000**
 
-Open a second terminal:
+Press Ctrl+C to stop.
+
+### Run the Dashboard Only
+
 ```powershell
 npm run dashboard
 ```
 
-Then visit: **http://localhost:3000**
+Starts just the dashboard without the scheduler (useful if you only want to browse existing results).
 
 ### Other Commands
 

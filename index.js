@@ -4,6 +4,7 @@ import { JobScraper } from './scraper.js';
 import { JobDatabase } from './database.js';
 import { JobEmailer } from './emailer.js';
 import { loadSitesFromCSV, validateCSV } from './sites-config.js';
+import { startDashboard } from './dashboard.js';
 
 dotenv.config();
 
@@ -166,6 +167,9 @@ if (process.argv.includes('--validate')) {
     await db.load();
     await emailer.sendWeeklySummary(db);
   });
+
+  // Start the dashboard server alongside the scheduler
+  startDashboard();
 
   console.log('\n✅ Scheduler is running. Press Ctrl+C to stop.\n');
 }

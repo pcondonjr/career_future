@@ -108,7 +108,15 @@ app.get('/companies', async (req, res) => {
 // Resume optimizer API routes
 app.use('/api', resumeRoutes);
 
-app.listen(PORT, () => {
-  console.log(`\n🌐 Dashboard running at http://localhost:${PORT}`);
-  console.log(`📊 View your jobs in your browser!`);
-});
+export function startDashboard() {
+  app.listen(PORT, () => {
+    console.log(`\n🌐 Dashboard running at http://localhost:${PORT}`);
+    console.log(`📊 View your jobs in your browser!`);
+  });
+}
+
+// Start when run directly
+const isMain = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
+if (isMain) {
+  startDashboard();
+}
