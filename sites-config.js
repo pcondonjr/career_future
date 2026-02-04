@@ -60,6 +60,7 @@ export async function loadSitesFromCSV(csvPath = './companies.csv', onlyEnabled 
         },
         enabled: row.enabled.toLowerCase() === 'true',
         skipKeywordFilter: row.skip_keyword_filter?.toLowerCase() === 'true',
+        useAIExtraction: row.use_ai_extraction?.toLowerCase() === 'true',
         notes: row.notes || ''
       }));
 

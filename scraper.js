@@ -1,5 +1,9 @@
 import puppeteer from 'puppeteer';
+import Anthropic from '@anthropic-ai/sdk';
+import dotenv from 'dotenv';
 import { KEYWORDS, LOCATIONS } from './sites-config.js';
+
+dotenv.config();
 
 export class JobScraper {
   constructor() {
@@ -60,6 +64,56 @@ export class JobScraper {
     return hasLocation;
   }
 
+  async scrapeWithAI(page, siteConfig) {
+    const pageText = await page.evaluate(() => document.body.innerText);
+    const pageUrl = page.url();
+
+    // Also extract all links from the page for URL resolution
+    const links = await page.evaluate(() => {
+      const anchors = document.querySelectorAll('a[href]');
+      return Array.from(anchors).map(a => ({
+        text: a.textContent.trim(),
+        href: a.href
+      }));
+    });
+
+    const client = new Anthropic();
+
+    const response = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 8192,
+      messages: [{
+        role: 'user',
+        content: `Extract job listings from the following page text. The page is from "${siteConfig.name}" at ${pageUrl}.
+
+Return a JSON array of job objects with these fields:
+- "title": the job title (string)
+- "company": the company name (string), use "${siteConfig.name}" if not specified per-listing
+- "url": the job listing URL (string) - match titles to URLs from the links list below
+- "location": the job location (string), use "" if not found
+
+Links on the page:
+${JSON.stringify(links.slice(0, 200))}
+
+Page text:
+${pageText.slice(0, 12000)}
+
+Return ONLY a valid JSON array, no other text. If no jobs are found, return [].`
+      }]
+    });
+
+    let content = response.content[0].text.trim();
+    // Strip markdown code fences if present
+    content = content.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '');
+    try {
+      const jobs = JSON.parse(content);
+      return Array.isArray(jobs) ? jobs : [];
+    } catch (err) {
+      console.error(`  AI extraction returned invalid JSON for ${siteConfig.name}:`, err.message);
+      return [];
+    }
+  }
+
   async scrapeSite(siteConfig) {
     const page = await this.browser.newPage();
     
@@ -91,8 +145,14 @@ export class JobScraper {
       // Wait for content to load
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Extract jobs
-      const jobs = await page.evaluate((config) => {
+      // Extract jobs - use AI extraction or CSS selectors
+      let jobs;
+
+      if (siteConfig.useAIExtraction) {
+        console.log(`  Using AI extraction for ${siteConfig.name}`);
+        jobs = await this.scrapeWithAI(page, siteConfig);
+      } else {
+        jobs = await page.evaluate((config) => {
         const results = [];
         const jobElements = document.querySelectorAll(config.selectors.jobCard);
 
@@ -156,7 +216,8 @@ export class JobScraper {
 
         return results;
       }, siteConfig);
-      
+      }
+
       // Filter for relevant jobs (skip keyword filter if site is marked to skip)
       const relevantJobs = siteConfig.skipKeywordFilter
         ? jobs.filter(job => this.isRelevantLocation(job.location))

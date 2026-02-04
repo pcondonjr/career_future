@@ -61,7 +61,9 @@
       "WebFetch(domain:www.packiq.com)",
       "WebFetch(domain:www.pacoletmilliken.com)",
       "WebFetch(domain:www.perdue.com)",
-      "WebFetch(domain:wattslist.info)"
+      "WebFetch(domain:wattslist.info)",
+      "WebSearch",
+      "WebFetch(domain:docs.anthropic.com)"
     ]
   }
 }
