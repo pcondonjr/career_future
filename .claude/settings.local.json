@@ -72,7 +72,9 @@
       "Bash(powershell -Command \"schtasks /create /tn ''PM2 Job Scraper'' /tr ''cmd /c pm2 resurrect'' /sc onlogon /rl highest /f\")",
       "Bash(powershell -Command \"schtasks /create /tn ''PM2 Job Scraper'' /tr ''cmd /c pm2 resurrect'' /sc onlogon /f\")",
       "Bash(powershell -Command \"echo $env:APPDATA\")",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(pm2 restart:*)",
+      "Bash(pm2 logs:*)"
     ]
   }
 }

@@ -1,28 +1,31 @@
-# 🎯 Salesforce Job Scraper with Dashboard
+# Salesforce Job Scraper with Dashboard
 
 Automated job scraper for Salesforce positions with email notifications and a web-based dashboard. Completely free to run - uses Puppeteer for scraping (no API costs).
 
-## ✨ Features
+## Features
 
-- 🔍 **Automated Job Discovery** - Scrapes 25+ job sites twice daily
-- 📧 **Email Notifications** - Get alerts for new jobs matching your criteria
-- 🌐 **Web Dashboard** - View and manage jobs in your browser
-- 📊 **Analytics** - Track job trends and statistics
-- 💾 **CSV Management** - Easy company list management via spreadsheet
-- 🔒 **Smart Deduplication** - Never see the same job twice
-- 📥 **Export Functionality** - Export jobs to CSV for tracking
+- **Automated Job Discovery** - Scrapes 25+ job sites twice daily
+- **Email Notifications** - Get alerts for new jobs matching your criteria
+- **Web Dashboard** - View and manage jobs in your browser
+- **Analytics** - Track job trends and statistics
+- **CSV Management** - Easy company list management via spreadsheet
+- **Smart Deduplication** - Never see the same job twice
+- **Export Functionality** - Export jobs to CSV for tracking
+- **Security Hardened** - Localhost-only binding, DNS rebinding protection, rate limiting
 
-## 📋 Requirements
+## Requirements
 
 - Windows 10/11 (or Mac/Linux)
 - Node.js 18+ (LTS recommended)
 - Gmail account (for notifications)
 
-## 🚀 Quick Start (Windows)
+## Installation
 
-### 1. Install Node.js
+### Step 1: Install Node.js
 
-Download from https://nodejs.org/ and install the **LTS version**.
+1. Download from https://nodejs.org/ (LTS version)
+2. Run the installer - check "Automatically install necessary tools"
+3. Restart your computer
 
 Verify installation:
 ```powershell
@@ -30,45 +33,62 @@ node --version
 npm --version
 ```
 
-### 2. Download This Project
+### Step 2: Download This Project
 
-Clone or download this repository to your computer.
+Clone or download this repository, then extract it to a location like:
+```
+C:\Users\YourName\Documents\salesforce-job-scraper
+```
 
-### 3. Install Dependencies
+### Step 3: Install Dependencies
 
 ```powershell
 cd salesforce-job-scraper
 npm install
 ```
 
-This installs all required packages (may take 2-3 minutes).
+This will take 2-3 minutes and downloads Puppeteer (~170MB, includes Chrome), Express, Nodemailer, and other packages.
 
-### 4. Configure Email
+### Step 4: Configure Email
 
-1. **Create Gmail App Password:**
-   - Go to https://myaccount.google.com/apppasswords
-   - Enable 2-Step Verification if not already enabled
-   - Create app password for "Mail" → "Windows Computer"
-   - Copy the 16-character password
+#### A. Create Gmail App Password
 
-2. **Create .env file:**
-   - Copy `.env.example` to `.env`
-   - Edit `.env` and add your credentials:
-     ```
-     EMAIL_USER=your-email@gmail.com
-     EMAIL_APP_PASSWORD=abcdefghijklmnop
-     DASHBOARD_PORT=3000
-     ```
+1. Go to https://myaccount.google.com/
+2. Click **Security** (left menu)
+3. Under "How you sign in to Google", enable **2-Step Verification** if not already enabled
+4. Go to https://myaccount.google.com/apppasswords
+5. Create app password for **Mail** > **Windows Computer**
+6. Copy the 16-character password (looks like: `abcd efgh ijkl mnop`)
 
-### 5. Test the Setup
+#### B. Create .env File
+
+1. Copy `.env.example` to `.env`
+2. Open `.env` in a text editor and add your credentials:
+   ```
+   EMAIL_USER=your-email@gmail.com
+   EMAIL_APP_PASSWORD=abcdefghijklmnop
+   DASHBOARD_PORT=3000
+   ```
+
+**Important:**
+- Remove spaces from the app password
+- Use the 16-char app password, NOT your regular password
+- Don't add quotes around values
+
+### Step 5: Test the Setup
 
 ```powershell
 npm run test
 ```
 
-You should see browser windows opening, sites being scraped, and (if jobs found) an email notification.
+You should see:
+1. CSV validation passes
+2. Browser windows opening (Puppeteer)
+3. Sites being scraped
+4. Jobs found
+5. Email sent (if jobs found)
 
-## 🎮 Usage
+## Usage
 
 ### Run the Scheduler + Dashboard
 
@@ -106,26 +126,51 @@ npm run export
 npm run test
 ```
 
-## 📁 Project Structure
+## Running 24/7 with PM2
 
-```
-salesforce-job-scraper/
-├── .env                 # Your credentials (create from .env.example)
-├── companies.csv        # Company list (EDIT THIS!)
-├── jobs_database.json   # Tracked jobs (auto-generated)
-├── package.json         # Dependencies
-├── index.js             # Main scheduler
-├── dashboard.js         # Web dashboard
-├── scraper.js           # Puppeteer logic
-├── database.js          # Job storage
-├── emailer.js           # Email sender
-├── sites-config.js      # CSV loader
-└── views/               # Dashboard templates
-    ├── index.ejs
-    └── companies.ejs
+To keep the scraper running in the background (survives closing VS Code and reboots):
+
+### Install and Start
+
+```powershell
+npm install -g pm2
+pm2 start index.js --name "job-scraper"
+pm2 save
 ```
 
-## ⚙️ Configuration
+This starts both the scheduler and dashboard as a background process.
+
+### Auto-Start on Windows Boot
+
+A startup script (`pm2-resurrect.bat`) in your Windows Startup folder will automatically restore your PM2 processes on login. To set this up manually:
+
+1. Place a file named `pm2-resurrect.bat` in `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup`
+2. Contents:
+   ```bat
+   @echo off
+   timeout /t 10 /nobreak >nul
+   pm2 resurrect
+   ```
+
+### PM2 Commands
+
+| Command | What it does |
+|---|---|
+| `pm2 status` | Check if it's running |
+| `pm2 logs job-scraper` | View live logs |
+| `pm2 restart job-scraper` | Restart after code changes |
+| `pm2 stop job-scraper` | Stop it |
+| `pm2 delete job-scraper` | Remove it from PM2 |
+
+## Security
+
+The dashboard includes the following protections:
+
+- **Localhost-only binding** - The server binds to `127.0.0.1`, so only your machine can access it. Other devices on your network cannot reach the dashboard.
+- **DNS rebinding protection** - Requests with unexpected `Host` headers are rejected with `403 Forbidden`, preventing malicious websites from accessing the dashboard through DNS rebinding attacks.
+- **Rate limiting** - The resume optimizer API endpoints (which call the paid Anthropic API) are rate-limited to 20 requests per minute to prevent cost abuse.
+
+## Configuration
 
 ### Add/Remove Companies
 
@@ -137,6 +182,11 @@ Salesforce,https://careers.salesforce.com/...,selector1,selector2,selector3,sele
 ```
 
 To disable a company: change `enabled` from `true` to `false`
+
+Validate changes:
+```powershell
+npm run validate
+```
 
 ### Customize Keywords
 
@@ -161,39 +211,62 @@ cron.schedule('0 8,17 * * *', runJobSearch);
 cron.schedule('0 */4 * * *', runJobSearch);
 ```
 
-## 🐛 Troubleshooting
+## Project Structure
+
+```
+salesforce-job-scraper/
+├── .env                 # Your credentials (create from .env.example)
+├── companies.csv        # Company list (EDIT THIS!)
+├── jobs_database.json   # Tracked jobs (auto-generated)
+├── package.json         # Dependencies
+├── index.js             # Main scheduler + dashboard launcher
+├── dashboard.js         # Web dashboard server
+├── scraper.js           # Puppeteer logic
+├── database.js          # Job storage
+├── emailer.js           # Email sender
+├── sites-config.js      # CSV loader
+└── views/               # Dashboard templates
+    ├── index.ejs
+    └── companies.ejs
+```
+
+## Troubleshooting
 
 ### "npm is not recognized"
-- Reinstall Node.js
-- Restart computer
+- Reinstall Node.js and restart your computer
 
 ### Email not sending
-- Check 2-Step Verification is enabled
-- Use app password, NOT regular password
+- Check 2-Step Verification is enabled on your Google account
+- Use the app password, NOT your regular password
 - Verify `.env` file exists with correct values
+- Don't add quotes around values in `.env`
 
 ### No jobs found
-- Sites may have changed HTML structure
-- Check `npm run validate` for CSV errors
+- Sites may have changed their HTML structure
+- Run `npm run validate` to check for CSV errors
 - Some sites may block automated access
 
 ### Dashboard won't start
 - Port 3000 in use? Change `DASHBOARD_PORT` in `.env`
 - Run `npm install express ejs`
 
-## 📞 Support
+### Scraper crashed
+- Restart with `npm start` or `pm2 restart job-scraper`
+- Check logs: `pm2 logs job-scraper`
 
-For issues:
-1. Check the troubleshooting section
-2. Validate your CSV: `npm run validate`
-3. Check logs for error messages
+## Daily Workflow
 
-## 📝 License
+1. Check email for new job alerts
+2. Visit dashboard at http://localhost:3000 to see all jobs
+3. Export to CSV for tracking applications
+4. Update `companies.csv` as needed
+
+## License
 
 MIT License - Free to use and modify
 
 ---
 
-**Built for Salesforce job seekers** 🎯
+**Built for Salesforce job seekers**
 
 Happy job hunting!

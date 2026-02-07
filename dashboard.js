@@ -12,6 +12,40 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.DASHBOARD_PORT || 3000;
 
+// --- Security middleware ---
+
+// 1. DNS rebinding protection: reject requests with unexpected Host headers
+app.use((req, res, next) => {
+  const host = (req.headers.host || '').replace(`:${PORT}`, '');
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return next();
+  }
+  res.status(403).send('Forbidden');
+});
+
+// 2. Rate limiting for expensive API endpoints (Anthropic calls)
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 20; // max requests per window
+
+function rateLimiter(req, res, next) {
+  const now = Date.now();
+  const entry = rateLimitMap.get('global') || { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
+
+  if (now > entry.resetAt) {
+    entry.count = 0;
+    entry.resetAt = now + RATE_LIMIT_WINDOW_MS;
+  }
+
+  entry.count++;
+  rateLimitMap.set('global', entry);
+
+  if (entry.count > RATE_LIMIT_MAX) {
+    return res.status(429).json({ error: 'Too many requests. Try again later.' });
+  }
+  next();
+}
+
 app.use(express.json());
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
@@ -105,12 +139,13 @@ app.get('/companies', async (req, res) => {
   }
 });
 
-// Resume optimizer API routes
-app.use('/api', resumeRoutes);
+// Resume optimizer API routes (rate-limited — these call the Anthropic API)
+app.use('/api', rateLimiter, resumeRoutes);
 
 export function startDashboard() {
-  app.listen(PORT, () => {
-    console.log(`\n🌐 Dashboard running at http://localhost:${PORT}`);
+  // 3. Bind to localhost only — prevents access from other devices on the network
+  app.listen(PORT, '127.0.0.1', () => {
+    console.log(`\n🌐 Dashboard running at http://localhost:${PORT} (localhost only)`);
     console.log(`📊 View your jobs in your browser!`);
   });
 }
