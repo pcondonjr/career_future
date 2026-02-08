@@ -1,5 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
+import { exec } from 'child_process';
+import fs from 'fs/promises';
+import puppeteer from 'puppeteer';
 import { JobDatabase } from './database.js';
 import { loadSitesFromCSV, validateCSV } from './sites-config.js';
 import path from 'path';
@@ -52,15 +55,31 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 const db = new JobDatabase();
+const lastRunFile = path.join(__dirname, 'last_run.json');
+
+async function loadLastRun() {
+  try {
+    const data = await fs.readFile(lastRunFile, 'utf-8');
+    return JSON.parse(data);
+  } catch {
+    return null;
+  }
+}
+
+async function saveLastRun(info) {
+  await fs.writeFile(lastRunFile, JSON.stringify(info, null, 2));
+}
 
 app.get('/', async (req, res) => {
   try {
     await db.load();
     const stats = db.getStats();
-    
+
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const jobs = Array.from(db.jobs.values())
+      .filter(job => new Date(job.firstSeen) >= sevenDaysAgo)
       .sort((a, b) => new Date(b.firstSeen) - new Date(a.firstSeen));
-    
+
     const byCompany = {};
     jobs.forEach(job => {
       if (!byCompany[job.company]) {
@@ -68,12 +87,15 @@ app.get('/', async (req, res) => {
       }
       byCompany[job.company].push(job);
     });
-    
-    res.render('index', { 
-      stats, 
-      jobs, 
+
+    const lastRun = await loadLastRun();
+
+    res.render('index', {
+      stats,
+      jobs,
       byCompany,
-      totalCompanies: Object.keys(byCompany).length 
+      totalCompanies: Object.keys(byCompany).length,
+      lastRun
     });
   } catch (error) {
     res.status(500).send('Error loading jobs: ' + error.message);
@@ -136,6 +158,90 @@ app.get('/companies', async (req, res) => {
     res.render('companies', { sites, validation });
   } catch (error) {
     res.status(500).send('Error loading companies: ' + error.message);
+  }
+});
+
+app.get('/companies-weekly', async (req, res) => {
+  try {
+    const validation = await validateCSV('./companies-weekly.csv');
+    const sites = await loadSitesFromCSV('./companies-weekly.csv', false);
+
+    res.render('companies-weekly', { sites, validation });
+  } catch (error) {
+    res.status(500).send('Error loading weekly companies: ' + error.message);
+  }
+});
+
+// Run scraper endpoints
+const scraperSignalFile = path.join(__dirname, '.scraper-running');
+const scraperBatFile = path.join(__dirname, '.run-scraper.bat');
+
+async function isScraperRunning() {
+  try {
+    await fs.access(scraperSignalFile);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+app.post('/api/run-scraper', async (req, res) => {
+  const mode = req.body.mode === 'weekly' ? 'weekly' : 'daily';
+  const searchValue = (req.body.searchValue || '').trim();
+
+  if (await isScraperRunning()) {
+    return res.status(409).json({ error: 'A scraper is already running' });
+  }
+
+  const runName = mode === 'weekly' ? 'Companies List Weekly' : 'Companies List';
+  await saveLastRun({ searchValue, runName, timestamp: new Date().toISOString() });
+  await fs.writeFile(scraperSignalFile, mode);
+
+  const weeklyFlag = mode === 'weekly' ? ' --weekly' : '';
+  const batContent = [
+    '@echo off',
+    `cd /d "${__dirname}"`,
+    `node index.js --now${weeklyFlag}`,
+    `del "${scraperSignalFile}"`,
+    'echo.',
+    'echo Scraper complete. Press any key to close.',
+    'pause > nul',
+    'exit'
+  ].join('\r\n');
+
+  await fs.writeFile(scraperBatFile, batContent);
+  exec(`start "${runName}" "${scraperBatFile}"`);
+
+  res.json({ message: `${mode} scraper started` });
+});
+
+app.get('/api/scraper-status', async (req, res) => {
+  res.json({ running: await isScraperRunning() });
+});
+
+// Fetch job description from URL using Puppeteer
+app.post('/api/fetch-job-description', async (req, res) => {
+  const { url } = req.body;
+  if (!url) {
+    return res.status(400).json({ error: 'URL is required' });
+  }
+
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+    });
+    const page = await browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+    const text = await page.evaluate(() => document.body.innerText);
+    res.json({ description: text });
+  } catch (error) {
+    console.error('Error fetching job description:', error.message);
+    res.status(500).json({ error: 'Failed to fetch job page: ' + error.message });
+  } finally {
+    if (browser) await browser.close();
   }
 });
 

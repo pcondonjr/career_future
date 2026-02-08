@@ -74,7 +74,12 @@
       "Bash(powershell -Command \"echo $env:APPDATA\")",
       "Bash(powershell -Command:*)",
       "Bash(pm2 restart:*)",
-      "Bash(pm2 logs:*)"
+      "Bash(pm2 logs:*)",
+      "Bash(pm2 status:*)",
+      "Bash(pm2 list:*)",
+      "Bash(netstat:*)",
+      "Bash(npm run test:*)",
+      "Bash(npm run test:weekly:*)"
     ]
   }
 }

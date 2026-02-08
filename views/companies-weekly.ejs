@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Weekly Companies</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+    <main class="container">
+        <a href="/">← Back to Dashboard</a>
+        <h1>⚙️ Manage Weekly Companies</h1>
+
+        <% if (validation.valid) { %>
+            <p style="color: green;">✅ CSV is valid! Found <%= validation.totalRows %> companies.</p>
+        <% } else { %>
+            <p style="color: red;">❌ CSV validation errors:</p>
+            <ul>
+                <% validation.errors.forEach(error => { %>
+                    <li><%= error %></li>
+                <% }); %>
+            </ul>
+        <% } %>
+
+        <p>📝 To edit companies, open <code>companies-weekly.csv</code> in Excel or any text editor.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>URL</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% sites.forEach(site => { %>
+                    <tr>
+                        <td><strong><%= site.name %></strong></td>
+                        <td><a href="<%= site.url %>" target="_blank">Link</a></td>
+                        <td><%= site.enabled ? '✅ Enabled' : '❌ Disabled' %></td>
+                        <td><%= site.notes || '-' %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

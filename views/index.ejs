@@ -8,7 +8,12 @@
 </head>
 <body>
     <main class="container">
-        <h1>Salesforce Job Dashboard</h1>
+        <h1>Job Search:<%= lastRun && lastRun.searchValue ? ' ' + lastRun.searchValue : '' %></h1>
+        <% if (lastRun && lastRun.timestamp) { %>
+            <p style="margin-top: -0.5rem; color: var(--muted-color);">
+                Last run: <%= new Date(lastRun.timestamp).toLocaleDateString() %> at <%= new Date(lastRun.timestamp).toLocaleTimeString() %> &mdash; <%= lastRun.runName %>
+            </p>
+        <% } %>
         <div class="grid">
             <div><strong>Total Jobs:</strong> <%= stats.total %></div>
             <div><strong>Last 24h:</strong> <%= stats.last24Hours %></div>
@@ -17,16 +22,50 @@
         </div>
         <hr>
         <div class="grid">
-            <button onclick="location.href='/api/export'">Export CSV</button>
-            <button onclick="location.href='/companies'">Manage Companies</button>
-            <button id="analyze-external-job-btn" class="contrast">Analyze External Job</button>
+            <a href="/api/export" role="button" class="outline">Export CSV</a>
+            <a href="/companies" role="button" class="outline">Daily Companies</a>
+            <a href="/companies-weekly" role="button" class="outline">Weekly Companies</a>
+            <button id="analyze-external-job-btn" class="contrast outline">Analyze External Job</button>
         </div>
         <hr>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: end; margin-bottom: 1rem;">
+            <label>
+                Field
+                <select id="search-field">
+                    <option value="title">Title</option>
+                    <option value="company">Company</option>
+                    <option value="location">Location</option>
+                </select>
+            </label>
+            <label>
+                Match
+                <select id="search-modifier">
+                    <option value="contains">Contains</option>
+                    <option value="exact">Exact Match</option>
+                    <option value="begins">Begins With</option>
+                    <option value="ends">Ends With</option>
+                </select>
+            </label>
+            <label style="flex: 1;">
+                Search
+                <input type="search" id="search-value" placeholder="Type to filter...">
+            </label>
+            <button id="search-clear" class="outline secondary">Clear</button>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
+            <button id="run-daily-btn" class="outline">Run Companies List Now</button>
+            <button id="run-weekly-btn" class="outline">Run Companies-Weekly List Now</button>
+            <span id="scraper-status" style="align-self: center;"></span>
+        </div>
+        <p id="search-results-count" style="display:none;"></p>
         <% if (jobs.length === 0) { %>
             <p>No jobs found yet. Run the scraper to start finding jobs!</p>
         <% } else { %>
             <% jobs.forEach(job => { %>
-                <article class="job-card" data-url="<%= job.url %>">
+                <article class="job-card" data-url="<%= job.url %>"
+                         data-title="<%= job.title %>"
+                         data-company="<%= job.company %>"
+                         data-location="<%= job.location || '' %>">
                     <h3 class="job-title"><%= job.title %></h3>
                     <p class="job-company"><strong><%= job.company %></strong></p>
                     <p class="job-location"><%= job.location || 'Location not specified' %></p>
@@ -39,6 +78,110 @@
             <% }); %>
         <% } %>
     </main>
+    <script>
+    (function() {
+      const field = document.getElementById('search-field');
+      const modifier = document.getElementById('search-modifier');
+      const value = document.getElementById('search-value');
+      const clearBtn = document.getElementById('search-clear');
+      const countEl = document.getElementById('search-results-count');
+      const cards = document.querySelectorAll('.job-card');
+
+      function applyFilter() {
+        const searchVal = value.value.toLowerCase().trim();
+        if (!searchVal) {
+          cards.forEach(c => c.style.display = '');
+          countEl.style.display = 'none';
+          return;
+        }
+
+        let shown = 0;
+        cards.forEach(card => {
+          const fieldVal = (card.dataset[field.value] || '').toLowerCase();
+          let match = false;
+
+          switch (modifier.value) {
+            case 'exact':    match = fieldVal === searchVal; break;
+            case 'contains': match = fieldVal.includes(searchVal); break;
+            case 'begins':   match = fieldVal.startsWith(searchVal); break;
+            case 'ends':     match = fieldVal.endsWith(searchVal); break;
+          }
+
+          card.style.display = match ? '' : 'none';
+          if (match) shown++;
+        });
+
+        countEl.textContent = `Showing ${shown} of ${cards.length} jobs`;
+        countEl.style.display = '';
+      }
+
+      // Restore search state from URL params on page load
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('field')) field.value = params.get('field');
+      if (params.get('modifier')) modifier.value = params.get('modifier');
+      if (params.get('search')) { value.value = params.get('search'); applyFilter(); }
+
+      value.addEventListener('input', applyFilter);
+      field.addEventListener('change', applyFilter);
+      modifier.addEventListener('change', applyFilter);
+      clearBtn.addEventListener('click', () => {
+        value.value = '';
+        applyFilter();
+      });
+
+      // Scraper run buttons
+      const dailyBtn = document.getElementById('run-daily-btn');
+      const weeklyBtn = document.getElementById('run-weekly-btn');
+      const statusEl = document.getElementById('scraper-status');
+
+      function searchParams() {
+        const p = new URLSearchParams();
+        if (field.value) p.set('field', field.value);
+        if (modifier.value) p.set('modifier', modifier.value);
+        if (value.value.trim()) p.set('search', value.value.trim());
+        return p.toString();
+      }
+
+      async function runScraper(mode, btn) {
+        btn.setAttribute('disabled', true);
+        btn.setAttribute('aria-busy', 'true');
+        statusEl.textContent = `Running ${mode} scraper...`;
+
+        try {
+          const res = await fetch('/api/run-scraper', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mode, searchValue: value.value.trim() })
+          });
+          const data = await res.json();
+
+          if (!res.ok) {
+            statusEl.textContent = data.error || 'Error starting scraper';
+            btn.removeAttribute('disabled');
+            btn.removeAttribute('aria-busy');
+            return;
+          }
+
+          // Poll for completion then reload with search state preserved
+          const poll = setInterval(async () => {
+            const s = await fetch('/api/scraper-status').then(r => r.json());
+            if (!s.running) {
+              clearInterval(poll);
+              const qs = searchParams();
+              window.location.href = '/' + (qs ? '?' + qs : '');
+            }
+          }, 3000);
+        } catch (err) {
+          statusEl.textContent = 'Failed to start scraper';
+          btn.removeAttribute('disabled');
+          btn.removeAttribute('aria-busy');
+        }
+      }
+
+      dailyBtn.addEventListener('click', () => runScraper('daily', dailyBtn));
+      weeklyBtn.addEventListener('click', () => runScraper('weekly', weeklyBtn));
+    })();
+    </script>
     <script src="/js/public_resume_optimizer.js"></script>
 </body>
 </html>

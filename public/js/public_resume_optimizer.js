@@ -73,7 +73,7 @@ class ResumeOptimizerUI {
 
     modal.classList.add('active');
     modal.querySelector('.modal-title').textContent =
-      `Optimize for: ${jobData.title} at ${jobData.company}`;
+      `Optimize for: ${jobData.title}${jobData.company ? ' at ' + jobData.company : ''}`;
 
     // If no description, show input form first
     if (!jobData.description) {
@@ -95,9 +95,12 @@ class ResumeOptimizerUI {
     modalBody.innerHTML = `
       <div class="description-input-form">
         <p style="margin-bottom: 15px;">
-          <strong>Step 1:</strong> Copy the job description from the job posting and paste it below.
+          <strong>Step 1:</strong> Auto-fetch the job description or paste it manually below.
         </p>
-        <p style="margin-bottom: 15px;">
+        <p style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+          <button id="auto-fetch-btn" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
+            Auto-Fetch Description
+          </button>
           <a href="${jobData.url}" target="_blank" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 8px;">
             Open Job Posting
           </a>
@@ -141,6 +144,42 @@ Include:
       }
       jobData.description = description;
       this.runAnalysis(jobData);
+    });
+
+    // Add event listener for auto-fetch button
+    document.getElementById('auto-fetch-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('auto-fetch-btn');
+      const textarea = document.getElementById('job-description-input');
+      const fetchUrl = jobData.url;
+
+      if (!fetchUrl || fetchUrl === '#') {
+        alert('No URL available for this job.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Fetching...';
+
+      try {
+        const res = await fetch('/api/fetch-job-description', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: fetchUrl })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Fetch failed');
+        }
+
+        textarea.value = data.description;
+        btn.textContent = 'Fetched!';
+        setTimeout(() => { btn.textContent = 'Auto-Fetch Description'; btn.disabled = false; }, 2000);
+      } catch (err) {
+        alert('Failed to fetch: ' + err.message);
+        btn.textContent = 'Auto-Fetch Description';
+        btn.disabled = false;
+      }
     });
   }
 
@@ -197,6 +236,12 @@ Include:
           </div>
 
           <div>
+            <button id="auto-fetch-external-btn" class="btn btn-secondary" type="button">
+              Auto-Fetch Description from URL
+            </button>
+          </div>
+
+          <div>
             <label for="external-job-description"><strong>Job Description:</strong></label>
             <textarea
               id="external-job-description"
@@ -240,10 +285,6 @@ Include:
         alert('Please enter the job title.');
         return;
       }
-      if (!company) {
-        alert('Please enter the company name.');
-        return;
-      }
       if (!description) {
         alert('Please paste the job description.');
         return;
@@ -258,8 +299,44 @@ Include:
         source: 'external'
       };
 
-      modal.querySelector('.modal-title').textContent = `Optimize for: ${title} at ${company}`;
+      modal.querySelector('.modal-title').textContent = `Optimize for: ${title}${company ? ' at ' + company : ''}`;
       this.runAnalysis(jobData);
+    });
+
+    // Add event listener for auto-fetch button
+    document.getElementById('auto-fetch-external-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('auto-fetch-external-btn');
+      const urlInput = document.getElementById('external-job-url').value.trim();
+      const textarea = document.getElementById('external-job-description');
+
+      if (!urlInput) {
+        alert('Please enter a Job URL first.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Fetching...';
+
+      try {
+        const res = await fetch('/api/fetch-job-description', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: urlInput })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Fetch failed');
+        }
+
+        textarea.value = data.description;
+        btn.textContent = 'Fetched!';
+        setTimeout(() => { btn.textContent = 'Auto-Fetch Description from URL'; btn.disabled = false; }, 2000);
+      } catch (err) {
+        alert('Failed to fetch: ' + err.message);
+        btn.textContent = 'Auto-Fetch Description from URL';
+        btn.disabled = false;
+      }
     });
   }
 
@@ -472,7 +549,7 @@ Include:
     // If still no description, we need to get it
     if (!jobData.description) {
       modal.querySelector('.modal-title').textContent =
-        `Cover Letter: ${jobData.title} at ${jobData.company}`;
+        `Cover Letter: ${jobData.title}${jobData.company ? ' at ' + jobData.company : ''}`;
       this.showDescriptionInputFormForCoverLetter(jobData);
       return;
     }
@@ -607,6 +684,9 @@ Include:
           <button id="download-cover-letter" class="btn btn-secondary">
             Download as .txt
           </button>
+          <button id="back-to-analysis-cl" class="btn btn-secondary">
+            Back to Analysis
+          </button>
           <button onclick="document.getElementById('optimization-modal').classList.remove('active')"
                   class="btn btn-secondary">
             Close
@@ -633,6 +713,12 @@ Include:
     document.getElementById('download-cover-letter').addEventListener('click', () => {
       this.downloadCoverLetter(this.currentCoverLetter.content, this.currentCoverLetter.company);
     });
+
+    document.getElementById('back-to-analysis-cl').addEventListener('click', () => {
+      this.displayAnalysisResults(this.currentAnalysis.analysis, this.currentAnalysis.metadata);
+      modal.querySelector('.modal-title').textContent =
+        `Optimize for: ${this.currentAnalysis.jobData.title}${this.currentAnalysis.jobData.company ? ' at ' + this.currentAnalysis.jobData.company : ''}`;
+    });
   }
 
   /**
@@ -643,7 +729,7 @@ Include:
     const modalBody = modal.querySelector('.modal-body');
 
     modal.querySelector('.modal-title').textContent =
-      `Optimized Resume: ${jobData.title} at ${jobData.company}`;
+      `Optimized Resume: ${jobData.title}${jobData.company ? ' at ' + jobData.company : ''}`;
 
     modalBody.innerHTML = `
       <div class="loading-state">
@@ -749,7 +835,7 @@ Include:
     document.getElementById('back-to-analysis').addEventListener('click', () => {
       this.displayAnalysisResults(this.currentAnalysis.analysis, this.currentAnalysis.metadata);
       modal.querySelector('.modal-title').textContent =
-        `Optimize for: ${this.currentAnalysis.jobData.title} at ${this.currentAnalysis.jobData.company}`;
+        `Optimize for: ${this.currentAnalysis.jobData.title}${this.currentAnalysis.jobData.company ? ' at ' + this.currentAnalysis.jobData.company : ''}`;
     });
   }
 
