@@ -2,13 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Salesforce Job Dashboard</title>
+    <title>Career Future - Job Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="stylesheet" href="/css/resume_optimizer_styles.css">
 </head>
 <body>
     <main class="container">
-        <h1>Job Search:<%= lastRun && lastRun.searchValue ? ' ' + lastRun.searchValue : '' %></h1>
+        <h1>Career Future!<%= lastRun && lastRun.searchValue ? ' - ' + lastRun.searchValue : '' %></h1>
         <% if (lastRun && lastRun.timestamp) { %>
             <p style="margin-top: -0.5rem; color: var(--muted-color);">
                 Last run: <%= new Date(lastRun.timestamp).toLocaleDateString() %> at <%= new Date(lastRun.timestamp).toLocaleTimeString() %> &mdash; <%= lastRun.runName %>

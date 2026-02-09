@@ -1,21 +1,22 @@
 import fs from 'fs/promises';
 import { parse } from 'csv-parse/sync';
+import config from './src/main/config.js';
 
-// Keywords to filter for relevant positions
-export const KEYWORDS = [
-  'salesforce'
-];
+/**
+ * Get job search keywords from configuration
+ * @returns {Array<string>} Keywords to filter for relevant positions
+ */
+export function getKeywords() {
+  return config.getKeywords();
+}
 
-// Location preferences
-export const LOCATIONS = [
-  'remote',
-  'greenville',
-  'south carolina',
-  'sc',
-  'charlotte',
-  'atlanta',
-  'hybrid'
-];
+/**
+ * Get location preferences from configuration
+ * @returns {Array<string>} Preferred job locations
+ */
+export function getLocations() {
+  return config.getLocations();
+}
 
 /**
  * Load job sites from CSV file

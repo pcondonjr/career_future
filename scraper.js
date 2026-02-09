@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer';
 import Anthropic from '@anthropic-ai/sdk';
 import dotenv from 'dotenv';
-import { KEYWORDS, LOCATIONS } from './sites-config.js';
+import { getKeywords, getLocations } from './sites-config.js';
 
 dotenv.config();
 
@@ -34,7 +34,8 @@ export class JobScraper {
     const locationLower = (location || '').toLowerCase();
 
     // Must match at least one keyword
-    const hasKeyword = KEYWORDS.some(keyword =>
+    const keywords = getKeywords();
+    const hasKeyword = keywords.some(keyword =>
       titleLower.includes(keyword.toLowerCase())
     );
 
@@ -42,7 +43,8 @@ export class JobScraper {
 
     // If location specified, check if it matches preferences
     if (location && locationLower) {
-      const hasLocation = LOCATIONS.some(loc =>
+      const locations = getLocations();
+      const hasLocation = locations.some(loc =>
         locationLower.includes(loc.toLowerCase())
       );
       return hasLocation;
@@ -58,7 +60,8 @@ export class JobScraper {
     if (!location || !locationLower) return true;
 
     // Check if location matches preferences
-    const hasLocation = LOCATIONS.some(loc =>
+    const locations = getLocations();
+    const hasLocation = locations.some(loc =>
       locationLower.includes(loc.toLowerCase())
     );
     return hasLocation;

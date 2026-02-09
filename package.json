@@ -1,11 +1,13 @@
 {
-  "name": "salesforce-job-scraper",
-  "version": "2.0.0",
+  "name": "career-future",
+  "version": "1.0.0",
   "type": "module",
-  "description": "Automated Salesforce job scraper with email notifications and web dashboard",
-  "main": "index.js",
+  "description": "Career Future - Automated job search assistant for career-focused professionals",
+  "main": "src/main/index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "electron .",
+    "dev": "electron . --inspect",
+    "legacy:start": "node index.js",
     "dashboard": "node dashboard.js",
     "test": "node index.js --now",
     "test:weekly": "node index.js --now --weekly",
@@ -15,14 +17,17 @@
     "export": "node export-jobs.js"
   },
   "keywords": [
-    "salesforce",
+    "career",
+    "job-search",
     "job-scraper",
     "puppeteer",
     "automation",
-    "job-search"
+    "electron",
+    "desktop-app"
   ],
   "author": "Patrick Condon",
   "license": "MIT",
+  "productName": "Career Future",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.72.1",
     "csv-parse": "^5.5.0",
@@ -32,5 +37,9 @@
     "node-cron": "^3.0.0",
     "nodemailer": "^7.0.13",
     "puppeteer": "^24.36.1"
+  },
+  "devDependencies": {
+    "electron": "^40.2.1",
+    "electron-store": "^11.0.2"
   }
 }
