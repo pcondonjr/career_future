@@ -88,7 +88,15 @@
       "Bash(\"c:\\\\Users\\\\pcond\\\\salesforce-projects\\\\jobs-scrapers\\\\salesforce-job-scraper\\\\node_modules\\\\electron\\\\dist\\\\electron.exe\" \"c:\\\\Users\\\\pcond\\\\salesforce-projects\\\\jobs-scrapers\\\\salesforce-job-scraper\")",
       "Bash(npm run dev:*)",
       "Bash(cmd /c:*)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Add license system with RSA key validation and 7-day trial\n\nImplement Phase 4 license system: RSA-signed license key generation and\nverification, 7-day trial period tracking, license activation UI, and\napp routing based on license/trial status. Tray menu now shows license state.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(ls:*)",
+      "Bash(CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder:*)",
+      "Bash(npx electron-builder:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run build:*)",
+      "Bash(python -m json.tool:*)"
     ]
   }
 }
