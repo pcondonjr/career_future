@@ -1,75 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Future - Error</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            text-align: center;
-            padding: 2rem;
-            max-width: 600px;
-        }
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        p {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-        .error-code {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            font-family: 'Courier New', monospace;
-        }
-        button {
-            background: white;
-            color: #667eea;
-            border: none;
-            padding: 1rem 2rem;
-            font-size: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: transform 0.2s;
-        }
-        button:hover {
-            transform: scale(1.05);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Career Future - Connection Error</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .error-container {
+      text-align: center;
+      padding: 3rem;
+      max-width: 500px;
+    }
+    .error-icon { font-size: 4rem; margin-bottom: 1.5rem; }
+    h1 { font-size: 1.8rem; margin-bottom: 1rem; color: #fff; }
+    p { font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; color: #aaa; }
+    .retry-btn {
+      background: #4361ee;
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .retry-btn:hover { background: #3a56d4; }
+    .brand { margin-top: 3rem; font-size: 0.85rem; color: #555; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔌 Dashboard Not Available</h1>
-        <p>
-            Career Future couldn't connect to the dashboard server.
-            The server may still be starting up.
-        </p>
-        <div class="error-code">
-            Failed to load: http://localhost:3000
-        </div>
-        <p>
-            <strong>What to try:</strong><br>
-            • Wait a few seconds and click Retry<br>
-            • Check that no other app is using port 3000<br>
-            • Restart the application
-        </p>
-        <button onclick="location.reload()">Retry Connection</button>
-    </div>
+  <div class="error-container">
+    <div class="error-icon">&#9888;</div>
+    <h1>Dashboard Not Available</h1>
+    <p>The Career Future dashboard is starting up. Please wait a moment and try again.</p>
+    <button class="retry-btn" onclick="window.location.reload()">Retry Connection</button>
+    <p class="brand">Career Future v1.0.0</p>
+  </div>
 </body>
 </html>

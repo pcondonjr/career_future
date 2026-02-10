@@ -1,4 +1,5 @@
-import { Tray, Menu, nativeImage, app } from 'electron';
+import { Tray, Menu, nativeImage, app, Notification, dialog } from 'electron';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import scheduler from '../backend/scheduler.js';
@@ -6,10 +7,6 @@ import scheduler from '../backend/scheduler.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-/**
- * System Tray Manager for Career Future
- * Provides quick access to app functions from the system tray
- */
 class TrayManager {
   constructor() {
     this.tray = null;
@@ -18,16 +15,18 @@ class TrayManager {
 
   /**
    * Create the system tray icon and menu
-   * @param {BrowserWindow} mainWindow - Reference to the main application window
+   * @param {BrowserWindow} mainWindow
    */
   create(mainWindow) {
     this.mainWindow = mainWindow;
 
-    // Create tray icon
-    const iconPath = this.getIconPath();
-    const icon = nativeImage.createFromPath(iconPath);
+    const icon = this._loadIcon();
+    if (!icon) {
+      console.warn('TrayManager: No icon available, skipping tray creation');
+      return;
+    }
 
-    // Resize icon for tray (platform-specific sizes)
+    // Resize for tray
     const trayIcon = icon.resize({
       width: process.platform === 'darwin' ? 22 : 16,
       height: process.platform === 'darwin' ? 22 : 16
@@ -35,37 +34,61 @@ class TrayManager {
 
     this.tray = new Tray(trayIcon);
     this.tray.setToolTip('Career Future - Job Search Assistant');
-
-    // Create context menu
     this.updateMenu();
 
-    // Double-click to show/hide window
     this.tray.on('double-click', () => {
       this.toggleWindow();
     });
 
-    console.log('✅ System tray icon created');
+    console.log('System tray icon created');
   }
 
   /**
-   * Get the appropriate icon path based on platform
+   * Load tray icon with fallback to a generated icon if files are missing
    */
-  getIconPath() {
+  _loadIcon() {
     const iconsDir = path.join(__dirname, '../../assets/icons');
 
-    // Platform-specific icon paths
-    if (process.platform === 'darwin') {
-      return path.join(iconsDir, 'tray-iconTemplate.png'); // macOS template
-    } else if (process.platform === 'win32') {
-      return path.join(iconsDir, 'tray-icon.ico'); // Windows
-    } else {
-      return path.join(iconsDir, 'tray-icon.png'); // Linux
+    // Try platform-specific icon first
+    const candidates = process.platform === 'win32'
+      ? ['tray-icon.ico', 'tray-icon.png', 'icon.png']
+      : process.platform === 'darwin'
+        ? ['tray-iconTemplate.png', 'tray-icon.png', 'icon.png']
+        : ['tray-icon.png', 'icon.png'];
+
+    for (const name of candidates) {
+      const filePath = path.join(iconsDir, name);
+      if (fs.existsSync(filePath)) {
+        try {
+          const img = nativeImage.createFromPath(filePath);
+          if (!img.isEmpty()) return img;
+        } catch {
+          // try next candidate
+        }
+      }
     }
+
+    // Fallback: create a simple 16x16 colored square in memory
+    // This is a minimal 16x16 RGBA PNG (blue square)
+    return this._createFallbackIcon();
   }
 
   /**
-   * Update the tray context menu
+   * Generate a tiny in-memory icon as fallback
    */
+  _createFallbackIcon() {
+    // 16x16 RGBA buffer - solid blue (#4361ee)
+    const size = 16;
+    const buf = Buffer.alloc(size * size * 4);
+    for (let i = 0; i < size * size; i++) {
+      buf[i * 4] = 0x43;     // R
+      buf[i * 4 + 1] = 0x61; // G
+      buf[i * 4 + 2] = 0xee; // B
+      buf[i * 4 + 3] = 0xff; // A
+    }
+    return nativeImage.createFromBuffer(buf, { width: size, height: size });
+  }
+
   updateMenu() {
     const contextMenu = Menu.buildFromTemplate([
       {
@@ -95,7 +118,7 @@ class TrayManager {
         label: 'Scheduler',
         submenu: [
           {
-            label: scheduler.isRunning ? '✓ Running' : '⏸ Stopped',
+            label: scheduler.isRunning ? 'Running' : 'Stopped',
             enabled: false
           },
           { type: 'separator' },
@@ -130,139 +153,80 @@ class TrayManager {
       }
     ]);
 
-    this.tray.setContextMenu(contextMenu);
+    this.tray?.setContextMenu(contextMenu);
   }
 
-  /**
-   * Toggle window visibility
-   */
   toggleWindow() {
-    if (this.mainWindow.isVisible()) {
+    if (this.mainWindow?.isVisible()) {
       this.mainWindow.hide();
     } else {
-      this.mainWindow.show();
-      this.mainWindow.focus();
+      this.mainWindow?.show();
+      this.mainWindow?.focus();
     }
   }
 
-  /**
-   * Show the main window
-   */
   showWindow() {
-    if (this.mainWindow) {
-      this.mainWindow.show();
-      this.mainWindow.focus();
-    }
+    this.mainWindow?.show();
+    this.mainWindow?.focus();
   }
 
-  /**
-   * Hide the main window
-   */
   hideWindow() {
-    if (this.mainWindow) {
-      this.mainWindow.hide();
-    }
+    this.mainWindow?.hide();
   }
 
-  /**
-   * Run the job scraper
-   * @param {string} mode - 'daily' or 'weekly'
-   */
   async runScraper(mode) {
     console.log(`Running ${mode} scraper from tray menu...`);
-
-    // Show notification
-    this.showNotification(
-      'Career Future',
-      `Starting ${mode} job scraper...`
-    );
+    this.showNotification('Career Future', `Starting ${mode} job scraper...`);
 
     try {
       await scheduler.runNow(mode);
-      this.updateMenu(); // Refresh menu after completion
+      this.updateMenu();
     } catch (error) {
       console.error(`Failed to run ${mode} scraper:`, error);
-      this.showNotification(
-        'Career Future - Error',
-        `Failed to run ${mode} scraper. Check console for details.`
+      this.showNotification('Career Future - Error', `Failed to run ${mode} scraper.`);
+    }
+  }
+
+  startScheduler() {
+    scheduler.start();
+    this.updateMenu();
+    this.showNotification('Career Future', 'Job scheduler started');
+  }
+
+  stopScheduler() {
+    scheduler.stop();
+    this.updateMenu();
+    this.showNotification('Career Future', 'Job scheduler stopped');
+  }
+
+  openSettings() {
+    if (this.mainWindow) {
+      this.mainWindow.show();
+      this.mainWindow.focus();
+      this.mainWindow.webContents.executeJavaScript(
+        `window.location.hash = '#settings';`
       );
     }
   }
 
-  /**
-   * Start the scheduler
-   */
-  startScheduler() {
-    scheduler.start();
-    this.updateMenu();
-    this.showNotification(
-      'Career Future',
-      'Job scheduler started'
-    );
-  }
-
-  /**
-   * Stop the scheduler
-   */
-  stopScheduler() {
-    scheduler.stop();
-    this.updateMenu();
-    this.showNotification(
-      'Career Future',
-      'Job scheduler stopped'
-    );
-  }
-
-  /**
-   * Open settings window
-   */
-  openSettings() {
-    // TODO: Implement settings window
-    console.log('Opening settings...');
-    if (this.mainWindow) {
-      this.mainWindow.show();
-      this.mainWindow.focus();
-      // Navigate to settings in dashboard
-      this.mainWindow.webContents.executeJavaScript(`
-        window.location.hash = '#settings';
-      `);
-    }
-  }
-
-  /**
-   * Show about dialog
-   */
   showAbout() {
-    const { dialog } = require('electron');
-    dialog.showMessageBox(this.mainWindow, {
-      type: 'info',
-      title: 'About Career Future',
-      message: 'Career Future',
-      detail: `Version: ${app.getVersion()}\n\nAutomated job search assistant for career-focused professionals.\n\n© 2026 Career Future`,
-      buttons: ['OK']
-    });
-  }
-
-  /**
-   * Show system notification
-   * @param {string} title - Notification title
-   * @param {string} body - Notification body
-   */
-  showNotification(title, body) {
-    const { Notification } = require('electron');
-
-    if (Notification.isSupported()) {
-      new Notification({
-        title,
-        body,
-        icon: this.getIconPath()
-      }).show();
+    if (this.mainWindow) {
+      dialog.showMessageBox(this.mainWindow, {
+        type: 'info',
+        title: 'About Career Future',
+        message: 'Career Future',
+        detail: `Version: ${app.getVersion()}\n\nAutomated job search assistant for career-focused professionals.\n\n© 2026 Career Future`,
+        buttons: ['OK']
+      });
     }
   }
 
-  /**
-   * Destroy the tray icon
-   */
+  showNotification(title, body) {
+    if (Notification.isSupported()) {
+      new Notification({ title, body }).show();
+    }
+  }
+
   destroy() {
     if (this.tray) {
       this.tray.destroy();
@@ -271,6 +235,5 @@ class TrayManager {
   }
 }
 
-// Export singleton instance
 const trayManager = new TrayManager();
 export default trayManager;

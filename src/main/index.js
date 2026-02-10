@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, Notification } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import config from './config.js';
@@ -22,15 +22,18 @@ async function createWindow() {
   // Get dashboard port from config
   dashboardPort = config.getDashboardPort();
 
+  // Resolve icon path (may not exist yet)
+  const iconPath = path.join(__dirname, '../../assets/icons/icon.png');
+
   // Create browser window
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
     minWidth: 800,
     minHeight: 600,
-    icon: path.join(__dirname, '../../assets/icons/icon.png'),
+    icon: iconPath,
     webPreferences: {
-      preload: path.join(__dirname, '../preload/preload.js'),
+      preload: path.join(__dirname, '../preload/preload.mjs'),
       nodeIntegration: false,
       contextIsolation: true,
       webSecurity: true
@@ -44,22 +47,15 @@ async function createWindow() {
     mainWindow.show();
   });
 
-  // Load the Express dashboard
-  // Note: The dashboard server needs to be started first
-  const dashboardUrl = `http://localhost:${dashboardPort}`;
+  // Load content based on first-run state
+  if (config.isFirstRun()) {
+    console.log('Loading setup wizard...');
+    mainWindow.loadFile(path.join(__dirname, '../renderer/wizard.html'));
+  } else {
+    loadDashboard();
+  }
 
-  console.log(`Loading dashboard from ${dashboardUrl}`);
-
-  // Wait a bit for dashboard server to start, then load
-  setTimeout(() => {
-    mainWindow.loadURL(dashboardUrl).catch(err => {
-      console.error('Failed to load dashboard:', err);
-      // Show error page
-      mainWindow.loadFile(path.join(__dirname, '../renderer/error.html'));
-    });
-  }, 2000);
-
-  // Handle window close
+  // Handle window close - minimize to tray instead
   mainWindow.on('close', (event) => {
     if (config.getSystemConfig().minimizeToTray && !app.isQuitting) {
       event.preventDefault();
@@ -76,15 +72,28 @@ async function createWindow() {
 }
 
 /**
+ * Load the Express dashboard into the main window
+ */
+function loadDashboard() {
+  const dashboardUrl = `http://localhost:${dashboardPort}`;
+  console.log(`Loading dashboard from ${dashboardUrl}`);
+
+  setTimeout(() => {
+    mainWindow.loadURL(dashboardUrl).catch(err => {
+      console.error('Failed to load dashboard:', err);
+      mainWindow.loadFile(path.join(__dirname, '../renderer/error.html'));
+    });
+  }, 2000);
+}
+
+/**
  * Start the dashboard server
  */
-async function startDashboard() {
-  // Import the dashboard dynamically
-  const { startDashboard: launchDashboard } = await import('../../dashboard.js');
-
+async function startDashboardServer() {
   try {
-    await launchDashboard(dashboardPort);
-    console.log(`✅ Dashboard server started on port ${dashboardPort}`);
+    const dashboardModule = await import('../../dashboard.js');
+    dashboardModule.startDashboard();
+    console.log(`Dashboard server starting on port ${dashboardPort}`);
   } catch (error) {
     console.error('Failed to start dashboard:', error);
   }
@@ -98,36 +107,148 @@ function startScheduler() {
 
   if (schedule.enabled) {
     scheduler.start();
-    console.log('✅ Job scheduler started');
+    console.log('Job scheduler started');
   } else {
-    console.log('ℹ️  Job scheduler disabled in configuration');
+    console.log('Job scheduler disabled in configuration');
   }
+}
+
+// ===== IPC Handlers =====
+
+function registerIpcHandlers() {
+  // App info
+  ipcMain.handle('app:getVersion', () => app.getVersion());
+
+  // Configuration read/write
+  ipcMain.handle('config:get', (_event, key) => {
+    return config.store.get(key);
+  });
+
+  ipcMain.handle('config:set', (_event, key, value) => {
+    config.store.set(key, value);
+    // Notify renderer of config change
+    if (mainWindow) {
+      mainWindow.webContents.send('config:changed', key, value);
+    }
+  });
+
+  // Scraper controls
+  ipcMain.handle('scraper:run', async (_event, mode) => {
+    try {
+      await scheduler.runNow(mode || 'daily');
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Scheduler controls
+  ipcMain.handle('scheduler:start', () => {
+    scheduler.start();
+    if (mainWindow) {
+      mainWindow.webContents.send('scheduler:status-changed', true);
+    }
+    return { running: true };
+  });
+
+  ipcMain.handle('scheduler:stop', () => {
+    scheduler.stop();
+    if (mainWindow) {
+      mainWindow.webContents.send('scheduler:status-changed', false);
+    }
+    return { running: false };
+  });
+
+  ipcMain.handle('scheduler:status', () => {
+    return { running: scheduler.isRunning };
+  });
+
+  // Window controls
+  ipcMain.on('window:minimize', () => {
+    mainWindow?.minimize();
+  });
+
+  ipcMain.on('window:maximize', () => {
+    if (mainWindow?.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow?.maximize();
+    }
+  });
+
+  ipcMain.on('window:close', () => {
+    mainWindow?.close();
+  });
+
+  // Notifications
+  ipcMain.on('notification:show', (_event, title, body) => {
+    if (Notification.isSupported()) {
+      new Notification({ title, body }).show();
+    }
+  });
+
+  // File dialogs
+  ipcMain.handle('dialog:selectFile', async (_event, options) => {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile'],
+      ...options
+    });
+    return result.canceled ? null : result.filePaths[0];
+  });
+
+  ipcMain.handle('dialog:selectFolder', async (_event, options) => {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openDirectory'],
+      ...options
+    });
+    return result.canceled ? null : result.filePaths[0];
+  });
+
+  // Setup wizard
+  ipcMain.on('wizard:complete', (_event, data) => {
+    // Apply wizard configuration
+    if (data.keywords) config.setKeywords(data.keywords);
+    if (data.locations) config.setLocations(data.locations);
+    if (data.email && data.appPassword) {
+      config.setEmailConfig(data.email, data.appPassword);
+    }
+    if (data.anthropicApiKey) config.setAnthropicApiKey(data.anthropicApiKey);
+    if (data.resumePath) config.setResumePath(data.resumePath);
+    if (data.schedule) config.setSchedule(data.schedule);
+
+    config.markFirstRunComplete();
+    console.log('Setup wizard completed');
+
+    // Transition to dashboard
+    loadDashboard();
+  });
+
+  // License validation (stub for Phase 4)
+  ipcMain.handle('license:validate', async (_event, email, key) => {
+    // TODO: Implement actual license validation in Phase 4
+    return { valid: true, message: 'License validation not yet implemented' };
+  });
 }
 
 // ===== App Lifecycle Events =====
 
 app.whenReady().then(async () => {
-  console.log('🚀 Career Future starting...');
+  console.log('Career Future starting...');
 
-  // Check if first run
-  if (config.isFirstRun()) {
-    console.log('📋 First run detected - setup wizard needed');
-    // TODO: Show setup wizard instead of main window
-    // For now, just create main window
-  }
+  // Register IPC handlers before creating any windows
+  registerIpcHandlers();
 
   // Start backend services
-  await startDashboard();
+  await startDashboardServer();
   startScheduler();
 
   // Create main window
   await createWindow();
 
-  console.log('✅ Career Future ready!');
+  console.log('Career Future ready!');
 });
 
 app.on('activate', () => {
-  // On macOS, re-create window when dock icon is clicked
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   } else if (mainWindow) {
@@ -136,7 +257,6 @@ app.on('activate', () => {
 });
 
 app.on('window-all-closed', () => {
-  // On macOS, keep app running even when all windows closed
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -144,8 +264,6 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   app.isQuitting = true;
-
-  // Stop scheduler
   if (scheduler.isRunning) {
     scheduler.stop();
   }
@@ -160,5 +278,4 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Export for testing
 export { mainWindow, createWindow };

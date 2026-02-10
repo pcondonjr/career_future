@@ -1,9 +1,125 @@
-import Store from 'electron-store';
-import { safeStorage, app } from 'electron';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '../..');
+
+// Detect Electron environment
+let safeStorage = null;
+let app = null;
+let Store = null;
+const isElectron = !!process.versions.electron;
+
+if (isElectron) {
+  try {
+    const electron = await import('electron');
+    safeStorage = electron.safeStorage;
+    app = electron.app;
+    const storeModule = await import('electron-store');
+    Store = storeModule.default;
+  } catch (e) {
+    // Not in Electron main process
+  }
+}
+
+/**
+ * Simple JSON file-based config store for non-Electron (plain Node) usage.
+ * Mirrors the electron-store API surface used by ConfigManager.
+ */
+class FileStore {
+  constructor({ schema, name }) {
+    this.filePath = path.join(PROJECT_ROOT, `${name}.json`);
+    this.defaults = this._extractDefaults(schema);
+    this.data = { ...this.defaults };
+    this._load();
+  }
+
+  _extractDefaults(schema) {
+    const defaults = {};
+    for (const [key, def] of Object.entries(schema)) {
+      if (def.default !== undefined) {
+        defaults[key] = JSON.parse(JSON.stringify(def.default));
+      }
+    }
+    return defaults;
+  }
+
+  _load() {
+    try {
+      if (fs.existsSync(this.filePath)) {
+        const raw = fs.readFileSync(this.filePath, 'utf-8');
+        const saved = JSON.parse(raw);
+        this.data = { ...this.defaults, ...saved };
+      }
+    } catch {
+      // Use defaults on any read error
+    }
+  }
+
+  _save() {
+    try {
+      fs.writeFileSync(this.filePath, JSON.stringify(this.data, null, 2));
+    } catch (e) {
+      console.warn('FileStore: Failed to save config:', e.message);
+    }
+  }
+
+  get(keyPath, defaultValue) {
+    const keys = keyPath.split('.');
+    let current = this.data;
+    for (const key of keys) {
+      if (current == null || typeof current !== 'object') {
+        return defaultValue;
+      }
+      current = current[key];
+    }
+    return current !== undefined ? current : defaultValue;
+  }
+
+  set(keyPath, value) {
+    const keys = keyPath.split('.');
+    let current = this.data;
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (current[keys[i]] == null || typeof current[keys[i]] !== 'object') {
+        current[keys[i]] = {};
+      }
+      current = current[keys[i]];
+    }
+    current[keys[keys.length - 1]] = value;
+    this._save();
+  }
+
+  delete(keyPath) {
+    const keys = keyPath.split('.');
+    let current = this.data;
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (current[keys[i]] == null) return;
+      current = current[keys[i]];
+    }
+    delete current[keys[keys.length - 1]];
+    this._save();
+  }
+
+  clear() {
+    this.data = { ...this.defaults };
+    this._save();
+  }
+
+  get store() {
+    return { ...this.data };
+  }
+
+  get path() {
+    return this.filePath;
+  }
+}
 
 /**
  * Configuration Manager for Career Future
- * Centralizes all application configuration with encrypted storage for sensitive values
+ * Centralizes all application configuration with encrypted storage for sensitive values.
+ * Works in both Electron (electron-store + safeStorage) and plain Node (JSON file fallback).
  */
 
 const schema = {
@@ -145,57 +261,72 @@ const schema = {
 
 class ConfigManager {
   constructor() {
-    this.store = new Store({ schema });
+    this.store = null;
     this.isElectronReady = false;
+    this._ensureStore();
   }
 
-  /**
-   * Initialize the config manager (call when app is ready)
-   */
+  _ensureStore() {
+    if (!this.store) {
+      try {
+        if (Store) {
+          // Electron environment: use electron-store
+          this.store = new Store({
+            schema,
+            name: 'career-future-config',
+            projectName: 'CareerFuture'
+          });
+        } else {
+          // Plain Node: use file-based store
+          this.store = new FileStore({
+            schema,
+            name: 'career-future-config'
+          });
+        }
+      } catch (error) {
+        console.warn('ConfigManager: Failed to create primary store, using file fallback:', error.message);
+        this.store = new FileStore({
+          schema,
+          name: 'career-future-config'
+        });
+      }
+    }
+    return this.store;
+  }
+
   init() {
-    this.isElectronReady = app.isReady();
-    if (!this.isElectronReady) {
+    if (app) {
+      this.isElectronReady = app.isReady();
+    }
+    this._ensureStore();
+    if (isElectron && !this.isElectronReady) {
       console.warn('ConfigManager: Electron app not ready yet. Encrypted storage unavailable.');
     }
   }
 
-  /**
-   * Encrypt and store a sensitive value
-   * @param {string} key - Config key path (e.g., 'email.appPassword')
-   * @param {string} value - Value to encrypt
-   */
   setSecure(key, value) {
     if (!value) {
       this.store.delete(key);
       return;
     }
 
-    if (this.isElectronReady && safeStorage.isEncryptionAvailable()) {
+    if (this.isElectronReady && safeStorage && safeStorage.isEncryptionAvailable()) {
       const encrypted = safeStorage.encryptString(value);
       this.store.set(key, encrypted.toString('base64'));
     } else {
-      // Fallback: Store unencrypted if safeStorage not available (non-Electron environment)
-      console.warn(`ConfigManager: Storing ${key} unencrypted (safeStorage unavailable)`);
       this.store.set(key, value);
     }
   }
 
-  /**
-   * Retrieve and decrypt a sensitive value
-   * @param {string} key - Config key path
-   * @returns {string|null}
-   */
   getSecure(key) {
     const value = this.store.get(key);
     if (!value) return null;
 
-    if (this.isElectronReady && safeStorage.isEncryptionAvailable()) {
+    if (this.isElectronReady && safeStorage && safeStorage.isEncryptionAvailable()) {
       try {
         const encrypted = Buffer.from(value, 'base64');
         return safeStorage.decryptString(encrypted);
-      } catch (error) {
-        // Value might be unencrypted (from fallback)
-        console.warn(`ConfigManager: Failed to decrypt ${key}, returning raw value`);
+      } catch {
         return value;
       }
     } else {
@@ -357,43 +488,26 @@ class ConfigManager {
 
   // ===== Utility Methods =====
 
-  /**
-   * Reset all configuration (use with caution!)
-   */
   reset() {
     this.store.clear();
   }
 
-  /**
-   * Export configuration (excluding sensitive values)
-   */
   exportConfig() {
     const config = this.store.store;
     const safe = { ...config };
-
-    // Remove sensitive data
     delete safe.email?.appPassword;
     delete safe.anthropic?.apiKey;
     delete safe.license;
-
     return safe;
   }
 
-  /**
-   * Import configuration
-   */
   importConfig(config) {
-    // Don't import sensitive values or license info
     const { email, anthropic, license, ...safeConfig } = config;
-
     Object.keys(safeConfig).forEach(key => {
       this.store.set(key, safeConfig[key]);
     });
   }
 
-  /**
-   * Get the config file path for debugging
-   */
   getConfigPath() {
     return this.store.path;
   }

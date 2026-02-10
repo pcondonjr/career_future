@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+  <title>Career Future - Setup</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      height: 4px;
+      background: #2a2a4a;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #4361ee;
+      transition: width 0.3s ease;
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* Main layout */
+    .wizard-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      max-width: 640px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Step content */
+    .step {
+      display: none;
+      width: 100%;
+      animation: fadeIn 0.3s ease;
+    }
+    .step.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .step-description {
+      color: #aaa;
+      text-align: center;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    /* Form elements */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      color: #ccc;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .label-hint {
+      color: #888;
+      font-size: 0.8rem;
+      font-weight: normal;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #4361ee;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .tag-input-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0.5rem;
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      min-height: 44px;
+      cursor: text;
+      transition: border-color 0.2s;
+    }
+    .tag-input-container:focus-within { border-color: #4361ee; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: #4361ee22;
+      border: 1px solid #4361ee44;
+      color: #8ba0ff;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .tag-remove {
+      cursor: pointer;
+      color: #8ba0ff;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+    .tag-remove:hover { color: #ff6b6b; }
+
+    .tag-input {
+      flex: 1;
+      min-width: 100px;
+      border: none;
+      background: transparent;
+      color: #e0e0e0;
+      font-size: 0.9rem;
+      padding: 0.2rem;
+      outline: none;
+    }
+
+    .file-picker {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .file-picker input { flex: 1; }
+
+    .btn-browse {
+      padding: 0.7rem 1rem;
+      background: #2a2a4a;
+      border: 1px solid #3a3a5a;
+      color: #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    .btn-browse:hover { background: #3a3a5a; }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #4361ee;
+    }
+
+    .checkbox-group label {
+      margin-bottom: 0;
+      cursor: pointer;
+    }
+
+    .time-inputs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .time-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .time-chip input[type="time"] {
+      background: transparent;
+      border: none;
+      color: #e0e0e0;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+    .time-chip input[type="time"]:focus { outline: none; }
+
+    .optional-badge {
+      background: #2a2a4a;
+      color: #888;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+
+    /* Navigation */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      width: 100%;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-back {
+      background: transparent;
+      color: #aaa;
+      border: 1px solid #3a3a5a;
+    }
+    .btn-back:hover { background: #2a2a4a; color: #fff; }
+
+    .btn-next {
+      background: #4361ee;
+      color: #fff;
+    }
+    .btn-next:hover { background: #3a56d4; }
+
+    .btn-skip {
+      background: transparent;
+      color: #888;
+      font-size: 0.9rem;
+    }
+    .btn-skip:hover { color: #ccc; }
+
+    .btn-finish {
+      background: #2ecc71;
+      color: #fff;
+      font-size: 1.05rem;
+      padding: 0.8rem 2rem;
+    }
+    .btn-finish:hover { background: #27ae60; }
+
+    /* Step indicator */
+    .step-dots {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2a2a4a;
+      transition: background 0.2s;
+    }
+    .dot.active { background: #4361ee; }
+    .dot.completed { background: #4361ee88; }
+
+    /* Summary */
+    .summary-card {
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .summary-card h3 {
+      color: #8ba0ff;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+    .summary-card p {
+      color: #ccc;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+    .summary-card .not-set {
+      color: #666;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+
+  <div class="wizard-container">
+    <!-- Step 1: Welcome -->
+    <div class="step active" data-step="0">
+      <div class="step-icon">&#127919;</div>
+      <h1>Welcome to Career Future</h1>
+      <p class="step-description">
+        Your automated job search assistant. Let's set up a few things
+        so Career Future can start finding opportunities for you.
+      </p>
+      <div class="nav-buttons" style="justify-content: center;">
+        <button class="btn btn-next" onclick="nextStep()">Get Started</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Search Keywords -->
+    <div class="step" data-step="1">
+      <div class="step-icon">&#128269;</div>
+      <h1>Job Search Keywords</h1>
+      <p class="step-description">
+        What types of roles are you looking for? Add keywords that describe your target positions.
+      </p>
+      <div class="form-group">
+        <label>Keywords <span class="label-hint">(press Enter to add)</span></label>
+        <div class="tag-input-container" id="keywordsContainer" onclick="this.querySelector('input').focus()">
+          <input type="text" class="tag-input" id="keywordInput" placeholder="e.g. salesforce, developer, admin..."
+            onkeydown="handleTagInput(event, 'keywords')">
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-back" onclick="prevStep()">Back</button>
+        <button class="btn btn-next" onclick="nextStep()">Continue</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Locations -->
+    <div class="step" data-step="2">
+      <div class="step-icon">&#128205;</div>
+      <h1>Preferred Locations</h1>
+      <p class="step-description">
+        Where do you want to work? Add cities, states, or "remote" for remote positions.
+      </p>
+      <div class="form-group">
+        <label>Locations <span class="label-hint">(press Enter to add)</span></label>
+        <div class="tag-input-container" id="locationsContainer" onclick="this.querySelector('input').focus()">
+          <input type="text" class="tag-input" id="locationInput" placeholder="e.g. remote, new york, san francisco..."
+            onkeydown="handleTagInput(event, 'locations')">
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-back" onclick="prevStep()">Back</button>
+        <button class="btn btn-next" onclick="nextStep()">Continue</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Email Notifications -->
+    <div class="step" data-step="3">
+      <div class="step-icon">&#128231;</div>
+      <h1>Email Notifications <span class="optional-badge">Optional</span></h1>
+      <p class="step-description">
+        Get email alerts when new matching jobs are found. Requires a Gmail account with an App Password.
+      </p>
+      <div class="form-group">
+        <label>Gmail Address</label>
+        <input type="email" id="emailUser" placeholder="you@gmail.com">
+      </div>
+      <div class="form-group">
+        <label>App Password <span class="label-hint">(16-character password from Google Account settings)</span></label>
+        <input type="password" id="emailAppPassword" placeholder="xxxx xxxx xxxx xxxx">
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-back" onclick="prevStep()">Back</button>
+        <div>
+          <button class="btn btn-skip" onclick="nextStep()">Skip</button>
+          <button class="btn btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: AI Resume Optimization -->
+    <div class="step" data-step="4">
+      <div class="step-icon">&#129302;</div>
+      <h1>AI Resume Optimizer <span class="optional-badge">Optional</span></h1>
+      <p class="step-description">
+        Career Future can tailor your resume for each job using AI. This requires an Anthropic API key and your resume file.
+      </p>
+      <div class="form-group">
+        <label>Anthropic API Key</label>
+        <input type="password" id="anthropicKey" placeholder="sk-ant-...">
+      </div>
+      <div class="form-group">
+        <label>Resume File</label>
+        <div class="file-picker">
+          <input type="text" id="resumePath" placeholder="Select your resume file..." readonly>
+          <button class="btn-browse" onclick="browseResume()">Browse</button>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-back" onclick="prevStep()">Back</button>
+        <div>
+          <button class="btn btn-skip" onclick="nextStep()">Skip</button>
+          <button class="btn btn-next" onclick="nextStep()">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 6: Schedule -->
+    <div class="step" data-step="5">
+      <div class="step-icon">&#128197;</div>
+      <h1>Scraping Schedule</h1>
+      <p class="step-description">
+        Choose when Career Future should automatically search for new jobs.
+      </p>
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="scheduleEnabled" checked>
+          <label for="scheduleEnabled">Enable automatic scheduling</label>
+        </div>
+      </div>
+      <div id="scheduleOptions">
+        <div class="form-group">
+          <label>Daily Scrape Times</label>
+          <div class="time-inputs">
+            <div class="time-chip">
+              <input type="time" id="dailyTime1" value="08:00">
+            </div>
+            <div class="time-chip">
+              <input type="time" id="dailyTime2" value="17:00">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Weekly Deep Scrape</label>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <select id="weeklyDay">
+              <option value="0" selected>Sunday</option>
+              <option value="1">Monday</option>
+              <option value="2">Tuesday</option>
+              <option value="3">Wednesday</option>
+              <option value="4">Thursday</option>
+              <option value="5">Friday</option>
+              <option value="6">Saturday</option>
+            </select>
+            <span style="color: #888;">at</span>
+            <div class="time-chip">
+              <input type="time" id="weeklyTime" value="10:00">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-back" onclick="prevStep()">Back</button>
+        <button class="btn btn-next" onclick="nextStep()">Continue</button>
+      </div>
+    </div>
+
+    <!-- Step 7: Summary / Complete -->
+    <div class="step" data-step="6">
+      <div class="step-icon">&#9989;</div>
+      <h1>You're All Set!</h1>
+      <p class="step-description">Here's a summary of your configuration. You can change these anytime in Settings.</p>
+
+      <div id="summaryContent"></div>
+
+      <div class="nav-buttons" style="justify-content: center;">
+        <button class="btn btn-back" onclick="prevStep()" style="margin-right: 1rem;">Back</button>
+        <button class="btn btn-finish" onclick="finishWizard()">Launch Career Future</button>
+      </div>
+    </div>
+
+    <!-- Step dots -->
+    <div class="step-dots" id="stepDots"></div>
+  </div>
+
+  <script>
+    const TOTAL_STEPS = 7;
+    let currentStep = 0;
+
+    // Wizard data
+    const wizardData = {
+      keywords: ['salesforce'],
+      locations: ['remote'],
+      email: '',
+      appPassword: '',
+      anthropicApiKey: '',
+      resumePath: '',
+      schedule: {
+        enabled: true,
+        dailyTimes: ['08:00', '17:00'],
+        weeklyDay: 0,
+        weeklyTime: '10:00'
+      }
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderDots();
+      updateProgress();
+      // Pre-populate default tags
+      renderTags('keywords');
+      renderTags('locations');
+
+      // Toggle schedule options
+      document.getElementById('scheduleEnabled').addEventListener('change', (e) => {
+        document.getElementById('scheduleOptions').style.display = e.target.checked ? 'block' : 'none';
+      });
+    });
+
+    function renderDots() {
+      const container = document.getElementById('stepDots');
+      container.innerHTML = '';
+      for (let i = 0; i < TOTAL_STEPS; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === currentStep) dot.className += ' active';
+        else if (i < currentStep) dot.className += ' completed';
+        container.appendChild(dot);
+      }
+    }
+
+    function updateProgress() {
+      const pct = (currentStep / (TOTAL_STEPS - 1)) * 100;
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    function showStep(idx) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      const target = document.querySelector(`.step[data-step="${idx}"]`);
+      if (target) target.classList.add('active');
+      currentStep = idx;
+      renderDots();
+      updateProgress();
+
+      // Build summary on last step
+      if (idx === TOTAL_STEPS - 1) {
+        buildSummary();
+      }
+    }
+
+    function collectCurrentStep() {
+      switch (currentStep) {
+        case 1: // Keywords - already collected via tags
+          break;
+        case 2: // Locations - already collected via tags
+          break;
+        case 3: // Email
+          wizardData.email = document.getElementById('emailUser').value.trim();
+          wizardData.appPassword = document.getElementById('emailAppPassword').value.trim();
+          break;
+        case 4: // AI
+          wizardData.anthropicApiKey = document.getElementById('anthropicKey').value.trim();
+          wizardData.resumePath = document.getElementById('resumePath').value.trim();
+          break;
+        case 5: // Schedule
+          wizardData.schedule.enabled = document.getElementById('scheduleEnabled').checked;
+          wizardData.schedule.dailyTimes = [
+            document.getElementById('dailyTime1').value,
+            document.getElementById('dailyTime2').value
+          ].filter(Boolean);
+          wizardData.schedule.weeklyDay = parseInt(document.getElementById('weeklyDay').value);
+          wizardData.schedule.weeklyTime = document.getElementById('weeklyTime').value;
+          break;
+      }
+    }
+
+    function nextStep() {
+      collectCurrentStep();
+      if (currentStep < TOTAL_STEPS - 1) {
+        showStep(currentStep + 1);
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 0) {
+        showStep(currentStep - 1);
+      }
+    }
+
+    // Tag input handling
+    function handleTagInput(event, field) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        const input = event.target;
+        const value = input.value.trim();
+        if (value && !wizardData[field].includes(value.toLowerCase())) {
+          wizardData[field].push(value.toLowerCase());
+          renderTags(field);
+        }
+        input.value = '';
+      }
+    }
+
+    function renderTags(field) {
+      const containerId = field + 'Container';
+      const container = document.getElementById(containerId);
+      const input = container.querySelector('input');
+
+      // Remove existing tags
+      container.querySelectorAll('.tag').forEach(t => t.remove());
+
+      // Add tags before the input
+      wizardData[field].forEach((tag, idx) => {
+        const el = document.createElement('span');
+        el.className = 'tag';
+        el.innerHTML = `${tag} <span class="tag-remove" onclick="removeTag('${field}', ${idx})">&#215;</span>`;
+        container.insertBefore(el, input);
+      });
+    }
+
+    function removeTag(field, idx) {
+      wizardData[field].splice(idx, 1);
+      renderTags(field);
+    }
+
+    // File picker
+    async function browseResume() {
+      if (window.electronAPI) {
+        const filePath = await window.electronAPI.selectFile({
+          title: 'Select Resume',
+          filters: [
+            { name: 'Documents', extensions: ['pdf', 'docx', 'doc', 'txt', 'md'] }
+          ]
+        });
+        if (filePath) {
+          document.getElementById('resumePath').value = filePath;
+          wizardData.resumePath = filePath;
+        }
+      }
+    }
+
+    // Summary
+    function buildSummary() {
+      const container = document.getElementById('summaryContent');
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+      let html = '';
+
+      html += `<div class="summary-card">
+        <h3>Search Keywords</h3>
+        <p>${wizardData.keywords.length ? wizardData.keywords.join(', ') : '<span class="not-set">None set</span>'}</p>
+      </div>`;
+
+      html += `<div class="summary-card">
+        <h3>Locations</h3>
+        <p>${wizardData.locations.length ? wizardData.locations.join(', ') : '<span class="not-set">None set</span>'}</p>
+      </div>`;
+
+      html += `<div class="summary-card">
+        <h3>Email Notifications</h3>
+        <p>${wizardData.email ? wizardData.email : '<span class="not-set">Not configured</span>'}</p>
+      </div>`;
+
+      html += `<div class="summary-card">
+        <h3>AI Resume Optimizer</h3>
+        <p>${wizardData.anthropicApiKey ? 'Configured' : '<span class="not-set">Not configured</span>'}${wizardData.resumePath ? ' &mdash; ' + wizardData.resumePath.split(/[\\/]/).pop() : ''}</p>
+      </div>`;
+
+      if (wizardData.schedule.enabled) {
+        html += `<div class="summary-card">
+          <h3>Schedule</h3>
+          <p>Daily at ${wizardData.schedule.dailyTimes.join(', ')}<br>
+          Weekly on ${days[wizardData.schedule.weeklyDay]} at ${wizardData.schedule.weeklyTime}</p>
+        </div>`;
+      } else {
+        html += `<div class="summary-card">
+          <h3>Schedule</h3>
+          <p><span class="not-set">Disabled</span></p>
+        </div>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // Finish wizard
+    function finishWizard() {
+      collectCurrentStep();
+
+      if (window.electronAPI) {
+        window.electronAPI.wizardComplete(wizardData);
+      } else {
+        console.log('Wizard data:', wizardData);
+        alert('Setup complete! (No Electron API available in this context)');
+      }
+    }
+  </script>
+</body>
+</html>

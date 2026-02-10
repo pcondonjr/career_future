@@ -79,7 +79,16 @@
       "Bash(pm2 list:*)",
       "Bash(netstat:*)",
       "Bash(npm run test:*)",
-      "Bash(npm run test:weekly:*)"
+      "Bash(npm run test:weekly:*)",
+      "WebFetch(domain:electron-vite.org)",
+      "Bash(\"node_modules\\\\electron\\\\dist\\\\electron.exe\" .)",
+      "Bash(cmd /c \"set ELECTRON_RUN_AS_NODE= && node_modules\\\\electron\\\\dist\\\\electron.exe .\")",
+      "Bash(ELECTRON_RUN_AS_NODE= \"c:\\\\Users\\\\pcond\\\\salesforce-projects\\\\jobs-scrapers\\\\salesforce-job-scraper\\\\node_modules\\\\electron\\\\dist\\\\electron.exe\":*)",
+      "Bash(unset:*)",
+      "Bash(\"c:\\\\Users\\\\pcond\\\\salesforce-projects\\\\jobs-scrapers\\\\salesforce-job-scraper\\\\node_modules\\\\electron\\\\dist\\\\electron.exe\" \"c:\\\\Users\\\\pcond\\\\salesforce-projects\\\\jobs-scrapers\\\\salesforce-job-scraper\")",
+      "Bash(npm run dev:*)",
+      "Bash(cmd /c:*)",
+      "Bash(kill:*)"
     ]
   }
 }
