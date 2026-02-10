@@ -218,9 +218,8 @@ class TrayManager {
     if (this.mainWindow) {
       this.mainWindow.show();
       this.mainWindow.focus();
-      this.mainWindow.webContents.executeJavaScript(
-        `window.location.hash = '#settings';`
-      );
+      const port = config.getDashboardPort();
+      this.mainWindow.loadURL(`http://localhost:${port}/settings`);
     }
   }
 

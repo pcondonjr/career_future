@@ -16,6 +16,7 @@ const __dirname = path.dirname(__filename);
 let resourcesBase = __dirname;
 let writableBase = __dirname;
 let chromePath = null;
+let configRef = null;
 
 const app = express();
 const PORT = process.env.DASHBOARD_PORT || 3000;
@@ -257,11 +258,99 @@ app.post('/api/fetch-job-description', async (req, res) => {
 // Resume optimizer API routes (rate-limited — these call the Anthropic API)
 app.use('/api', rateLimiter, resumeRoutes);
 
+// --- Settings routes ---
+
+app.get('/settings', (req, res) => {
+  if (!configRef) return res.status(503).send('Config not available');
+  const settings = {
+    keywords: configRef.getKeywords(),
+    locations: configRef.getLocations(),
+    schedule: configRef.getSchedule(),
+    email: {
+      user: configRef.getEmailConfig().user || '',
+      hasPassword: !!configRef.getEmailConfig().appPassword,
+      service: configRef.getEmailConfig().service || 'gmail'
+    },
+    hasApiKey: !!configRef.getAnthropicApiKey(),
+    resumePath: configRef.getResumePath() || '',
+    companies: configRef.getCompaniesPaths(),
+    database: configRef.getDatabasePaths(),
+    dashboardPort: configRef.getDashboardPort(),
+    system: configRef.getSystemConfig(),
+    license: configRef.getLicenseInfo()
+  };
+  res.render('settings', { settings });
+});
+
+app.get('/api/settings', (req, res) => {
+  if (!configRef) return res.status(503).json({ error: 'Config not available' });
+  res.json({
+    keywords: configRef.getKeywords(),
+    locations: configRef.getLocations(),
+    schedule: configRef.getSchedule(),
+    email: {
+      user: configRef.getEmailConfig().user || '',
+      hasPassword: !!configRef.getEmailConfig().appPassword,
+      service: configRef.getEmailConfig().service || 'gmail'
+    },
+    hasApiKey: !!configRef.getAnthropicApiKey(),
+    resumePath: configRef.getResumePath() || '',
+    companies: configRef.getCompaniesPaths(),
+    database: configRef.getDatabasePaths(),
+    dashboardPort: configRef.getDashboardPort(),
+    system: configRef.getSystemConfig(),
+    license: configRef.getLicenseInfo()
+  });
+});
+
+app.post('/api/settings', (req, res) => {
+  if (!configRef) return res.status(503).json({ error: 'Config not available' });
+  const { section, data } = req.body;
+  try {
+    switch (section) {
+      case 'search':
+        if (data.keywords) configRef.setKeywords(data.keywords);
+        if (data.locations) configRef.setLocations(data.locations);
+        break;
+      case 'schedule':
+        configRef.setSchedule(data);
+        break;
+      case 'email':
+        configRef.setEmailConfig(data.user, data.appPassword, data.service);
+        break;
+      case 'apiKey':
+        configRef.setAnthropicApiKey(data.apiKey);
+        break;
+      case 'resume':
+        configRef.setResumePath(data.path);
+        break;
+      case 'companies':
+        configRef.setCompaniesPaths(data.daily, data.weekly);
+        break;
+      case 'database':
+        configRef.setDatabasePaths(data.daily, data.weekly);
+        break;
+      case 'dashboardPort':
+        configRef.setDashboardPort(data.port);
+        break;
+      case 'system':
+        configRef.setSystemConfig(data);
+        break;
+      default:
+        return res.status(400).json({ error: 'Unknown settings section' });
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 export function startDashboard(options = {}) {
   // Set path bases from caller (Electron main process) or fall back to __dirname
   resourcesBase = options.resourcesPath || __dirname;
   writableBase = options.writablePath || __dirname;
   chromePath = options.chromePath || null;
+  configRef = options.config || null;
 
   // Configure Express paths now that bases are set
   app.use(express.static(path.join(resourcesBase, 'public')));

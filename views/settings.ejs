@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>Career Future - Settings</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    :root {
+      --pico-primary: #4361ee;
+    }
+    body { padding-bottom: 4rem; }
+    .nav-bar {
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+      align-items: center; margin-bottom: 1.5rem;
+    }
+    .nav-bar a[role="button"] { margin: 0; }
+    .section-card {
+      border: 1px solid var(--pico-muted-border-color);
+      border-radius: 8px; padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-card h3 { margin-top: 0; }
+    .tag-container {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      padding: 0.5rem; border: 1px solid var(--pico-form-element-border-color);
+      border-radius: var(--pico-border-radius);
+      background: var(--pico-form-element-background-color);
+      min-height: 2.5rem; cursor: text;
+    }
+    .tag {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      background: #4361ee33; color: #7b93f5; border: 1px solid #4361ee55;
+      border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.85rem;
+    }
+    .tag .remove { cursor: pointer; font-weight: bold; opacity: 0.7; }
+    .tag .remove:hover { opacity: 1; color: #ef4444; }
+    .tag-input {
+      border: none; background: transparent; color: inherit;
+      outline: none; flex: 1; min-width: 100px; font-size: 0.9rem;
+      padding: 0.2rem;
+    }
+    .time-chips {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      align-items: center; margin-bottom: 0.5rem;
+    }
+    .time-chip {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      background: var(--pico-form-element-background-color);
+      border: 1px solid var(--pico-form-element-border-color);
+      border-radius: 4px; padding: 0.3rem 0.5rem; font-size: 0.85rem;
+    }
+    .time-chip .remove { cursor: pointer; opacity: 0.7; }
+    .time-chip .remove:hover { opacity: 1; color: #ef4444; }
+    .toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      padding: 0.8rem 1.5rem; border-radius: 8px; font-size: 0.9rem;
+      z-index: 9999; opacity: 0; transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+    .toast.success { background: #22c55e22; border: 1px solid #22c55e44; color: #22c55e; }
+    .toast.error { background: #ef444422; border: 1px solid #ef444444; color: #ef4444; }
+    .license-badge {
+      display: inline-block; padding: 0.3rem 0.8rem;
+      border-radius: 20px; font-size: 0.85rem;
+    }
+    .license-badge.active { background: #22c55e22; border: 1px solid #22c55e44; color: #22c55e; }
+    .license-badge.trial { background: #f59e0b22; border: 1px solid #f59e0b44; color: #f59e0b; }
+    .license-badge.expired { background: #ef444422; border: 1px solid #ef444444; color: #ef4444; }
+    fieldset { border: none; padding: 0; }
+    .inline-row { display: flex; gap: 1rem; align-items: end; flex-wrap: wrap; }
+    .inline-row > * { flex: 1; min-width: 150px; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Settings</h1>
+    <div class="nav-bar">
+      <a href="/" role="button" class="outline">Back to Dashboard</a>
+    </div>
+
+    <!-- Search Settings -->
+    <div class="section-card">
+      <h3>Search Keywords & Locations</h3>
+      <label>Keywords</label>
+      <div class="tag-container" id="keywords-container" data-field="keywords">
+        <% settings.keywords.forEach(k => { %>
+          <span class="tag"><%= k %><span class="remove" onclick="removeTag(this)">&times;</span></span>
+        <% }) %>
+        <input class="tag-input" placeholder="Add keyword..." onkeydown="handleTagKey(event, 'keywords')">
+      </div>
+      <small>Press Enter to add a keyword</small>
+
+      <label style="margin-top: 1rem;">Locations</label>
+      <div class="tag-container" id="locations-container" data-field="locations">
+        <% settings.locations.forEach(l => { %>
+          <span class="tag"><%= l %><span class="remove" onclick="removeTag(this)">&times;</span></span>
+        <% }) %>
+        <input class="tag-input" placeholder="Add location..." onkeydown="handleTagKey(event, 'locations')">
+      </div>
+      <small>Press Enter to add a location</small>
+
+      <button style="margin-top: 1rem;" onclick="saveSearch()">Save Search Settings</button>
+    </div>
+
+    <!-- Schedule -->
+    <div class="section-card">
+      <h3>Schedule</h3>
+      <fieldset>
+        <label>
+          <input type="checkbox" id="schedule-enabled" <%= settings.schedule.enabled ? 'checked' : '' %>>
+          Enable automatic scheduling
+        </label>
+      </fieldset>
+
+      <label>Daily Scrape Times</label>
+      <div class="time-chips" id="daily-times">
+        <% settings.schedule.dailyTimes.forEach(t => { %>
+          <span class="time-chip"><%= t %><span class="remove" onclick="removeTimeChip(this)">&times;</span></span>
+        <% }) %>
+      </div>
+      <div class="inline-row">
+        <input type="time" id="new-daily-time" value="08:00">
+        <button class="outline" onclick="addDailyTime()">Add Time</button>
+      </div>
+
+      <div class="inline-row" style="margin-top: 1rem;">
+        <label>
+          Weekly Day
+          <select id="weekly-day">
+            <% ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].forEach((d, i) => { %>
+              <option value="<%= i %>" <%= settings.schedule.weeklyDay === i ? 'selected' : '' %>><%= d %></option>
+            <% }) %>
+          </select>
+        </label>
+        <label>
+          Weekly Time
+          <input type="time" id="weekly-time" value="<%= settings.schedule.weeklyTime %>">
+        </label>
+      </div>
+
+      <button style="margin-top: 1rem;" onclick="saveSchedule()">Save Schedule</button>
+    </div>
+
+    <!-- Email -->
+    <div class="section-card">
+      <h3>Email Notifications</h3>
+      <label>
+        Email Address
+        <input type="email" id="email-user" value="<%= settings.email.user %>" placeholder="your@gmail.com">
+      </label>
+      <label>
+        App Password
+        <input type="password" id="email-password" placeholder="<%= settings.email.hasPassword ? 'Password is set (leave blank to keep)' : 'Enter app password' %>">
+      </label>
+      <label>
+        Email Service
+        <select id="email-service">
+          <option value="gmail" <%= settings.email.service === 'gmail' ? 'selected' : '' %>>Gmail</option>
+          <option value="outlook" <%= settings.email.service === 'outlook' ? 'selected' : '' %>>Outlook</option>
+        </select>
+      </label>
+      <button onclick="saveEmail()">Save Email Settings</button>
+    </div>
+
+    <!-- AI / API Key -->
+    <div class="section-card">
+      <h3>AI Resume Optimizer</h3>
+      <label>
+        Anthropic API Key
+        <input type="password" id="api-key" placeholder="<%= settings.hasApiKey ? 'API key is set (leave blank to keep)' : 'Enter your Anthropic API key' %>">
+      </label>
+      <label>
+        Resume File Path
+        <input type="text" id="resume-path" value="<%= settings.resumePath %>" placeholder="/path/to/resume.txt">
+      </label>
+      <div class="inline-row">
+        <button onclick="saveApiKey()">Save API Key</button>
+        <button class="outline" onclick="saveResume()">Save Resume Path</button>
+      </div>
+    </div>
+
+    <!-- File Paths -->
+    <div class="section-card">
+      <h3>File Paths</h3>
+      <div class="inline-row">
+        <label>
+          Daily Companies CSV
+          <input type="text" id="companies-daily" value="<%= settings.companies.daily %>">
+        </label>
+        <label>
+          Weekly Companies CSV
+          <input type="text" id="companies-weekly" value="<%= settings.companies.weekly %>">
+        </label>
+      </div>
+      <button onclick="saveCompanies()">Save Companies Paths</button>
+
+      <div class="inline-row" style="margin-top: 1rem;">
+        <label>
+          Daily Database
+          <input type="text" id="db-daily" value="<%= settings.database.daily %>">
+        </label>
+        <label>
+          Weekly Database
+          <input type="text" id="db-weekly" value="<%= settings.database.weekly %>">
+        </label>
+      </div>
+      <button onclick="saveDatabase()">Save Database Paths</button>
+    </div>
+
+    <!-- System -->
+    <div class="section-card">
+      <h3>System</h3>
+      <label>
+        Dashboard Port
+        <input type="number" id="dashboard-port" value="<%= settings.dashboardPort %>" min="1" max="65535">
+      </label>
+      <small>Requires app restart to take effect</small>
+      <fieldset style="margin-top: 1rem;">
+        <label>
+          <input type="checkbox" id="sys-autostart" <%= settings.system.autoStart ? 'checked' : '' %>>
+          Start on system login
+        </label>
+        <label>
+          <input type="checkbox" id="sys-tray" <%= settings.system.minimizeToTray ? 'checked' : '' %>>
+          Minimize to system tray
+        </label>
+        <label>
+          <input type="checkbox" id="sys-updates" <%= settings.system.checkUpdates ? 'checked' : '' %>>
+          Check for updates
+        </label>
+      </fieldset>
+      <button onclick="saveSystem()">Save System Settings</button>
+    </div>
+
+    <!-- License -->
+    <div class="section-card">
+      <h3>License</h3>
+      <% if (settings.license.key) { %>
+        <span class="license-badge active">Licensed</span>
+        <p style="margin-top: 0.5rem;">
+          <strong>Email:</strong> <%= settings.license.email || 'N/A' %><br>
+          <strong>Type:</strong> <%= settings.license.type || 'N/A' %><br>
+          <strong>Activated:</strong> <%= settings.license.activatedAt ? new Date(settings.license.activatedAt).toLocaleDateString() : 'N/A' %>
+        </p>
+      <% } else if (settings.license.trialStartDate) { %>
+        <% const elapsed = (Date.now() - new Date(settings.license.trialStartDate).getTime()) / (1000*60*60*24); %>
+        <% const remaining = Math.max(0, Math.ceil(7 - elapsed)); %>
+        <% if (remaining > 0) { %>
+          <span class="license-badge trial">Trial: <%= remaining %> day<%= remaining !== 1 ? 's' : '' %> remaining</span>
+        <% } else { %>
+          <span class="license-badge expired">Trial Expired</span>
+        <% } %>
+        <p style="margin-top: 0.5rem;">
+          <strong>Trial started:</strong> <%= new Date(settings.license.trialStartDate).toLocaleDateString() %>
+        </p>
+      <% } else { %>
+        <span class="license-badge trial">No license info</span>
+      <% } %>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast show ' + type;
+    setTimeout(() => { toast.className = 'toast'; }, 3000);
+  }
+
+  async function saveSection(section, data) {
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section, data })
+      });
+      const result = await res.json();
+      if (result.success) {
+        showToast('Settings saved!', 'success');
+      } else {
+        showToast(result.error || 'Save failed', 'error');
+      }
+    } catch (err) {
+      showToast('Save failed: ' + err.message, 'error');
+    }
+  }
+
+  // --- Tag inputs ---
+  function getTags(containerId) {
+    const container = document.getElementById(containerId);
+    return Array.from(container.querySelectorAll('.tag')).map(t =>
+      t.childNodes[0].textContent.trim()
+    );
+  }
+
+  function handleTagKey(event, field) {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    const input = event.target;
+    const value = input.value.trim();
+    if (!value) return;
+    const container = input.parentElement;
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.innerHTML = value + '<span class="remove" onclick="removeTag(this)">&times;</span>';
+    container.insertBefore(tag, input);
+    input.value = '';
+  }
+
+  function removeTag(el) {
+    el.parentElement.remove();
+  }
+
+  function saveSearch() {
+    saveSection('search', {
+      keywords: getTags('keywords-container'),
+      locations: getTags('locations-container')
+    });
+  }
+
+  // --- Schedule ---
+  function getDailyTimes() {
+    return Array.from(document.querySelectorAll('#daily-times .time-chip')).map(c =>
+      c.childNodes[0].textContent.trim()
+    );
+  }
+
+  function addDailyTime() {
+    const time = document.getElementById('new-daily-time').value;
+    if (!time) return;
+    const container = document.getElementById('daily-times');
+    const chip = document.createElement('span');
+    chip.className = 'time-chip';
+    chip.innerHTML = time + '<span class="remove" onclick="removeTimeChip(this)">&times;</span>';
+    container.appendChild(chip);
+  }
+
+  function removeTimeChip(el) {
+    el.parentElement.remove();
+  }
+
+  function saveSchedule() {
+    saveSection('schedule', {
+      enabled: document.getElementById('schedule-enabled').checked,
+      dailyTimes: getDailyTimes(),
+      weeklyDay: parseInt(document.getElementById('weekly-day').value),
+      weeklyTime: document.getElementById('weekly-time').value
+    });
+  }
+
+  // --- Email ---
+  function saveEmail() {
+    const password = document.getElementById('email-password').value;
+    const data = {
+      user: document.getElementById('email-user').value,
+      service: document.getElementById('email-service').value
+    };
+    // Only send password if user typed a new one
+    if (password) data.appPassword = password;
+    saveSection('email', data);
+  }
+
+  // --- API Key ---
+  function saveApiKey() {
+    const key = document.getElementById('api-key').value;
+    if (!key) return showToast('Enter an API key', 'error');
+    saveSection('apiKey', { apiKey: key });
+  }
+
+  function saveResume() {
+    saveSection('resume', { path: document.getElementById('resume-path').value });
+  }
+
+  // --- File Paths ---
+  function saveCompanies() {
+    saveSection('companies', {
+      daily: document.getElementById('companies-daily').value,
+      weekly: document.getElementById('companies-weekly').value
+    });
+  }
+
+  function saveDatabase() {
+    saveSection('database', {
+      daily: document.getElementById('db-daily').value,
+      weekly: document.getElementById('db-weekly').value
+    });
+  }
+
+  // --- System ---
+  function saveSystem() {
+    saveSection('system', {
+      autoStart: document.getElementById('sys-autostart').checked,
+      minimizeToTray: document.getElementById('sys-tray').checked,
+      checkUpdates: document.getElementById('sys-updates').checked
+    });
+    const port = parseInt(document.getElementById('dashboard-port').value);
+    if (port >= 1 && port <= 65535) {
+      saveSection('dashboardPort', { port });
+    }
+  }
+  </script>
+</body>
+</html>

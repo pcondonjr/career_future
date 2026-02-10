@@ -103,7 +103,8 @@ async function startDashboardServer() {
     dashboardModule.startDashboard({
       resourcesPath: getResourcesPath(),
       writablePath: getWritablePath(),
-      chromePath: findChromePath()
+      chromePath: findChromePath(),
+      config
     });
     console.log(`Dashboard server starting on port ${dashboardPort}`);
   } catch (error) {
