@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+  <title>Career Future - License Activation</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .license-container {
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .icon { font-size: 3rem; margin-bottom: 1rem; }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #aaa;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    .trial-badge {
+      display: inline-block;
+      background: #f59e0b22;
+      border: 1px solid #f59e0b44;
+      color: #f59e0b;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .trial-badge.expired {
+      background: #ef444422;
+      border-color: #ef444444;
+      color: #ef4444;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      color: #ccc;
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.8rem;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #4361ee;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 0.8rem;
+      background: #4361ee;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+    .btn-primary:hover { background: #3651d4; }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 1rem;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .message.error {
+      display: block;
+      background: #ef444422;
+      border: 1px solid #ef444444;
+      color: #ef4444;
+    }
+    .message.success {
+      display: block;
+      background: #22c55e22;
+      border: 1px solid #22c55e44;
+      color: #22c55e;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #2a2a4a;
+      margin: 1.5rem 0;
+    }
+
+    .footer-text {
+      color: #666;
+      font-size: 0.8rem;
+      margin-top: 1.5rem;
+    }
+    .footer-text a {
+      color: #4361ee;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="license-container">
+    <div class="icon">&#128272;</div>
+    <h1>Activate Career Future</h1>
+    <div class="subtitle" id="subtitle">Enter your license key to continue using Career Future.</div>
+
+    <div class="trial-badge expired" id="trial-badge" style="display: none;"></div>
+
+    <form id="license-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="your@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="license-key">License Key</label>
+        <textarea id="license-key" placeholder="Paste your license key here..." rows="3" required></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary" id="activate-btn">Activate License</button>
+    </form>
+
+    <div class="message" id="message"></div>
+
+    <p class="footer-text">Need a license? Contact support for a license key.</p>
+  </div>
+
+  <script>
+  (async function() {
+    const api = window.electronAPI;
+    const badge = document.getElementById('trial-badge');
+    const subtitle = document.getElementById('subtitle');
+    const form = document.getElementById('license-form');
+    const emailInput = document.getElementById('email');
+    const keyInput = document.getElementById('license-key');
+    const activateBtn = document.getElementById('activate-btn');
+    const messageEl = document.getElementById('message');
+
+    // Load current status
+    try {
+      const status = await api.getLicenseStatus();
+      if (status.expired) {
+        badge.textContent = 'Trial Expired';
+        badge.style.display = 'inline-block';
+        subtitle.textContent = 'Your 7-day trial has ended. Enter a license key to continue.';
+      } else if (status.trial && status.daysRemaining !== null) {
+        badge.className = 'trial-badge';
+        badge.textContent = `Trial: ${status.daysRemaining} day${status.daysRemaining !== 1 ? 's' : ''} remaining`;
+        badge.style.display = 'inline-block';
+      }
+    } catch {}
+
+    function showMessage(text, type) {
+      messageEl.textContent = text;
+      messageEl.className = `message ${type}`;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+      const key = keyInput.value.trim();
+
+      if (!email || !key) return;
+
+      activateBtn.disabled = true;
+      activateBtn.textContent = 'Activating...';
+      messageEl.className = 'message';
+
+      try {
+        const result = await api.activateLicense(email, key);
+        if (result.valid) {
+          showMessage('License activated successfully! Loading dashboard...', 'success');
+          // Main process will transition to dashboard
+        } else {
+          showMessage(result.error || 'Invalid license key', 'error');
+          activateBtn.disabled = false;
+          activateBtn.textContent = 'Activate License';
+        }
+      } catch (err) {
+        showMessage('Activation failed: ' + err.message, 'error');
+        activateBtn.disabled = false;
+        activateBtn.textContent = 'Activate License';
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

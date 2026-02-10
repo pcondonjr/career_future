@@ -132,9 +132,9 @@ const schema = {
     properties: {
       key: { type: 'string' },
       email: { type: 'string' },
+      type: { type: 'string' },
       activatedAt: { type: 'string' },
-      lastValidated: { type: 'string' },
-      machineId: { type: 'string' }
+      trialStartDate: { type: 'string' }
     },
     default: {}
   },

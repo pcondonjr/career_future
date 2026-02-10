@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import config from './config.js';
 import trayManager from './tray.js';
 import scheduler from '../backend/scheduler.js';
+import { initTrial, isAppUsable, getLicenseStatus, validateLicenseKey } from './license.js';
 
 // ES module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -47,12 +48,18 @@ async function createWindow() {
     mainWindow.show();
   });
 
-  // Load content based on first-run state
+  // Initialize trial tracking on every launch
+  initTrial(config);
+
+  // Load content based on app state
   if (config.isFirstRun()) {
     console.log('Loading setup wizard...');
     mainWindow.loadFile(path.join(__dirname, '../renderer/wizard.html'));
-  } else {
+  } else if (isAppUsable(config)) {
     loadDashboard();
+  } else {
+    console.log('License required - loading activation page...');
+    mainWindow.loadFile(path.join(__dirname, '../renderer/license.html'));
   }
 
   // Handle window close - minimize to tray instead
@@ -223,10 +230,27 @@ function registerIpcHandlers() {
     loadDashboard();
   });
 
-  // License validation (stub for Phase 4)
-  ipcMain.handle('license:validate', async (_event, email, key) => {
-    // TODO: Implement actual license validation in Phase 4
-    return { valid: true, message: 'License validation not yet implemented' };
+  // License status
+  ipcMain.handle('license:status', () => {
+    return getLicenseStatus(config);
+  });
+
+  // License activation - validates key, stores it, and transitions to dashboard
+  ipcMain.handle('license:activate', (_event, email, key) => {
+    const result = validateLicenseKey(key);
+    if (result.valid) {
+      config.setLicenseInfo({
+        ...config.getLicenseInfo(),
+        key,
+        email: result.email,
+        type: result.type,
+        activatedAt: new Date().toISOString()
+      });
+      console.log(`License activated for ${result.email}`);
+      // Transition to dashboard
+      loadDashboard();
+    }
+    return result;
   });
 }
 

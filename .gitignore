@@ -6,3 +6,5 @@ build/
 .vscode/
 nul
 .claude/
+scripts/keys/
+release/

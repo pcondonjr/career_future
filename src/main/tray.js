@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import scheduler from '../backend/scheduler.js';
+import { getLicenseStatus } from './license.js';
+import config from './config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -89,8 +91,20 @@ class TrayManager {
     return nativeImage.createFromBuffer(buf, { width: size, height: size });
   }
 
+  _getLicenseLabel() {
+    const status = getLicenseStatus(config);
+    if (status.licensed) return `Licensed to: ${status.email}`;
+    if (status.trial) return `Trial: ${status.daysRemaining} day${status.daysRemaining !== 1 ? 's' : ''} remaining`;
+    return 'Trial Expired';
+  }
+
   updateMenu() {
     const contextMenu = Menu.buildFromTemplate([
+      {
+        label: this._getLicenseLabel(),
+        enabled: false
+      },
+      { type: 'separator' },
       {
         label: 'Show Dashboard',
         click: () => this.showWindow()

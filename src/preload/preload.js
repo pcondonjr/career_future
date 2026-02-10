@@ -45,8 +45,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   wizardBack: () => ipcRenderer.send('wizard:back'),
   wizardComplete: (data) => ipcRenderer.send('wizard:complete', data),
 
-  // License validation (for future implementation)
-  validateLicense: (email, key) => ipcRenderer.invoke('license:validate', email, key),
+  // License
+  getLicenseStatus: () => ipcRenderer.invoke('license:status'),
+  activateLicense: (email, key) => ipcRenderer.invoke('license:activate', email, key),
 
   // Event listeners
   on: (channel, callback) => {
