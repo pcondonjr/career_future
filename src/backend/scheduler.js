@@ -4,6 +4,7 @@ import { JobDatabase } from '../../database.js';
 import { JobEmailer } from '../../emailer.js';
 import { loadSitesFromCSV, validateCSV } from '../../sites-config.js';
 import config from '../main/config.js';
+import { resolveResourceFile, resolveWritableFile, findChromePath } from '../main/paths.js';
 
 /**
  * Job Scheduler for Career Future
@@ -26,13 +27,13 @@ export class Scheduler {
 
     const modeConfig = {
       daily: {
-        csvPath: paths.daily,
-        dbPath: dbPaths.daily,
+        csvPath: resolveResourceFile(paths.daily),
+        dbPath: resolveWritableFile(dbPaths.daily),
         name: 'Daily'
       },
       weekly: {
-        csvPath: paths.weekly,
-        dbPath: dbPaths.weekly,
+        csvPath: resolveResourceFile(paths.weekly),
+        dbPath: resolveWritableFile(dbPaths.weekly),
         name: 'Weekly'
       }
     };
@@ -40,10 +41,10 @@ export class Scheduler {
     const currentConfig = modeConfig[mode];
 
     console.log('\n' + '='.repeat(60));
-    console.log(`🔍 Starting ${currentConfig.name} job search at ${new Date().toLocaleString()}`);
+    console.log(`Starting ${currentConfig.name} job search at ${new Date().toLocaleString()}`);
     console.log('='.repeat(60) + '\n');
 
-    const scraper = new JobScraper();
+    const scraper = new JobScraper({ chromePath: findChromePath() });
     const db = new JobDatabase(currentConfig.dbPath);
     const emailer = new JobEmailer();
 
@@ -177,7 +178,7 @@ export class Scheduler {
     // Weekly summary every Monday at 9 AM
     const summaryTask = cron.schedule('0 9 * * 1', async () => {
       const dbPaths = config.getDatabasePaths();
-      const db = new JobDatabase(dbPaths.daily);
+      const db = new JobDatabase(resolveWritableFile(dbPaths.daily));
       const emailer = new JobEmailer();
       await db.load();
       await emailer.sendWeeklySummary(db);

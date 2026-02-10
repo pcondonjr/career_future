@@ -2,7 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import { exec } from 'child_process';
 import fs from 'fs/promises';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import { JobDatabase } from './database.js';
 import { loadSitesFromCSV, validateCSV } from './sites-config.js';
 import path from 'path';
@@ -11,6 +11,11 @@ import resumeRoutes from './resume_api_routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Path bases — set by startDashboard() options or fall back to __dirname
+let resourcesBase = __dirname;
+let writableBase = __dirname;
+let chromePath = null;
 
 const app = express();
 const PORT = process.env.DASHBOARD_PORT || 3000;
@@ -50,12 +55,12 @@ function rateLimiter(req, res, next) {
 }
 
 app.use(express.json());
-app.use(express.static('public'));
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 
-const db = new JobDatabase();
-const lastRunFile = path.join(__dirname, 'last_run.json');
+// Static files and views — configured in startDashboard() after paths are set
+// Defaults here for legacy `node dashboard.js` usage
+let db;
+let lastRunFile;
 
 async function loadLastRun() {
   try {
@@ -152,8 +157,9 @@ app.get('/api/export', async (req, res) => {
 
 app.get('/companies', async (req, res) => {
   try {
-    const validation = await validateCSV();
-    const sites = await loadSitesFromCSV('./companies.csv', false);
+    const csvPath = path.join(resourcesBase, 'companies.csv');
+    const validation = await validateCSV(csvPath);
+    const sites = await loadSitesFromCSV(csvPath, false);
 
     res.render('companies', { sites, validation });
   } catch (error) {
@@ -163,8 +169,9 @@ app.get('/companies', async (req, res) => {
 
 app.get('/companies-weekly', async (req, res) => {
   try {
-    const validation = await validateCSV('./companies-weekly.csv');
-    const sites = await loadSitesFromCSV('./companies-weekly.csv', false);
+    const csvPath = path.join(resourcesBase, 'companies-weekly.csv');
+    const validation = await validateCSV(csvPath);
+    const sites = await loadSitesFromCSV(csvPath, false);
 
     res.render('companies-weekly', { sites, validation });
   } catch (error) {
@@ -172,9 +179,9 @@ app.get('/companies-weekly', async (req, res) => {
   }
 });
 
-// Run scraper endpoints
-const scraperSignalFile = path.join(__dirname, '.scraper-running');
-const scraperBatFile = path.join(__dirname, '.run-scraper.bat');
+// Run scraper endpoints — signal/bat files in writable location
+let scraperSignalFile;
+let scraperBatFile;
 
 async function isScraperRunning() {
   try {
@@ -200,7 +207,7 @@ app.post('/api/run-scraper', async (req, res) => {
   const weeklyFlag = mode === 'weekly' ? ' --weekly' : '';
   const batContent = [
     '@echo off',
-    `cd /d "${__dirname}"`,
+    `cd /d "${writableBase}"`,
     `node index.js --now${weeklyFlag}`,
     `del "${scraperSignalFile}"`,
     'echo.',
@@ -228,10 +235,12 @@ app.post('/api/fetch-job-description', async (req, res) => {
 
   let browser;
   try {
-    browser = await puppeteer.launch({
+    const launchOpts = {
       headless: 'new',
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
-    });
+    };
+    if (chromePath) launchOpts.executablePath = chromePath;
+    browser = await puppeteer.launch(launchOpts);
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
     await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
@@ -248,15 +257,33 @@ app.post('/api/fetch-job-description', async (req, res) => {
 // Resume optimizer API routes (rate-limited — these call the Anthropic API)
 app.use('/api', rateLimiter, resumeRoutes);
 
-export function startDashboard() {
-  // 3. Bind to localhost only — prevents access from other devices on the network
+export function startDashboard(options = {}) {
+  // Set path bases from caller (Electron main process) or fall back to __dirname
+  resourcesBase = options.resourcesPath || __dirname;
+  writableBase = options.writablePath || __dirname;
+  chromePath = options.chromePath || null;
+
+  // Configure Express paths now that bases are set
+  app.use(express.static(path.join(resourcesBase, 'public')));
+  app.set('views', path.join(resourcesBase, 'views'));
+
+  // Initialize path-dependent variables
+  db = new JobDatabase(path.join(writableBase, 'jobs_database.json'));
+  lastRunFile = path.join(writableBase, 'last_run.json');
+  scraperSignalFile = path.join(writableBase, '.scraper-running');
+  scraperBatFile = path.join(writableBase, '.run-scraper.bat');
+
+  // Make resourcesBase available to sub-routers via app.locals
+  app.locals.resourcesBase = resourcesBase;
+  app.locals.writableBase = writableBase;
+
+  // Bind to localhost only — prevents access from other devices on the network
   app.listen(PORT, '127.0.0.1', () => {
-    console.log(`\n🌐 Dashboard running at http://localhost:${PORT} (localhost only)`);
-    console.log(`📊 View your jobs in your browser!`);
+    console.log(`Dashboard running at http://localhost:${PORT} (localhost only)`);
   });
 }
 
-// Start when run directly
+// Start when run directly (legacy mode: node dashboard.js)
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
 if (isMain) {
   startDashboard();

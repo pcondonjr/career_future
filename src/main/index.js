@@ -5,6 +5,7 @@ import config from './config.js';
 import trayManager from './tray.js';
 import scheduler from '../backend/scheduler.js';
 import { initTrial, isAppUsable, getLicenseStatus, validateLicenseKey } from './license.js';
+import { getResourcesPath, getWritablePath, findChromePath } from './paths.js';
 
 // ES module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -23,8 +24,8 @@ async function createWindow() {
   // Get dashboard port from config
   dashboardPort = config.getDashboardPort();
 
-  // Resolve icon path (may not exist yet)
-  const iconPath = path.join(__dirname, '../../assets/icons/icon.png');
+  // Resolve icon path
+  const iconPath = path.join(getResourcesPath(), 'assets', 'icons', 'icon.png');
 
   // Create browser window
   mainWindow = new BrowserWindow({
@@ -99,7 +100,11 @@ function loadDashboard() {
 async function startDashboardServer() {
   try {
     const dashboardModule = await import('../../dashboard.js');
-    dashboardModule.startDashboard();
+    dashboardModule.startDashboard({
+      resourcesPath: getResourcesPath(),
+      writablePath: getWritablePath(),
+      chromePath: findChromePath()
+    });
     console.log(`Dashboard server starting on port ${dashboardPort}`);
   } catch (error) {
     console.error('Failed to start dashboard:', error);

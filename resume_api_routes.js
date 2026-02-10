@@ -22,20 +22,22 @@ let cachedResumeText = null;
 let resumeLastModified = null;
 
 /**
- * Load resume text from file with caching
+ * Load resume text from file with caching.
+ * Uses resourcesBase from app.locals (set by dashboard.js) for path resolution.
  */
-async function getResumeText() {
-  const resumePath = path.join(__dirname, 'resume', 'Patrick_Condon_Resume.txt');
-  
+async function getResumeText(req) {
+  const base = (req && req.app.locals.resourcesBase) || __dirname;
+  const resumePath = path.join(base, 'resume', 'Patrick_Condon_Resume.txt');
+
   try {
     const stats = await fs.stat(resumePath);
     const currentModified = stats.mtime.getTime();
-    
+
     // Return cached version if file hasn't changed
     if (cachedResumeText && resumeLastModified === currentModified) {
       return cachedResumeText;
     }
-    
+
     // Read and cache resume
     cachedResumeText = await fs.readFile(resumePath, 'utf-8');
     resumeLastModified = currentModified;
@@ -60,7 +62,7 @@ router.post('/analyze-job', async (req, res) => {
     }
     
     // Load resume
-    const resumeText = await getResumeText();
+    const resumeText = await getResumeText(req);
     
     // Estimate cost before processing
     const estimatedInputTokens = optimizer.estimateTokens(jobDescription + resumeText);
@@ -114,7 +116,7 @@ router.post('/generate-cover-letter', async (req, res) => {
     }
     
     // Load resume
-    const resumeText = await getResumeText();
+    const resumeText = await getResumeText(req);
     
     // Generate cover letter
     const startTime = Date.now();
@@ -203,7 +205,7 @@ router.post('/batch-analyze', async (req, res) => {
       });
     }
     
-    const resumeText = await getResumeText();
+    const resumeText = await getResumeText(req);
     const results = [];
     
     console.log(`Starting batch analysis of ${jobs.length} jobs`);
@@ -274,7 +276,7 @@ router.post('/generate-optimized-resume', async (req, res) => {
     }
 
     // Load resume
-    const resumeText = await getResumeText();
+    const resumeText = await getResumeText(req);
 
     console.log(`Generating optimized resume for: ${jobTitle || 'Unknown'} at ${company || 'Unknown'}`);
 
@@ -318,7 +320,7 @@ router.post('/generate-optimized-resume', async (req, res) => {
 router.get('/cost-estimate', async (req, res) => {
   try {
     const descriptionLength = parseInt(req.query.descriptionLength) || 3000;
-    const resumeText = await getResumeText();
+    const resumeText = await getResumeText(req);
     
     const estimatedInputTokens = optimizer.estimateTokens(
       'x'.repeat(descriptionLength) + resumeText

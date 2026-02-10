@@ -1,0 +1,60 @@
+appId: com.careerfuture.app
+productName: Career Future
+copyright: Copyright (c) 2026 Career Future
+
+directories:
+  buildResources: build
+  output: release
+
+files:
+  - dist/**/*
+  - node_modules/**/*
+  - package.json
+  - "!node_modules/**/{test,tests,__tests__}/**"
+  - "!node_modules/**/*.{md,ts,map}"
+  - "!node_modules/**/CHANGELOG*"
+  - "!node_modules/.package-lock.json"
+
+extraResources:
+  - from: views/
+    to: app-data/views/
+    filter:
+      - "**/*"
+  - from: public/
+    to: app-data/public/
+    filter:
+      - "**/*"
+  - from: assets/icons/
+    to: app-data/assets/icons/
+    filter:
+      - "**/*"
+  - from: resume/
+    to: app-data/resume/
+    filter:
+      - "**/*"
+  - from: companies.csv
+    to: app-data/companies.csv
+  - from: companies-weekly.csv
+    to: app-data/companies-weekly.csv
+
+asar: true
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+  signAndEditExecutable: false
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Career Future
+  perMachine: false
+  allowElevation: true
+  runAfterFinish: true
+
+publish: null

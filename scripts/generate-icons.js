@@ -186,28 +186,44 @@ function drawLetterF(pixels, size, r, g, b) {
 }
 
 /**
- * Create ICO file from PNG data
- * Single-image ICO wrapping a PNG
+ * Create ICO file from a single PNG
  */
 function createICO(pngData) {
+  return createMultiICO([{ size: 256, png: pngData }]);
+}
+
+/**
+ * Create a multi-size ICO file from an array of { size, png } entries
+ */
+function createMultiICO(images) {
+  const count = images.length;
+
   // ICO header: 6 bytes
   const header = Buffer.alloc(6);
   header.writeUInt16LE(0, 0);     // reserved
   header.writeUInt16LE(1, 2);     // type: icon
-  header.writeUInt16LE(1, 4);     // count: 1 image
+  header.writeUInt16LE(count, 4); // image count
 
-  // ICO directory entry: 16 bytes
-  const entry = Buffer.alloc(16);
-  entry[0] = 0;   // width (0 = 256)
-  entry[1] = 0;   // height (0 = 256)
-  entry[2] = 0;   // color palette
-  entry[3] = 0;   // reserved
-  entry.writeUInt16LE(1, 4);   // color planes
-  entry.writeUInt16LE(32, 6);  // bits per pixel
-  entry.writeUInt32LE(pngData.length, 8);  // size of image data
-  entry.writeUInt32LE(22, 12); // offset to image data (6 + 16)
+  // Directory entries: 16 bytes each
+  const dirSize = count * 16;
+  let dataOffset = 6 + dirSize;
+  const entries = [];
 
-  return Buffer.concat([header, entry, pngData]);
+  for (const img of images) {
+    const entry = Buffer.alloc(16);
+    entry[0] = img.size < 256 ? img.size : 0; // width (0 = 256)
+    entry[1] = img.size < 256 ? img.size : 0; // height (0 = 256)
+    entry[2] = 0;   // color palette
+    entry[3] = 0;   // reserved
+    entry.writeUInt16LE(1, 4);   // color planes
+    entry.writeUInt16LE(32, 6);  // bits per pixel
+    entry.writeUInt32LE(img.png.length, 8);   // size of image data
+    entry.writeUInt32LE(dataOffset, 12);       // offset to image data
+    entries.push(entry);
+    dataOffset += img.png.length;
+  }
+
+  return Buffer.concat([header, ...entries, ...images.map(i => i.png)]);
 }
 
 // Generate icons at various sizes
@@ -246,5 +262,22 @@ const readmePath = path.join(iconsDir, 'README.txt');
 if (fs.existsSync(readmePath)) {
   fs.unlinkSync(readmePath);
 }
+
+// Generate build/ icons for electron-builder
+const buildDir = path.join(__dirname, '..', 'build');
+fs.mkdirSync(buildDir, { recursive: true });
+
+// Multi-size ICO for Windows installer (16, 32, 48, 256)
+const icoSizes = [16, 32, 48, 256];
+const icoImages = icoSizes.map(size => ({
+  size,
+  png: createPNG(size, size, drawIcon(size))
+}));
+fs.writeFileSync(path.join(buildDir, 'icon.ico'), createMultiICO(icoImages));
+console.log('  Created build/icon.ico (multi-size: 16, 32, 48, 256)');
+
+// PNG for Linux/fallback
+fs.writeFileSync(path.join(buildDir, 'icon.png'), mainPng);
+console.log('  Created build/icon.png (256x256)');
 
 console.log('\nAll icons generated successfully!');

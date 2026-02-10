@@ -26,7 +26,8 @@ export default defineConfig({
       rollupOptions: {
         input: {
           error: 'src/renderer/error.html',
-          wizard: 'src/renderer/wizard.html'
+          wizard: 'src/renderer/wizard.html',
+          license: 'src/renderer/license.html'
         }
       }
     }

@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import Anthropic from '@anthropic-ai/sdk';
 import dotenv from 'dotenv';
 import { getKeywords, getLocations } from './sites-config.js';
@@ -6,12 +6,13 @@ import { getKeywords, getLocations } from './sites-config.js';
 dotenv.config();
 
 export class JobScraper {
-  constructor() {
+  constructor(options = {}) {
     this.browser = null;
+    this.chromePath = options.chromePath || null;
   }
 
   async initialize() {
-    this.browser = await puppeteer.launch({
+    const launchOpts = {
       headless: 'new',
       args: [
         '--no-sandbox',
@@ -20,7 +21,9 @@ export class JobScraper {
         '--disable-accelerated-2d-canvas',
         '--disable-gpu'
       ]
-    });
+    };
+    if (this.chromePath) launchOpts.executablePath = this.chromePath;
+    this.browser = await puppeteer.launch(launchOpts);
   }
 
   async close() {

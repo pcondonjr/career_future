@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import scheduler from '../backend/scheduler.js';
 import { getLicenseStatus } from './license.js';
 import config from './config.js';
+import { getResourcesPath } from './paths.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,7 +50,7 @@ class TrayManager {
    * Load tray icon with fallback to a generated icon if files are missing
    */
   _loadIcon() {
-    const iconsDir = path.join(__dirname, '../../assets/icons');
+    const iconsDir = path.join(getResourcesPath(), 'assets', 'icons');
 
     // Try platform-specific icon first
     const candidates = process.platform === 'win32'
