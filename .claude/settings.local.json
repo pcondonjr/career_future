@@ -96,7 +96,17 @@
       "Bash(npx electron-builder:*)",
       "Bash(git commit:*)",
       "Bash(npm run build:*)",
-      "Bash(python -m json.tool:*)"
+      "Bash(python -m json.tool:*)",
+      "WebFetch(domain:uk.welcometothejungle.com)",
+      "WebFetch(domain:www.welcometothejungle.com)",
+      "WebFetch(domain:en.blog.mantiks.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:apify.com)",
+      "WebFetch(domain:blog.mantiks.io)",
+      "WebFetch(domain:www.hwresources.net)",
+      "WebFetch(domain:innovativesolarsystemsllc.com)",
+      "WebFetch(domain:www.pointsoflight.org)",
+      "WebFetch(domain:workforcenow.adp.com)"
     ]
   }
 }

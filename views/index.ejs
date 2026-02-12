@@ -31,6 +31,15 @@
         <hr>
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: end; margin-bottom: 1rem;">
             <label>
+                Time Range
+                <select id="time-range">
+                    <option value="24h"<%= range === '24h' ? ' selected' : '' %>>Last 24 Hours</option>
+                    <option value="7d"<%= range === '7d' ? ' selected' : '' %>>Last 7 Days</option>
+                    <option value="30d"<%= range === '30d' ? ' selected' : '' %>>Last 30 Days</option>
+                    <option value="all"<%= range === 'all' ? ' selected' : '' %>>All Time</option>
+                </select>
+            </label>
+            <label>
                 Field
                 <select id="search-field">
                     <option value="title">Title</option>
@@ -130,6 +139,14 @@
         applyFilter();
       });
 
+      // Time range dropdown
+      const timeRange = document.getElementById('time-range');
+      timeRange.addEventListener('change', () => {
+        const p = new URLSearchParams(window.location.search);
+        p.set('range', timeRange.value);
+        window.location.href = '/?' + p.toString();
+      });
+
       // Scraper run buttons
       const dailyBtn = document.getElementById('run-daily-btn');
       const weeklyBtn = document.getElementById('run-weekly-btn');
@@ -137,6 +154,7 @@
 
       function searchParams() {
         const p = new URLSearchParams();
+        p.set('range', timeRange.value);
         if (field.value) p.set('field', field.value);
         if (modifier.value) p.set('modifier', modifier.value);
         if (value.value.trim()) p.set('search', value.value.trim());

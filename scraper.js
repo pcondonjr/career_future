@@ -1,6 +1,8 @@
 import puppeteer from 'puppeteer-core';
 import Anthropic from '@anthropic-ai/sdk';
 import dotenv from 'dotenv';
+import path from 'path';
+import fs from 'fs';
 import { getKeywords, getLocations } from './sites-config.js';
 
 dotenv.config();
@@ -9,6 +11,20 @@ export class JobScraper {
   constructor(options = {}) {
     this.browser = null;
     this.chromePath = options.chromePath || null;
+  }
+
+  _findChrome() {
+    const candidates = [
+      path.join(process.env['PROGRAMFILES'] || '', 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      path.join(process.env['PROGRAMFILES(X86)'] || '', 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      path.join(process.env['LOCALAPPDATA'] || '', 'Google', 'Chrome', 'Application', 'chrome.exe'),
+      path.join(process.env['PROGRAMFILES(X86)'] || '', 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+      path.join(process.env['PROGRAMFILES'] || '', 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    ];
+    for (const c of candidates) {
+      if (c && fs.existsSync(c)) return c;
+    }
+    return null;
   }
 
   async initialize() {
@@ -22,7 +38,8 @@ export class JobScraper {
         '--disable-gpu'
       ]
     };
-    if (this.chromePath) launchOpts.executablePath = this.chromePath;
+    const execPath = this.chromePath || this._findChrome();
+    if (execPath) launchOpts.executablePath = execPath;
     this.browser = await puppeteer.launch(launchOpts);
   }
 

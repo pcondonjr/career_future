@@ -17,3 +17,8 @@ HERC Jobs,https://main.hercjobs.org/jobs/?keywords=salesforce,".job-listing, .jo
 Inside Higher Ed,https://careers.insidehighered.com/jobs/?keywords=salesforce,li,"h3 a, h3",".location, li",a,true,false,false,Higher Ed careers
 Watt's List - Non-profit,https://wattslist.info/salesforce-nonprofit-jobs,.github-markdown-body p[data-v-md-line],a strong,.no-location,a,true,false,true,Nonprofit SF jobs
 Watt's List,https://wattslist.info/consulting-jobs,.github-markdown-body ul li,a,br,a,true,false,true,Consulting SF jobs
+Welcome to the Jungle,https://www.welcometothejungle.com/en/jobs?query=salesforce&page=1,"[data-role=""jobs:thumb""]",h2,span.sc-ftOrOy,"a[href*=""/jobs/""]",true,false,false,Job board - Algolia/React - location selector may need updating
+8VC Jobs,https://jobs.8vc.com/jobs?q=salesforce,.job-card,"[data-testid=""job-title-link""]",span,"[data-testid=""job-title-link""]",true,false,false,VC job board - Ashby platform - stable data-testid selectors
+a16z Jobs,https://jobs.a16z.com/jobs,.job-list-job,"h2.job-list-job-title a, .job-list-job-title a",.job-list-badge-locations,".job-list-job-title a",true,true,false,VC job board - Consider platform - links to external boards (Greenhouse/Lever/Ashby)
+Accel Jobs,https://jobs.accel.com/jobs?q=salesforce,.job-card,"[data-testid=""job-title-link""]",span,"[data-testid=""job-title-link""]",true,false,false,VC job board - Getro/Ashby platform - same as 8VC
+Bessemer (ADP),https://myjobs.adp.com/bessemer/cx,.ng-star-inserted,h3,".reqLocation, .cx-single-location-text",a,true,true,false,VC portfolio - ADP Angular portal - selectors may need refinement

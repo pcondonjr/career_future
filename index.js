@@ -1,5 +1,7 @@
 import cron from 'node-cron';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { JobScraper } from './scraper.js';
 import { JobDatabase } from './database.js';
 import { JobEmailer } from './emailer.js';
@@ -8,16 +10,19 @@ import { startDashboard } from './dashboard.js';
 
 dotenv.config();
 
-// Configuration for different scraper modes
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Configuration for different scraper modes (use absolute paths so it works
+// regardless of the working directory, e.g. when launched via batch file)
 const CONFIG = {
   daily: {
-    csvPath: './companies.csv',
-    dbPath: './jobs_database.json',
+    csvPath: path.join(__dirname, 'companies.csv'),
+    dbPath: path.join(__dirname, 'jobs_database.json'),
     name: 'Daily'
   },
   weekly: {
-    csvPath: './companies-weekly.csv',
-    dbPath: './jobs_database_weekly.json',
+    csvPath: path.join(__dirname, 'companies-weekly.csv'),
+    dbPath: path.join(__dirname, 'jobs_database_weekly.json'),
     name: 'Weekly'
   }
 };
@@ -116,7 +121,7 @@ async function runJobSearch(mode = 'daily') {
 
 // CLI mode
 const isWeekly = process.argv.includes('--weekly');
-const csvToValidate = isWeekly ? './companies-weekly.csv' : './companies.csv';
+const csvToValidate = isWeekly ? CONFIG.weekly.csvPath : CONFIG.daily.csvPath;
 
 if (process.argv.includes('--validate')) {
   // Validate CSV and exit

@@ -81,9 +81,14 @@ app.get('/', async (req, res) => {
     await db.load();
     const stats = db.getStats();
 
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const range = req.query.range || '30d';
+    let cutoff = null;
+    if (range !== 'all') {
+      const days = range === '24h' ? 1 : range === '7d' ? 7 : range === '30d' ? 30 : 30;
+      cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    }
     const jobs = Array.from(db.jobs.values())
-      .filter(job => new Date(job.firstSeen) >= sevenDaysAgo)
+      .filter(job => !cutoff || new Date(job.firstSeen) >= cutoff)
       .sort((a, b) => new Date(b.firstSeen) - new Date(a.firstSeen));
 
     const byCompany = {};
@@ -101,7 +106,8 @@ app.get('/', async (req, res) => {
       jobs,
       byCompany,
       totalCompanies: Object.keys(byCompany).length,
-      lastRun
+      lastRun,
+      range
     });
   } catch (error) {
     res.status(500).send('Error loading jobs: ' + error.message);
