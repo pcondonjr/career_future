@@ -1,0 +1,26 @@
+dork_id,category,query,frequency,notes
+ats-workday,ATS Platform,"site:myworkdayjobs.com ""{{keyword}} administrator""",daily,Most Fortune 500 companies
+ats-workday-broad,ATS Platform,"site:myworkdayjobs.com ""{{keyword}}"" (""administrator"" OR ""admin"" OR ""business analyst"")",daily,Broader Workday catch
+ats-workday-subdomains,ATS Platform,"site:wd5.myworkdayjobs.com OR site:wd1.myworkdayjobs.com OR site:wd3.myworkdayjobs.com ""{{keyword}}""",weekly,Try wd1-wd5 variants
+ats-greenhouse,ATS Platform,"site:boards.greenhouse.io ""{{keyword}} administrator""",daily,Startups & mid-market tech
+ats-greenhouse-broad,ATS Platform,"site:boards.greenhouse.io ""{{keyword}}"" (""administrator"" OR ""business analyst"" OR ""project manager"")",daily,Broader Greenhouse catch
+ats-greenhouse-alt,ATS Platform,"site:job-boards.greenhouse.io ""{{keyword}}""",weekly,Alternate Greenhouse URL
+ats-icims,ATS Platform,"site:icims.com ""{{keyword}} administrator""",daily,Enterprise companies
+ats-eightfold,ATS Platform,"site:eightfold.ai ""{{keyword}} administrator""",daily,Large enterprises
+ats-lever,ATS Platform,"site:jobs.lever.co ""{{keyword}} administrator""",daily,Tech startups
+ats-phenom,ATS Platform,"site:phenom.com ""{{keyword}} administrator""",weekly,Enterprise companies
+ats-smartrecruiters,ATS Platform,"site:smartrecruiters.com ""{{keyword}} administrator""",weekly,Mid-market companies
+ats-bamboohr,ATS Platform,"site:bamboohr.com ""{{keyword}} administrator""",weekly,Small-mid companies
+ats-ashby,ATS Platform,"site:jobs.ashbyhq.com ""{{keyword}} administrator""",weekly,Tech startups
+ats-jobvite,ATS Platform,"site:jobs.jobvite.com ""{{keyword}} administrator""",weekly,Various companies
+loc-all-ats,Location,"""{{keyword}} administrator"" {{locations_or}} (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com OR site:eightfold.ai)",daily,All major ATS with configured locations
+loc-ats-broad,Location,"""{{keyword}}"" {{locations_or}} (site:myworkdayjobs.com OR site:boards.greenhouse.io)",daily,Broad keyword with configured locations
+role-sf-admin,Role Specific,"""{{keyword}} administrator"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",daily,Admin roles across ATS
+role-sf-ba,Role Specific,"""{{keyword}}"" ""business analyst"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",daily,BA roles
+role-sf-pm,Role Specific,"""{{keyword}}"" ""project manager"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",daily,PM roles
+role-revops,Role Specific,"""revenue operations"" ""{{keyword}}"" (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,RevOps roles
+role-sf-flow,Role Specific,"""{{keyword}}"" ""flow"" (""administrator"" OR ""admin"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Flow-specific roles
+combo-remote-all,Power Combo,"""{{keyword}} administrator"" ""remote"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com OR site:eightfold.ai OR site:jobs.lever.co)",daily,Cast wide net for remote
+combo-education,Power Combo,"""{{keyword}}"" (""education cloud"" OR ""higher education"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Education sector
+combo-nonprofit,Power Combo,"""{{keyword}}"" (""nonprofit"" OR ""NPSP"" OR ""nonprofit cloud"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Nonprofit sector
+combo-experience-cloud,Power Combo,"""{{keyword}}"" ""experience cloud"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",weekly,Community/portal roles

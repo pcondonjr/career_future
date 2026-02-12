@@ -7,13 +7,11 @@ company_name,careers_url,job_card_selector,title_selector,location_selector,link
 Accenture,https://www.accenture.com/us-en/careers/jobsearch?jk=salesforce,".job-item, [data-job-id]",.job-title,.job-location,a,true,Major consulting firm
 Silverline,https://www.silverlinecrm.com/careers/,.career-opening,"h3, .position-title",.location,a,true,SF Partner
 Perficient,https://careers.perficient.com/us/en/search-results?keywords=salesforce,.job-tile,.job-title,.job-location,a,true,SF consulting
-HubSpot,https://www.hubspot.com/careers/jobs?page=1&query=salesforce,"[data-test=""job-card""]",h3,"[data-test=""location""]",a,true,Tech company
+HubSpot,https://www.hubspot.com/careers/jobs?page=1&query=salesforce,"[data-test=""job-card""]",h3,"[data-test=""location""]",a,false,Tech company - navigation timeout
 Zoom,https://careers.zoom.us/jobs/search?query=salesforce,.job-card,.job-title,.location,a,true,Tech company
-DocuSign,https://www.docusign.com/company/careers/open-positions?search=salesforce,[data-jobid],.job-title,.job-location,a,true,Tech company
+DocuSign,https://www.docusign.com/company/careers/open-positions?search=salesforce,[data-jobid],.job-title,.job-location,a,false,Tech company - navigation timeout
 Michelin,https://jobs.michelinman.com/search/?q=salesforce,"tr.data-row, .job-listing","a.jobTitle-link, .job-title",".jobLocation, .location",a.jobTitle-link,true,Local - Greenville SC
 Prisma Health,https://careers.prismahealth.org/search/?q=salesforce,tr[data-job-id],a.jobTitle,.jobLocation,a.jobTitle,true,Local - Greenville SC
-Indeed,https://www.indeed.com/jobs?q=salesforce+administrator&l=Remote,".job_seen_beacon, .jobsearch-SerpJobCard","h2.jobTitle, .jobTitle",.companyLocation,"h2.jobTitle a, a.jcs-JobTitle",false,Job board
-Dice,https://www.dice.com/jobs?q=salesforce%20administrator&location=Remote,"[data-cy=""card-title-link""]","a[data-cy=""card-title-link""]","[data-cy=""job-card-location""]","a[data-cy=""card-title-link""]",false,Tech job board
 Heller Consulting,https://www.hellerconsulting.com/careers/,.job-opening,h3,.location,a,true,Nonprofit focus
 Fíonta,https://www.fionta.com/careers/,.career-opportunity,"h3, .title",.location,a,true,Nonprofit focus
 Newsela,https://newsela.com/about/careers/,"[data-job-id], .job-listing",".job-title, h3",.location,a,true,EdTech - Education Cloud
@@ -24,6 +22,87 @@ Stripe,https://stripe.com/jobs/search?query=salesforce,[data-job-id],h3,.locatio
 Airtable,https://www.airtable.com/company/careers?search=salesforce,.job-posting,.job-title,.location,a,true,Tech company
 Wiz,https://www.wiz.io/careers,"[class*=""job""]",.job-title,.location,a,true,Cloud security
 Zenkraft,https://zenkraft.com/careers/,.career-listing,.position-title,.location,a,true,Trailblazer company
+NewSpring Church,https://www.newspring.cc/jobs,"section, div.job-listing",h3,"a[href*='/locations/']","a[href*='/jobs/']",true,Church - Anderson SC - verified jobs
+Thrive Upstate,https://thriveupstate.org/join-our-team/,"div, article",strong,.location,"a[href*='thriveupstate.org']",true,Nonprofit - Greenville SC - 3 jobs
+MountainTrue,https://mountaintrue.org/about-us/jobs-internships/,".wp-block-group, div",strong,"p:contains('Location')",a,true,Nonprofit - Asheville NC - internships
+Advanced Prosthetics,https://www.advancedpro.biz/about-us/careers,"div, section","h2, h3",p,a,true,Healthcare - Greenville/Gastonia - 2 jobs
+ACL Airshop,https://www.aclairshop.com/careers.php,".job-listing, div",h3,.location,a,true,Aviation - needs selector verification
+Agape Care Group,https://careers.agapecaregroup.com/,".job-card, div",".job-title, h3",.location,a,true,Healthcare - external portal
+Dogwood Health Trust,https://dogwoodhealthtrust.org/about/careers/jobs/,".job-listing, div",h3,.location,a,true,Nonprofit - Asheville NC
+Together Women Rise,https://togetherwomenrise.org/careers/,".job-listing, div",h3,.location,a,true,Nonprofit
+KeyMark,https://www.keymarkinc.com/careers/apply/,".elementor-widget-wrap, div",h3,"ul li","a[href*='paylocity']",true,Tech - Liberty SC - uses Paylocity
+CaroMont Health,https://pm.healthcaresource.com/cs/caromont,".job-row, tr",".job-title, a",.location,a,true,Healthcare - Gastonia NC - HealthcareSource
+Southern First Bank,https://recruiting.ultipro.com/SOU1058STHFB,".opportunity, div",".opportunity-title, h3",.location,a,false,Banking - Greenville SC - Ultipro - navigation timeout
+TPM,https://tpm.exacthire.com/,".job-listing, div",".job-title, h3",.location,a,true,Manufacturing - Greenville SC - ExactHire
+SHARE SC,https://www.sharesc.org/careers.php,tr,"td:nth-child(2), a","td:nth-child(1)",a,true,Nonprofit - 10 jobs - table format
+Patterson Pumps,https://pattersonpumps.com/careers,div,"a[href$='.pdf']",h5,"a[href$='.pdf']",true,Manufacturing - Toccoa GA - 7 jobs PDF links
+Spero Financial,https://spero.financial/careers,".job-card, div",h3,.location,a,true,Credit Union - Greenville SC
+McGill Associates,https://www.mcgillassociates.com/career-opportunities/,".job-card, div",h3,.location,a,true,Engineering - Asheville NC
+Center for Craft,https://www.centerforcraft.org/news,"article, .news-item",h2,.date,a,true,Nonprofit - Asheville NC - jobs in news
+Power Services Group,https://www.powerservicesgroup.com/about/careers/,"ul li, div",a,p,"a[href*='/careers/']",true,Manufacturing - 3 machinist jobs
+Green Built Alliance,https://www.gba.org/about-us/careers/,".wp-block-group, div","h3, h4",p,"a[href*='.pdf']",true,Nonprofit - Asheville NC - contractor positions
+Stephens County Hospital,https://stephenscountyhospital.com/careers/job-openings/,".job-card, div",h3,.location,a,true,Healthcare - Toccoa GA
+Young Office,https://www.youngoffice.com/company/careers/,".job-card, div",h3,.location,a,true,Office Solutions - SC
+ASAP Connections,https://asapconnections.org/about-us/join-our-team/,".job-listing, div",h3,.location,a,true,Nonprofit - Asheville NC - internships
+Johnson Development,https://www.johnsondevelopment.net/jda-careers,".job-card, div","h2, h3",p,a,true,Real Estate - Spartanburg SC - 3 jobs
+Pioneer Motor Bearing,https://www.pioneer1.com/about-us/careers/,".job-listing, div",h3,p,"a[href*='factoryfix']",true,Manufacturing - Kings Mountain NC - 1 job
+KYMCO USA,https://kymcousa.com/careers/,".job-listing, div","h2, h3",p,a,true,Powersports - Spartanburg SC - 2 jobs
+PromoUltd,https://www.promoultd.com/join-our-team,".job-listing, div",h3,p,a,true,Marketing - Greenville SC - sales position
+Reynolds Company,https://reynoldsglue.com/contact/employment-opportunities/,".job-listing, div",h3,p,a,true,Manufacturing - sales position
+Hill Electric,https://hillelectric.net/careers/,".job-listing, div",h3,p,a,true,Electrical - general applications
+Weekes Construction,https://weekesconstruction.com/contact-us/,".job-listing, div",h3,p,a,true,Construction - hiring section
+3D Systems Corp,"https://www.3dsystems.com/careers#positions",.position-card,.position-title,.position-location,a,true,Rock Hill SC - Tech/Manufacturing - Eightfold ATS
+Abbott Laboratories,https://www.jobs.abbott/us/en/search-results?keywords=salesforce&location=South%20Carolina,.jobs-list-item,.job-title,.job-location,.job-title a,true,Liberty SC - Medical devices - Workday ATS
+ACS Technologies,https://www.acstechnologies.com/careers/,.career-opening,.position-title,.location,a,true,Florence SC - Church mgmt SaaS
+ADP,https://jobs.adp.com/search/?q=salesforce&locationsearch=South+Carolina,.job-listing,.job-title,.job-location,.job-title a,true,Florence SC - Known SF user for internal ops
+Aetna Voluntary Plans,https://jobs.cvshealth.com/search/?q=salesforce&locationsearch=South+Carolina,.job-listing,.job-title,.job-location,.job-title a,true,Columbia SC - Parent CVS Health - iCIMS ATS
+Agape Care Group,https://www.agapecare.com/careers/,.job-listing,.job-title,.job-location,a.job-link,false,Spartanburg SC - Healthcare/Hospice - SSL cert invalid
+Aiken Regional Medical Ctr,https://careers.uhsinc.com/search/?q=&locationsearch=Aiken%2C+SC,.job-listing,.job-title,.job-location,.job-title a,false,Aiken SC - UHS parent company - connection timeout
+Allconnect Inc,https://www.allconnect.com/about/careers,.job-card,.job-title,.job-location,a,true,Fort Mill SC - Telecom/Tech
+Amazon Fulfillment Ctr,https://www.amazon.jobs/en/search?base_query=salesforce&loc_query=South+Carolina,.job-tile,.job-title,.location-and-id,a.job-link,true,West Columbia SC - Enterprise SF user
+AnMed Health,https://careers.anmedhealth.org/search?q=&location=Anderson%2C+SC,.job-list-item,.job-title,.job-location,a,false,Anderson SC - Large health system - DNS not resolving
+Atlas Copco Compressors,https://www.atlascopcogroup.com/en/careers/job-search?q=&location=Rock+Hill,.job-card,.job-title,.job-location,a.job-link,true,Rock Hill SC - Industrial mfg
+Bausch + Lomb,https://careers.bausch.com/search/?q=salesforce&locationsearch=Greenville,.job-listing,.job-title,.job-location,.job-title a,false,Greenville SC - Workday ATS - DNS not resolving
+Beaufort Memorial,https://www.beaufortmemorial.org/careers,.job-listing,.job-title,.job-location,a,false,Beaufort SC - Large hospital - SSL cert invalid
+Benefitfocus,https://vfrjobs.voya.com/en/jobs/?search=salesforce&location=Charleston,.job-card,.job-title,.job-location,a.job-link,false,Daniel Island SC - Voya parent - Known SF user - DNS not resolving
+Blackbaud,https://careers.blackbaud.com/us/en/search-results?keywords=salesforce,.jobs-list-item,.job-title,.job-location,.job-title a,true,Daniel Island SC - EdTech/Nonprofit - Known SF user - Phenom ATS
+BlueCross BlueShield SC,https://careers-bcbssc.icims.com/jobs/search?ss=1&searchKeyword=salesforce,.iCIMS_JobsTable .row,.iCIMS_JobTitle,td.iCIMS_JobLocation,.iCIMS_JobTitle a,true,Columbia/Myrtle Beach - iCIMS ATS
+Bon Secours St Francis,https://careers.bonsecours.com/search/?q=salesforce&locationsearch=Greenville,.job-listing,.job-title,.job-location,.job-title a,false,Greenville SC - Large hospital system - navigation timeout
+Breakthru Beverage SC,https://careers.breakthrubev.com/jobs?keywords=&location=South+Carolina,.card,.card-title,.card-location,a,true,Ridgeway SC - Beverage distribution
+Britax Child Safety,https://careers.britax.com/search/?q=&locationsearch=Fort+Mill,.job-listing,.job-title,.job-location,.job-title a,true,Fort Mill SC - Consumer products mfg
+Chubb Corp,https://careers.chubb.com/global/en/search-results?keywords=salesforce,.jobs-list-item,.job-title,.job-location,.job-title a,true,Greenville SC - Fortune 500 insurer - Phenom ATS
+Citadel Military College,https://jobs.citadel.edu/postings/search,.job-listing,.job-title,.job-location,a,true,Charleston SC - Higher education
+City Of Greenville,https://www.greenvillesc.gov/Jobs.aspx,.job-listing,.job-title,.job-location,a,true,Greenville SC - Municipal government
+Clemson University,https://jobs.clemson.edu/postings/search?utf8=%E2%9C%93&query=salesforce,.job-listing,.job-title,.job-location,a,true,Clemson SC - Known SF user - Education Cloud target
+Coastal Carolina University,https://jobs.coastal.edu/postings/search,.job-listing,.job-title,.job-location,a,true,Conway SC - Higher education
+Coldwell Banker Caine,https://www.cbcaine.com/about/careers/,.career-listing,.position-title,.location,a,false,Greenville SC - Real estate - CRM heavy - SSL cert invalid
+Colonial Life,https://jobs.unum.com/search/?q=salesforce&locationsearch=Columbia+SC,.job-listing,.job-title,.job-location,.job-title a,false,Columbia SC - Unum parent - Known SF user - DNS not resolving
+Columbia College,https://www.columbiasc.edu/about/employment/,.job-listing,.job-title,.job-location,a,true,Columbia SC - Higher education
+Columbia International Univ,https://www.ciu.edu/employment,.job-listing,.job-title,.job-location,a,true,Columbia SC - Higher education
+Comporium,https://www.comporium.com/careers/,.job-listing,.job-title,.job-location,a,true,Rock Hill SC - Regional telecom
+Costello Real Estate,https://www.linkedin.com/company/costello-real-estate-and-investments/jobs/,.job-card,.job-title,.job-location,a,true,Fort Mill SC - Check LinkedIn for postings
+EDENS,https://www.edens.com/careers,.career-opening,.position-title,.location,a,true,Columbia SC - Commercial real estate
+Enstar US,https://www.enstargroup.com/careers,.job-listing,.job-title,.job-location,a,true,Columbia SC - Insurance holding company
+Evening Post Industries,https://www.eveningpostindustries.com/careers,.job-listing,.job-title,.job-location,a,true,Charleston SC - Media company
+Flex,https://flextronics.wd1.myworkdayjobs.com/Careers?q=salesforce&locations=West+Columbia,.css-19uc56f,.css-19uc56f h3,.css-129m7dg,a,true,West Columbia SC - Workday ATS
+Fluor Enterprises,https://careers.fluor.com/careers?query=salesforce&location=Greenville,.position-card,.position-title,.position-location,a,true,Greenville SC - Fortune 500 - Eightfold ATS
+Founders Federal Credit Union,https://www.foundersfcu.com/careers,.job-listing,.job-title,.job-location,a,true,Lancaster SC - Credit union - Possible SF user
+FUJIFILM Manufacturing USA,https://fujifilm.wd3.myworkdayjobs.com/FUJIFILM_Careers?q=salesforce,.css-19uc56f,.css-19uc56f h3,.css-129m7dg,a,true,Greenwood SC - Workday ATS
+Furman University,https://furman.wd5.myworkdayjobs.com/Furman_Careers,.css-19uc56f,.css-19uc56f h3,.css-129m7dg,a,true,Greenville SC - Higher education - Workday ATS
+Greenville Technical College,https://www.gvltec.edu/About_Us/Human_Resources/Employment_Opportunities/,.job-listing,.job-title,.job-location,a,true,Greenville SC - Education Cloud target
+HCA Healthcare Colleton,https://careers.hcahealthcare.com/search/?q=salesforce&locationsearch=South+Carolina,.job-listing,.job-title,.job-location,.job-title a,true,Walterboro SC - Large hospital chain
+Honeywell,https://careers.honeywell.com/us/en/search-results?keywords=salesforce&location=South+Carolina,.jobs-list-item,.job-title,.job-location,.job-title a,true,Fort Mill SC - Fortune 500 - Known SF user - Phenom ATS
+Husqvarna Outdoor Products,https://careers.husqvarnagroup.com/search/?q=salesforce&locationsearch=Orangeburg,.job-listing,.job-title,.job-location,.job-title a,false,Orangeburg SC - Global mfg - DNS not resolving
+Inspiration Networks,https://www.linkedin.com/company/inspiration-networks/jobs/,.job-card,.job-title,.job-location,a,true,Fort Mill SC - Media/Broadcasting - Check LinkedIn
+Itron Inc,https://itron.wd5.myworkdayjobs.com/Itron_Careers?q=salesforce,.css-19uc56f,.css-19uc56f h3,.css-129m7dg,a,true,West Union SC - Energy tech - Workday ATS
+Jacobs Engineering,https://careers.jacobs.com/search/?q=salesforce&locationsearch=Greenville,.job-listing,.job-title,.job-location,.job-title a,true,Greenville SC - Fortune 500 - Known SF user
+Johnson Controls,https://jobs.johnsoncontrols.com/search/?q=salesforce&locationsearch=South+Carolina,.job-listing,.job-title,.job-location,.job-title a,true,West Union SC - Fortune 500 - Workday ATS
+Kanawha Insurance,https://www.linkedin.com/company/kanawha-insurance-company/jobs/,.job-card,.job-title,.job-location,a,true,Lancaster SC - Insurance - Check LinkedIn
+Kimberly-Clark,https://www.kimberly-clark.com/en-us/careers/search-jobs?q=salesforce&location=South+Carolina,.job-card,.job-title,.job-location,a.job-link,true,Beech Island SC - Fortune 500 - Workday ATS
+BorgWarner Inc,https://borgwarner.wd5.myworkdayjobs.com/BorgWarner_Careers?q=salesforce,.css-19uc56f,.css-19uc56f h3,.css-129m7dg,a,true,Seneca SC - Auto parts mfg - Workday ATS
+Premier Pain Solutions,https://recruiting.paylocity.com/recruiting/jobs/All/42101e7b-b16e-40f6-8fe8-894f3d865541/Premier-Pain-Solutions-PLLC,.job-card,h3,.location,a,false,Career 
+Indeed,https://www.indeed.com/jobs?q=salesforce+administrator&l=Remote,".job_seen_beacon, .jobsearch-SerpJobCard","h2.jobTitle, .jobTitle",.companyLocation,"h2.jobTitle a, a.jcs-JobTitle",false,Job board
+Dice,https://www.dice.com/jobs?q=salesforce%20administrator&location=Remote,"[data-cy=""card-title-link""]","a[data-cy=""card-title-link""]","[data-cy=""job-card-location""]","a[data-cy=""card-title-link""]",false,Tech job board
 Strong Missions,https://www.strongmissions.com/about/careers,.job-card,h3,.location,a,false,Career 
 BHHS Cambridge Realty,https://www.bhhs.com/join-us,.job-card,h3,.location,a,false,Career 
 Upstate Workforce Future's,https://www.upstateworkforceboard.org/opportunities,.job-card,h3,.location,a,false,Career 
@@ -47,7 +126,6 @@ French Broad Chocolates,https://frenchbroadchocolates.com/pages/work-with-us,.jo
 Robojuice,https://robojuice.com/careers/,.job-card,h3,.location,a,false,Career 
 Animal Hospital of Waynesville,https://www.animalhosp.com/careers,.job-card,h3,.location,a,false,Career 
 First Responders Healthcare Services,https://1strespondershealthcare.applytojob.com/apply,.job-card,h3,.location,a,false,Career 
-Premier Pain Solutions,https://recruiting.paylocity.com/recruiting/jobs/All/42101e7b-b16e-40f6-8fe8-894f3d865541/Premier-Pain-Solutions-PLLC,.job-card,h3,.location,a,false,Career 
 NewBold,https://newboldtech.com/careers/,.job-card,h3,.location,a,false,Career 
 North Carolina School for the Deaf,https://nc.wd108.myworkdayjobs.com/NC_Careers?hiringCompany=4c5533ba0a02100160ee4aeb0cfb0000,.job-card,h3,.location,a,false,Career 
 Community Credit,https://mycommunitycredit.com/careers/,.job-card,h3,.location,a,false,Career 
@@ -62,43 +140,10 @@ EnCode Wireless,https://www.encodewireless.com/contact.html,.job-card,h3,.locati
 Excel Fire Sprinklers,https://careers.pyebarkerfs.com/,.job-card,h3,.location,a,false,Career 
 Ahead Start,https://aheadstart-sc.com/career-opportunities/,.job-card,h3,.location,a,false,Career 
 McKinney Mazda,https://sites.hireology.com/mckinneyautomotive1,.job-card,h3,.location,a,false,Career
-# --- New companies from companies-to-add_2.csv ---
-NewSpring Church,https://www.newspring.cc/jobs,"section, div.job-listing",h3,"a[href*='/locations/']","a[href*='/jobs/']",true,Church - Anderson SC - verified jobs
-Thrive Upstate,https://thriveupstate.org/join-our-team/,"div, article",strong,.location,"a[href*='thriveupstate.org']",true,Nonprofit - Greenville SC - 3 jobs
-MountainTrue,https://mountaintrue.org/about-us/jobs-internships/,".wp-block-group, div",strong,"p:contains('Location')",a,true,Nonprofit - Asheville NC - internships
-Advanced Prosthetics,https://www.advancedpro.biz/about-us/careers,"div, section","h2, h3",p,a,true,Healthcare - Greenville/Gastonia - 2 jobs
-ACL Airshop,https://www.aclairshop.com/careers.php,".job-listing, div",h3,.location,a,true,Aviation - needs selector verification
-Agape Care Group,https://careers.agapecaregroup.com/,".job-card, div",".job-title, h3",.location,a,true,Healthcare - external portal
-Dogwood Health Trust,https://dogwoodhealthtrust.org/about/careers/jobs/,".job-listing, div",h3,.location,a,true,Nonprofit - Asheville NC
-Together Women Rise,https://togetherwomenrise.org/careers/,".job-listing, div",h3,.location,a,true,Nonprofit
-KeyMark,https://www.keymarkinc.com/careers/apply/,".elementor-widget-wrap, div",h3,"ul li","a[href*='paylocity']",true,Tech - Liberty SC - uses Paylocity
-CaroMont Health,https://pm.healthcaresource.com/cs/caromont,".job-row, tr",".job-title, a",.location,a,true,Healthcare - Gastonia NC - HealthcareSource
-Southern First Bank,https://recruiting.ultipro.com/SOU1058STHFB,".opportunity, div",".opportunity-title, h3",.location,a,true,Banking - Greenville SC - Ultipro
-TPM,https://tpm.exacthire.com/,".job-listing, div",".job-title, h3",.location,a,true,Manufacturing - Greenville SC - ExactHire
-# --- Additional companies from second batch ---
-SHARE SC,https://www.sharesc.org/careers.php,tr,"td:nth-child(2), a","td:nth-child(1)",a,true,Nonprofit - 10 jobs - table format
-Patterson Pumps,https://pattersonpumps.com/careers,div,"a[href$='.pdf']",h5,"a[href$='.pdf']",true,Manufacturing - Toccoa GA - 7 jobs PDF links
-Spero Financial,https://spero.financial/careers,".job-card, div",h3,.location,a,true,Credit Union - Greenville SC
-McGill Associates,https://www.mcgillassociates.com/career-opportunities/,".job-card, div",h3,.location,a,true,Engineering - Asheville NC
-Center for Craft,https://www.centerforcraft.org/news,"article, .news-item",h2,.date,a,true,Nonprofit - Asheville NC - jobs in news
 East Fork Pottery,https://www.eastfork.com/careers,".job-card, div",h3,.location,a,false,Pottery - Asheville NC - uses ADP external
 Givens Communities,https://givenscommunities.org/careers/,".job-card, div",h3,.location,a,false,Senior Living - Asheville NC - uses UKG Pro
 Lockstep Group,https://lockstepgroup.com/about/join-us/,".job-card, div",h3,.location,a,false,Tech - uses Paylocity external
 NHE Inc,https://nhe-inc.com/careers/,".job-card, div",h3,.location,a,false,Property Mgmt - uses BambooHR external
-# --- Third batch of companies ---
-Power Services Group,https://www.powerservicesgroup.com/about/careers/,"ul li, div",a,p,"a[href*='/careers/']",true,Manufacturing - 3 machinist jobs
-Green Built Alliance,https://www.gba.org/about-us/careers/,".wp-block-group, div","h3, h4",p,"a[href*='.pdf']",true,Nonprofit - Asheville NC - contractor positions
-Stephens County Hospital,https://stephenscountyhospital.com/careers/job-openings/,".job-card, div",h3,.location,a,true,Healthcare - Toccoa GA
-Young Office,https://www.youngoffice.com/company/careers/,".job-card, div",h3,.location,a,true,Office Solutions - SC
-ASAP Connections,https://asapconnections.org/about-us/join-our-team/,".job-listing, div",h3,.location,a,true,Nonprofit - Asheville NC - internships
-# --- Fourth batch of companies ---
-Johnson Development,https://www.johnsondevelopment.net/jda-careers,".job-card, div","h2, h3",p,a,true,Real Estate - Spartanburg SC - 3 jobs
-Pioneer Motor Bearing,https://www.pioneer1.com/about-us/careers/,".job-listing, div",h3,p,"a[href*='factoryfix']",true,Manufacturing - Kings Mountain NC - 1 job
-KYMCO USA,https://kymcousa.com/careers/,".job-listing, div","h2, h3",p,a,true,Powersports - Spartanburg SC - 2 jobs
-PromoUltd,https://www.promoultd.com/join-our-team,".job-listing, div",h3,p,a,true,Marketing - Greenville SC - sales position
-Reynolds Company,https://reynoldsglue.com/contact/employment-opportunities/,".job-listing, div",h3,p,a,true,Manufacturing - sales position
-Hill Electric,https://hillelectric.net/careers/,".job-listing, div",h3,p,a,true,Electrical - general applications
-Weekes Construction,https://weekesconstruction.com/contact-us/,".job-listing, div",h3,p,a,true,Construction - hiring section
 Hispanic Alliance SC,https://hispanicalliancesc.com/hiring/,".job-listing, div",h3,p,a,false,Nonprofit - Greenville SC - not currently hiring
 Countybank,https://ecountybank.isolvedhire.com/jobsbyorganization/,".job-listing, div",h3,.location,a,false,Banking - uses iSolved external
 Jeff Lynch Appliance,https://jefflynch.isolvedhire.com/jobs/,".job-listing, div",h3,.location,a,false,Retail - uses iSolved external

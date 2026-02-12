@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Resume Optimizer Setup Script
-# Automates integration into salesforce-job-scrapper
+# Automates integration into career-future
 #
 
 set -e
@@ -19,7 +19,7 @@ NC='\033[0m' # No Color
 # Check if we're in the right directory
 if [ ! -f "package.json" ]; then
     echo -e "${RED}Error: package.json not found${NC}"
-    echo "Please run this script from your salesforce-job-scrapper directory"
+    echo "Please run this script from your career-future directory"
     exit 1
 fi
 

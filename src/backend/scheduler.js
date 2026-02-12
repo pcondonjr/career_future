@@ -3,6 +3,7 @@ import { JobScraper } from '../../scraper.js';
 import { JobDatabase } from '../../database.js';
 import { JobEmailer } from '../../emailer.js';
 import { loadSitesFromCSV, validateCSV } from '../../sites-config.js';
+import { GoogleDorkScraper } from '../../google-dork-scraper.js';
 import config from '../main/config.js';
 import { resolveResourceFile, resolveWritableFile, findChromePath } from '../main/paths.js';
 
@@ -130,6 +131,71 @@ export class Scheduler {
   }
 
   /**
+   * Run a Google Dork search
+   * @param {string} frequency - 'daily' or 'weekly'
+   */
+  async runDorkSearch(frequency = 'daily') {
+    const dbPaths = config.getDatabasePaths();
+    const dorksDbPath = resolveWritableFile('jobs_database_dorks.json');
+    const dorksCsvPath = resolveResourceFile('google-dorks.csv');
+
+    console.log('\n' + '='.repeat(60));
+    console.log(`Starting Google Dorks (${frequency}) search at ${new Date().toLocaleString()}`);
+    console.log('='.repeat(60) + '\n');
+
+    let dorkScraper;
+    try {
+      dorkScraper = new GoogleDorkScraper();
+    } catch {
+      // Constructor prints setup instructions
+      return;
+    }
+
+    const db = new JobDatabase(dorksDbPath);
+    const dailyDb = new JobDatabase(resolveWritableFile(dbPaths.daily));
+    const weeklyDb = new JobDatabase(resolveWritableFile(dbPaths.weekly));
+    const emailer = new JobEmailer();
+
+    try {
+      await db.load();
+      await dailyDb.load();
+      await weeklyDb.load();
+      console.log(`📋 Loaded ${dailyDb.jobs.size} daily + ${weeklyDb.jobs.size} weekly jobs for deduplication\n`);
+
+      const allJobs = await dorkScraper.runDorkSearch(dorksCsvPath, frequency);
+
+      // Filter new jobs against dorks DB
+      let newJobs = db.filterNewJobs(allJobs);
+      console.log(`✨ New jobs (not in dorks database): ${newJobs.length}`);
+
+      // Also filter out jobs already in daily or weekly databases
+      const beforeFilter = newJobs.length;
+      newJobs = newJobs.filter(job => !dailyDb.hasJob(job) && !weeklyDb.hasJob(job));
+      const filtered = beforeFilter - newJobs.length;
+      if (filtered > 0) {
+        console.log(`🔍 Filtered out ${filtered} jobs already in daily/weekly databases`);
+      }
+      console.log(`📬 Jobs to report (truly new): ${newJobs.length}`);
+
+      await db.save();
+
+      if (newJobs.length > 0) {
+        const stats = db.getStats();
+        await emailer.sendJobAlert(newJobs, stats, 'dorks');
+      }
+
+      console.log('\n' + '='.repeat(60));
+      console.log(`Google Dorks (${frequency}) search complete!`);
+      console.log(`New jobs found: ${newJobs.length}`);
+      console.log(`Total jobs tracked (dorks): ${db.jobs.size}`);
+      console.log('='.repeat(60) + '\n');
+
+    } catch (error) {
+      console.error('Error during dork search:', error);
+    }
+  }
+
+  /**
    * Start the scheduler with configured schedule
    */
   start() {
@@ -175,8 +241,26 @@ export class Scheduler {
     });
     this.tasks.push(weeklyTask);
 
-    // Weekly summary every Monday at 9 AM
-    const summaryTask = cron.schedule('0 9 * * 1', async () => {
+    // Dork searches run 30 minutes after the first daily time
+    const firstDailyHour = schedule.dailyTimes[0].split(':')[0];
+    const dorkDailyCron = `30 ${firstDailyHour} * * *`;
+    const dorkDailyTask = cron.schedule(dorkDailyCron, () => {
+      this.runDorkSearch('daily');
+    });
+    this.tasks.push(dorkDailyTask);
+    console.log(`📅 Daily dorks: ${firstDailyHour}:30`);
+
+    // Weekly dorks run day after weekly scraper
+    const dorkWeeklyDay = (schedule.weeklyDay + 1) % 7;
+    const dorkWeeklyCron = `30 ${weeklyHour} * * ${dorkWeeklyDay}`;
+    const dorkWeeklyTask = cron.schedule(dorkWeeklyCron, () => {
+      this.runDorkSearch('weekly');
+    });
+    this.tasks.push(dorkWeeklyTask);
+    console.log(`📅 Weekly dorks: ${weekdayNames[dorkWeeklyDay]}s at ${weeklyHour}:30`);
+
+    // Weekly summary on the day after the weekly scraper at 9 AM
+    const summaryTask = cron.schedule(`0 9 * * ${dorkWeeklyDay}`, async () => {
       const dbPaths = config.getDatabasePaths();
       const db = new JobDatabase(resolveWritableFile(dbPaths.daily));
       const emailer = new JobEmailer();

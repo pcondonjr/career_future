@@ -1,6 +1,6 @@
-# Salesforce Job Scraper with Dashboard
+# Career Future
 
-Automated job scraper for Salesforce positions with email notifications and a web-based dashboard. Completely free to run - uses Puppeteer for scraping (no API costs).
+Automated job scraper with email notifications and a web-based dashboard. Completely free to run - uses Puppeteer for scraping (no API costs).
 
 ## Features
 
@@ -37,13 +37,13 @@ npm --version
 
 Clone or download this repository, then extract it to a location like:
 ```
-C:\Users\YourName\Documents\salesforce-job-scraper
+C:\Users\YourName\Documents\career-future
 ```
 
 ### Step 3: Install Dependencies
 
 ```powershell
-cd salesforce-job-scraper
+cd career-future
 npm install
 ```
 
@@ -214,7 +214,7 @@ cron.schedule('0 */4 * * *', runJobSearch);
 ## Project Structure
 
 ```
-salesforce-job-scraper/
+career-future/
 ├── .env                 # Your credentials (create from .env.example)
 ├── companies.csv        # Company list (EDIT THIS!)
 ├── jobs_database.json   # Tracked jobs (auto-generated)
@@ -267,6 +267,6 @@ MIT License - Free to use and modify
 
 ---
 
-**Built for Salesforce job seekers**
+**Built for job seekers**
 
 Happy job hunting!
