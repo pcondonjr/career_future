@@ -106,7 +106,13 @@
       "WebFetch(domain:www.hwresources.net)",
       "WebFetch(domain:innovativesolarsystemsllc.com)",
       "WebFetch(domain:www.pointsoflight.org)",
-      "WebFetch(domain:workforcenow.adp.com)"
+      "WebFetch(domain:workforcenow.adp.com)",
+      "Bash(move:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "WebFetch(domain:careers.elliottdavis.com)",
+      "WebFetch(domain:www.challenger.org)",
+      "WebFetch(*)"
     ]
   }
 }

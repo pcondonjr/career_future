@@ -1,0 +1,44 @@
+CAREER FUTURE — Project Move Instructions
+==========================================
+
+Follow these steps in order after closing VSCode:
+
+1. CLOSE VSCODE
+   - Close the current VSCode window completely
+
+2. MOVE THE FOLDER
+   - Open File Explorer
+   - Navigate to: C:\Users\pcond\salesforce-projects\jobs-scrapers\
+   - Cut the "salesforce-job-scraper" folder (Ctrl+X)
+   - Navigate up to: C:\Users\pcond\salesforce-projects\
+   - Paste it there (Ctrl+V)
+   - Rename it from "salesforce-job-scraper" to "career-future"
+
+   OR from PowerShell (run as admin if needed):
+     Move-Item "C:\Users\pcond\salesforce-projects\jobs-scrapers\salesforce-job-scraper" "C:\Users\pcond\salesforce-projects\career-future"
+
+3. REOPEN IN VSCODE
+   - Open VSCode
+   - File > Open Folder > C:\Users\pcond\salesforce-projects\career-future
+
+4. VERIFY (in VSCode terminal)
+     git remote -v
+   Should show: https://github.com/pcondonjr/career-future.git
+
+     git status
+   Should show: On branch main, nothing to commit
+
+5. CONTINUE WITH VERCEL
+   - Go back to https://vercel.com/new
+   - Import the "career-future" repo from GitHub
+   - Set Root Directory to "storefront"
+   - Add environment variables (see storefront README)
+   - Deploy
+
+6. DELETE THIS FILE
+   You can delete this file after completing the move:
+     del MOVE-INSTRUCTIONS.txt
+
+==========================================
+Claude Code memory has already been copied to the new path.
+All file references have been updated. Nothing else to change.
