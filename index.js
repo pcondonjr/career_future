@@ -78,7 +78,7 @@ async function runJobSearch(mode = 'daily') {
     console.log(`📋 Loading ${sites.length} enabled sites\n`);
 
     if (sites.length === 0) {
-      console.log('⚠️  No enabled sites found in CSV. Add companies to scrape.');
+      console.log('⚠️  No enabled sites found in CSV. Add companies to search.');
       return;
     }
 
@@ -241,9 +241,9 @@ if (process.argv.includes('--validate')) {
   // Weekly dorks run day after weekly scraper
   const dorkWeeklyDay = (weeklyDay + 1) % 7;
 
-  console.log('🚀 Salesforce Job Scraper Started');
-  console.log(`📅 Daily scraper: ${dailyTimes.join(' and ')}`);
-  console.log(`📅 Weekly scraper: ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][weeklyDay]}s at ${weeklyTime}`);
+  console.log('🚀 Career Future Search Started');
+  console.log(`📅 Daily search: ${dailyTimes.join(' and ')}`);
+  console.log(`📅 Weekly search: ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][weeklyDay]}s at ${weeklyTime}`);
   console.log(`📅 Daily dorks: ${firstDailyHour}:${dorkDailyMin}`);
   console.log(`📅 Weekly dorks: ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dorkWeeklyDay]}s at ${weeklyHour}:${dorkDailyMin}`);
 

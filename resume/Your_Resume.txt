@@ -1,0 +1,81 @@
+Jordan M. Castellano
+Austin, TX 78701
+jordan.castellano@email.com
+512.555.8294
+www.linkedin.com/in/jordancastellano/
+
+PROFILE SUMMARY
+
+Salesforce Trailblazer and operational excellence leader with 8+ years of hands-on experience optimizing business operations, implementing scalable processes, and serving as the Salesforce platform owner across Sales, Marketing, Customer Success, and Finance functions. Expert in Flow automation, Experience Cloud community management, Service Cloud configuration, and Knowledge Base implementation. Proven track record designing workflows, dashboards, and KPIs that drive data-informed decision-making and revenue operations. Skilled at translating business requirements into technical solutions while ensuring cross-functional alignment and driving operational efficiency. Holds 7 Salesforce certifications including Advanced Administrator, Business Analyst, and Service Cloud Consultant.
+
+CORE COMPETENCIES
+
+Flow Automation & Workflow Optimization | Experience Cloud Administration | Service Cloud Configuration | Salesforce Knowledge Base | Business Operations & Process Design | Revenue Operations (Pipeline, Renewals, Forecasting) | KPI & Dashboard Development | Data Models & Security Permissions | Advanced Formulas & Validation Rules | Release Management & Multi-Environment Management | Cross-Functional Stakeholder Collaboration | Requirements Gathering & Documentation | Quality Assurance & Testing | User Adoption & Training
+
+PROFESSIONAL EXPERIENCE
+
+Bridgewater Health Systems
+Austin, TX
+Mar 2024 -- current
+Senior Salesforce Analyst
+
+- Serve as Salesforce platform owner, ensuring alignment between business operations, systems, and strategy across Sales, Marketing, and Customer Success functions while continuously optimizing core operational processes.
+- Design and implement Flow automation solutions to streamline patient intake workflows, improve operational efficiency, and support revenue growth through automated pipeline management and forecasting accuracy.
+- Partner with leadership to define KPIs, build executive dashboards, and create metrics that drive data-informed decision-making and operational visibility across the organization.
+- Translate business requirements into scalable Salesforce solutions, including advanced formulas, validation rules, and security permissions that support organizational growth.
+- Lead cross-functional initiatives with full accountability, managing project timelines, budgets, and resources while ensuring timely execution and quality deliverables.
+
+Pinnacle Software Group
+Austin, TX
+Jun 2021 -- Feb 2024
+Salesforce Project Manager
+
+- Led Salesforce platform expansion initiative, serving as primary liaison between business stakeholders and technical teams to optimize operational processes and improve cross-functional visibility.
+- Implemented Flow-based automation workflows to streamline case management, documentation updates, and reporting processes, reducing manual effort by 35% and improving data accuracy.
+- Established quality assurance protocols and testing processes to validate platform functionality, security, and performance, proactively identifying and resolving issues.
+- Designed dashboards and reports to support operational decision-making, providing visibility into key metrics and process inefficiencies.
+- Gathered detailed business requirements across departments and translated them into technical specifications, ensuring solutions aligned with strategic objectives.
+- Collaborated with development team to integrate new Salesforce features while maintaining system stability and user adoption.
+
+Redstone Consulting Partners
+Denver, CO
+Aug 2019 -- May 2021
+Salesforce Consultant
+
+- Implemented Experience Cloud communities with multi-language support using Custom Metadata Types, enabling customer self-service and improving operational efficiency for 500+ community members.
+- Designed and configured Service Cloud solutions including custom Help objects, case management workflows, and Knowledge Base articles to streamline customer support operations.
+- Built automated Flow solutions to replace manual processes, including Screen Flows for client onboarding that eliminated the need for costly third-party applications.
+- Created comprehensive dashboards and reports to track operational metrics, including support ticket resolution (averaging 40 requests per week) and provide visibility into process performance.
+- Optimized revenue operations by configuring pipeline management workflows, renewal tracking, and forecasting capabilities within Sales Cloud.
+- Led business process redesign initiatives across Sales, Marketing, and Customer Success functions to maximize operational efficiency and support organizational growth.
+
+Summit Ridge Financial
+Denver, CO
+Jan 2017 -- Jul 2019
+Business Systems Analyst
+
+- Served as Salesforce operations lead, managing platform administration, Flow automation, and operational process optimization across the organization.
+- Led implementations of Sales Cloud and Service Cloud, improving customer engagement workflows and reducing case resolution time by 25%.
+- Designed KPIs, dashboards, and reporting structures to provide leadership with visibility into revenue operations, pipeline health, and key business metrics.
+- Coordinated data migrations from legacy CRM systems while ensuring data quality, security permissions, and system performance.
+- Translated business requirements into technical specifications and scalable Salesforce solutions, ensuring alignment with strategic growth objectives.
+- Managed project budgets, timelines, and scope while maintaining high service delivery standards.
+
+EDUCATION & PROFESSIONAL DEVELOPMENT
+
+Master of Business Administration | University of Texas at Austin - Austin, TX
+Bachelor of Science in Information Systems | Colorado State University - Fort Collins, CO
+
+CERTIFICATIONS
+
+Salesforce Certified Advanced Administrator (SCAA) | Salesforce (Mar 2023)
+Salesforce Certified Business Analyst | Salesforce (Aug 2023)
+Salesforce Certified Service Cloud Consultant | Salesforce (Nov 2022)
+Salesforce Certified Administrator (SCA) | Salesforce (Jun 2019)
+Project Management Professional | Project Management Institute (Expires Sep 2026)
+Professional Scrum Master | Scrum.org (Apr 2023)
+Certified ScrumMaster | Scrum Alliance (Jan 2021)
+
+TECHNICAL SKILLS
+
+Salesforce Flow Builder | Experience Cloud | Service Cloud | Sales Cloud | CPQ | Salesforce Knowledge | Data Loader | Salesforce Inspector | Workbench | Microsoft Project | ServiceNow | Asana | Jira | Confluence | Slack | Power Query | Google Suite | MS Office (Word, Excel, PowerPoint, Teams)

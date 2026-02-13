@@ -15,7 +15,7 @@
 
 ## 1. Application Overview
 
-**Career Future** is an Electron desktop application that automates job searching by scraping company career pages, tracking new listings in a local database, and sending email notifications when matching jobs are found.
+**Career Future** is an Electron desktop application that automates job searching by searching company career pages, tracking new listings in a local database, and sending email notifications when matching jobs are found.
 
 ### Technology Stack
 
@@ -37,9 +37,9 @@
 | Operating System | Windows 7 or later (x64) |
 | Disk Space | ~500 MB |
 | RAM | 2 GB minimum |
-| Browser | Chrome or Edge (required for scraping) |
+| Browser | Chrome or Edge (required for searching) |
 | Admin Rights | Not required (per-user installation) |
-| Network | Internet access for scraping and email |
+| Network | Internet access for searching and email |
 
 ---
 
@@ -84,7 +84,7 @@ On first launch, a setup wizard guides the user through configuration:
 | Locations | Yes | Geographic preferences (e.g., "remote", "charlotte") |
 | Email | No | Gmail address + App Password for notifications |
 | AI Resume | No | Anthropic API key + resume file path |
-| Schedule | Yes | When to run automated scrapes |
+| Schedule | Yes | When to run automated searches |
 | Summary | - | Review and confirm all settings |
 
 After the wizard completes, the 7-day trial begins and the app transitions to the main dashboard.
@@ -120,8 +120,8 @@ Licensed to: user@example.com    (or Trial: X days remaining)
 Show Dashboard
 Hide Dashboard
 ─────────────────────────────
-Run Scraper Now  >  Daily Scrape
-                    Weekly Scrape
+Run Search Now  >  Daily Search
+                    Weekly Search
 ─────────────────────────────
 Scheduler  >  Running / Stopped
                Start Scheduler
@@ -142,34 +142,34 @@ The dashboard runs as a local Express web server at `http://localhost:3000` (con
 - Group jobs by company
 - Export jobs to CSV
 - View/manage company lists (daily and weekly)
-- Run scraper manually
+- Run search manually
 - AI-powered resume optimization
 - Full settings panel at `/settings`
 
 ### 3.4 Managing the Scheduler
 
-The scheduler runs cron jobs to automatically scrape at configured times.
+The scheduler runs cron jobs to automatically search at configured times.
 
 **Starting/stopping from the tray:**
 - Right-click tray icon > Scheduler > Start/Stop
 
 **Configuring schedule (Settings > Schedule):**
 - Enable/disable automatic scheduling
-- Set daily scrape times (e.g., 08:00 and 17:00)
-- Set weekly scrape day and time (e.g., Sunday at 10:00)
+- Set daily search times (e.g., 08:00 and 17:00)
+- Set weekly search day and time (e.g., Sunday at 10:00)
 
-**Manual scrape runs:**
-- Tray menu > Run Scraper Now > Daily/Weekly
-- Dashboard > Run Scraper button
+**Manual search runs:**
+- Tray menu > Run Search Now > Daily/Weekly
+- Dashboard > Run Search button
 
 ### 3.5 Managing Company Lists
 
-Company scraping targets are stored in CSV files:
+Company search targets are stored in CSV files:
 
 | File | Purpose |
 |------|---------|
-| `companies.csv` | Daily scraping targets |
-| `companies-weekly.csv` | Weekly scraping targets (broader search) |
+| `companies.csv` | Daily search targets |
+| `companies-weekly.csv` | Weekly search targets (broader search) |
 
 **CSV format:**
 ```csv
@@ -197,8 +197,8 @@ Edit these files through:
 5. Enter in Career Future Settings > Email Notifications
 
 **Notification types:**
-- **Daily job alert:** Sent after each daily scrape with new listings
-- **Weekly job alert:** Sent after weekly scrape with listings not found in daily
+- **Daily job alert:** Sent after each daily search with new listings
+- **Weekly job alert:** Sent after weekly search with listings not found in daily
 - **Weekly summary:** Sent every Monday at 9 AM with stats
 
 ### 3.7 AI Resume Optimizer
@@ -589,7 +589,7 @@ Before releasing an update:
 - [ ] Test the setup wizard flow (new installs)
 - [ ] Test the update flow (existing installation with data)
 - [ ] Verify license activation still works
-- [ ] Test scraper with current company CSVs
+- [ ] Test search with current company CSVs
 - [ ] Verify email notifications
 - [ ] Test all scheduler modes (daily, weekly, manual)
 - [ ] Verify settings persistence across update
@@ -767,7 +767,7 @@ To enable code signing:
 | Issue | Cause | Solution |
 |-------|-------|----------|
 | "Chrome not found" errors | No Chrome/Edge installed | Install Chrome or Edge |
-| Scraper finds no jobs | Invalid CSV URLs | Verify company URLs in CSV files |
+| Search finds no jobs | Invalid CSV URLs | Verify company URLs in CSV files |
 | Email not sending | Invalid app password | Regenerate Gmail app password |
 | "License expired" on launch | Trial ended, no license key | Activate a license key |
 | Dashboard won't load | Port 3000 in use | Change port in Settings or config file |
@@ -793,7 +793,7 @@ Career Future searches for Chrome/Edge at these paths:
 %PROGRAMFILES%\Microsoft\Edge\Application\msedge.exe
 ```
 
-If Chrome/Edge is installed in a non-standard location, the scraper will fail to launch a browser.
+If Chrome/Edge is installed in a non-standard location, the search will fail to launch a browser.
 
 ### 8.4 Resetting Trial Period
 

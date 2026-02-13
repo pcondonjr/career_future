@@ -1,10 +1,10 @@
 # Career Future
 
-Automated job scraper with email notifications and a web-based dashboard. Completely free to run - uses Puppeteer for scraping (no API costs).
+Automated job search tool with email notifications and a web-based dashboard. Completely free to run - uses Puppeteer for searching (no API costs).
 
 ## Features
 
-- **Automated Job Discovery** - Scrapes 25+ job sites twice daily
+- **Automated Job Discovery** - Searches 25+ job sites twice daily
 - **Email Notifications** - Get alerts for new jobs matching your criteria
 - **Web Dashboard** - View and manage jobs in your browser
 - **Analytics** - Track job trends and statistics
@@ -84,7 +84,7 @@ npm run test
 You should see:
 1. CSV validation passes
 2. Browser windows opening (Puppeteer)
-3. Sites being scraped
+3. Sites being searched
 4. Jobs found
 5. Email sent (if jobs found)
 
@@ -128,7 +128,7 @@ npm run test
 
 ## Running 24/7 with PM2
 
-To keep the scraper running in the background (survives closing VS Code and reboots):
+To keep the search running in the background (survives closing VS Code and reboots):
 
 ### Install and Start
 
@@ -250,7 +250,7 @@ career-future/
 - Port 3000 in use? Change `DASHBOARD_PORT` in `.env`
 - Run `npm install express ejs`
 
-### Scraper crashed
+### Search crashed
 - Restart with `npm start` or `pm2 restart job-scraper`
 - Check logs: `pm2 logs job-scraper`
 

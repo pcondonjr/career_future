@@ -80,7 +80,7 @@ export class Scheduler {
       console.log(`📋 Loading ${sites.length} enabled sites\n`);
 
       if (sites.length === 0) {
-        console.log('⚠️  No enabled sites found in CSV. Add companies to scrape.');
+        console.log('⚠️  No enabled sites found in CSV. Add companies to search.');
         return;
       }
 
@@ -221,13 +221,13 @@ export class Scheduler {
     }).join(',');
 
     const dailyCron = `0 ${dailyHours} * * *`;
-    console.log(`📅 Daily scraper: ${schedule.dailyTimes.join(', ')}`);
+    console.log(`📅 Daily search: ${schedule.dailyTimes.join(', ')}`);
 
     // Weekly scraper cron
     const [weeklyHour] = schedule.weeklyTime.split(':');
     const weeklyCron = `0 ${weeklyHour} * * ${schedule.weeklyDay}`;
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    console.log(`📅 Weekly scraper: ${weekdayNames[schedule.weeklyDay]}s at ${schedule.weeklyTime}`);
+    console.log(`📅 Weekly search: ${weekdayNames[schedule.weeklyDay]}s at ${schedule.weeklyTime}`);
 
     // Schedule daily job
     const dailyTask = cron.schedule(dailyCron, () => {

@@ -116,14 +116,14 @@ class TrayManager {
       },
       { type: 'separator' },
       {
-        label: 'Run Scraper Now',
+        label: 'Run Search Now',
         submenu: [
           {
-            label: 'Daily Scrape',
+            label: 'Daily Search',
             click: () => this.runScraper('daily')
           },
           {
-            label: 'Weekly Scrape',
+            label: 'Weekly Search',
             click: () => this.runScraper('weekly')
           }
         ]
@@ -191,14 +191,14 @@ class TrayManager {
 
   async runScraper(mode) {
     console.log(`Running ${mode} scraper from tray menu...`);
-    this.showNotification('Career Future', `Starting ${mode} job scraper...`);
+    this.showNotification('Career Future', `Starting ${mode} job search...`);
 
     try {
       await scheduler.runNow(mode);
       this.updateMenu();
     } catch (error) {
       console.error(`Failed to run ${mode} scraper:`, error);
-      this.showNotification('Career Future - Error', `Failed to run ${mode} scraper.`);
+      this.showNotification('Career Future - Error', `Failed to run ${mode} search.`);
     }
   }
 

@@ -204,7 +204,7 @@ app.post('/api/run-scraper', async (req, res) => {
   const searchValue = (req.body.searchValue || '').trim();
 
   if (await isScraperRunning()) {
-    return res.status(409).json({ error: 'A scraper is already running' });
+    return res.status(409).json({ error: 'A search is already running' });
   }
 
   const runName = mode === 'weekly' ? 'Companies List Weekly' : 'Companies List';
@@ -218,7 +218,7 @@ app.post('/api/run-scraper', async (req, res) => {
     `node index.js --now${weeklyFlag}`,
     `del "${scraperSignalFile}"`,
     'echo.',
-    'echo Scraper complete. Press any key to close.',
+    'echo Search complete. Press any key to close.',
     'pause > nul',
     'exit'
   ].join('\r\n');
@@ -226,7 +226,7 @@ app.post('/api/run-scraper', async (req, res) => {
   await fs.writeFile(scraperBatFile, batContent);
   exec(`start "${runName}" "${scraperBatFile}"`);
 
-  res.json({ message: `${mode} scraper started` });
+  res.json({ message: `${mode} search started` });
 });
 
 app.get('/api/scraper-status', async (req, res) => {

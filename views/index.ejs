@@ -69,7 +69,7 @@
         </div>
         <p id="search-results-count" style="display:none;"></p>
         <% if (jobs.length === 0) { %>
-            <p>No jobs found yet. Run the scraper to start finding jobs!</p>
+            <p>No jobs found yet. Run a search to start finding jobs!</p>
         <% } else { %>
             <% jobs.forEach(job => { %>
                 <article class="job-card" data-url="<%= job.url %>"
@@ -164,7 +164,7 @@
       async function runScraper(mode, btn) {
         btn.setAttribute('disabled', true);
         btn.setAttribute('aria-busy', 'true');
-        statusEl.textContent = `Running ${mode} scraper...`;
+        statusEl.textContent = `Running ${mode} search...`;
 
         try {
           const res = await fetch('/api/run-scraper', {
@@ -175,7 +175,7 @@
           const data = await res.json();
 
           if (!res.ok) {
-            statusEl.textContent = data.error || 'Error starting scraper';
+            statusEl.textContent = data.error || 'Error starting search';
             btn.removeAttribute('disabled');
             btn.removeAttribute('aria-busy');
             return;
@@ -191,7 +191,7 @@
             }
           }, 3000);
         } catch (err) {
-          statusEl.textContent = 'Failed to start scraper';
+          statusEl.textContent = 'Failed to start search';
           btn.removeAttribute('disabled');
           btn.removeAttribute('aria-busy');
         }
