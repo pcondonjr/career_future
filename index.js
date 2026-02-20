@@ -30,9 +30,13 @@ const CONFIG = {
     name: 'Weekly'
   },
   dorks: {
-    csvPath: path.join(__dirname, 'google-dorks.csv'),
+    csvPath: path.join(__dirname, 'data/ats-list.csv'),
     dbPath: path.join(__dirname, 'jobs_database_dorks.json'),
     name: 'Google Dorks'
+  },
+  jobs: {
+    dbPath: path.join(__dirname, 'jobs_database_jobs.json'),
+    name: 'Jobs API'
   }
 };
 
@@ -190,6 +194,68 @@ async function runDorkSearch(frequency = 'daily') {
   }
 }
 
+async function runSerperJobsSearch() {
+  const config = CONFIG.jobs;
+
+  console.log('\n' + '='.repeat(60));
+  console.log(`🔍 Starting ${config.name} search at ${new Date().toLocaleString()}`);
+  console.log('='.repeat(60) + '\n');
+
+  let scraper;
+  try {
+    scraper = new GoogleDorkScraper();
+  } catch {
+    return;
+  }
+
+  const db = new JobDatabase(config.dbPath);
+  const dailyDb = new JobDatabase(CONFIG.daily.dbPath);
+  const weeklyDb = new JobDatabase(CONFIG.weekly.dbPath);
+  const dorksDb = new JobDatabase(CONFIG.dorks.dbPath);
+  const emailer = new JobEmailer();
+
+  try {
+    await db.load();
+    await dailyDb.load();
+    await weeklyDb.load();
+    await dorksDb.load();
+    console.log(`📋 Loaded ${dailyDb.jobs.size} daily + ${weeklyDb.jobs.size} weekly + ${dorksDb.jobs.size} dork jobs for deduplication\n`);
+
+    const allJobs = await scraper.runJobsSearch();
+
+    // Filter new jobs against jobs DB
+    let newJobs = db.filterNewJobs(allJobs);
+    console.log(`✨ New jobs (not in jobs database): ${newJobs.length}`);
+
+    // Also filter out jobs already in other databases
+    const beforeFilter = newJobs.length;
+    newJobs = newJobs.filter(job =>
+      !dailyDb.hasJob(job) && !weeklyDb.hasJob(job) && !dorksDb.hasJob(job)
+    );
+    const filtered = beforeFilter - newJobs.length;
+    if (filtered > 0) {
+      console.log(`🔍 Filtered out ${filtered} jobs already in other databases`);
+    }
+    console.log(`📬 Jobs to report (truly new): ${newJobs.length}`);
+
+    await db.save();
+
+    if (newJobs.length > 0) {
+      const stats = db.getStats();
+      await emailer.sendJobAlert(newJobs, stats, 'jobs');
+    }
+
+    console.log('\n' + '='.repeat(60));
+    console.log(`${config.name} search complete!`);
+    console.log(`New jobs found: ${newJobs.length}`);
+    console.log(`Total jobs tracked (jobs API): ${db.jobs.size}`);
+    console.log('='.repeat(60) + '\n');
+
+  } catch (error) {
+    console.error('Error during Jobs API search:', error);
+  }
+}
+
 // CLI mode
 const isWeekly = process.argv.includes('--weekly');
 const csvToValidate = isWeekly ? CONFIG.weekly.csvPath : CONFIG.daily.csvPath;
@@ -216,6 +282,9 @@ if (process.argv.includes('--validate')) {
 
     process.exit(result.valid ? 0 : 1);
   });
+} else if (process.argv.includes('--now') && process.argv.includes('--jobs')) {
+  // Run Jobs API search immediately for testing
+  runSerperJobsSearch();
 } else if (process.argv.includes('--now') && process.argv.includes('--dorks')) {
   // Run dork search immediately for testing
   const frequency = isWeekly ? 'weekly' : 'daily';
@@ -246,6 +315,7 @@ if (process.argv.includes('--validate')) {
   console.log(`📅 Weekly search: ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][weeklyDay]}s at ${weeklyTime}`);
   console.log(`📅 Daily dorks: ${firstDailyHour}:${dorkDailyMin}`);
   console.log(`📅 Weekly dorks: ${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dorkWeeklyDay]}s at ${weeklyHour}:${dorkDailyMin}`);
+  console.log(`📅 Daily Jobs API: ${firstDailyHour}:45`);
 
   // Daily scraper at configured times
   cron.schedule(`0 ${dailyHours} * * *`, () => {
@@ -267,6 +337,11 @@ if (process.argv.includes('--validate')) {
     runDorkSearch('weekly');
   });
 
+  // Daily Jobs API search 45 min after first daily time
+  cron.schedule(`45 ${firstDailyHour} * * *`, () => {
+    runSerperJobsSearch();
+  });
+
   // Weekly summary on the day after the weekly scraper at 9 AM
   cron.schedule(`0 9 * * ${dorkWeeklyDay}`, async () => {
     const db = new JobDatabase();
@@ -276,7 +351,7 @@ if (process.argv.includes('--validate')) {
   });
 
   // Start the dashboard server alongside the scheduler
-  startDashboard();
+  startDashboard({ config: configManager });
 
   console.log('\n✅ Scheduler is running. Press Ctrl+C to stop.\n');
 }

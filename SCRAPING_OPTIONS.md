@@ -4,7 +4,7 @@ Comparison of approaches for extracting job listings from career sites.
 
 ## CSS Selectors (Current Default)
 
-How it works: Use `document.querySelectorAll()` with CSS selectors defined per-site in `companies.csv`.
+How it works: Use `document.querySelectorAll()` with CSS selectors defined per-site in `data/companies.csv`.
 
 **Pros:**
 - Fast, no external API calls
@@ -39,7 +39,7 @@ How it works: Use `document.evaluate()` with XPath expressions to traverse the D
 
 ## AI Extraction (Current Alternative)
 
-How it works: Send rendered page text to Claude API (Haiku) to extract structured job data. Enabled per-site via `use_ai_extraction=true` in `companies.csv`.
+How it works: Send rendered page text to Claude API (Haiku) to extract structured job data. Enabled per-site via `use_ai_extraction=true` in `data/companies.csv`.
 
 **Pros:**
 - Resilient to DOM changes -- understands content semantically

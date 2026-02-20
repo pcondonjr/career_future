@@ -8,3 +8,6 @@ nul
 .claude/
 scripts/keys/
 release/
+docs/ADMIN_GUIDE.md
+files_apify/
+**/compan*.csv

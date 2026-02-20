@@ -1,26 +1,27 @@
 dork_id,category,query,frequency,notes
-ats-workday,ATS Platform,"site:myworkdayjobs.com ""{{keyword}} administrator""",daily,Most Fortune 500 companies
-ats-workday-broad,ATS Platform,"site:myworkdayjobs.com ""{{keyword}}"" (""administrator"" OR ""admin"" OR ""business analyst"")",daily,Broader Workday catch
-ats-workday-subdomains,ATS Platform,"site:wd5.myworkdayjobs.com OR site:wd1.myworkdayjobs.com OR site:wd3.myworkdayjobs.com ""{{keyword}}""",weekly,Try wd1-wd5 variants
-ats-greenhouse,ATS Platform,"site:boards.greenhouse.io ""{{keyword}} administrator""",daily,Startups & mid-market tech
-ats-greenhouse-broad,ATS Platform,"site:boards.greenhouse.io ""{{keyword}}"" (""administrator"" OR ""business analyst"" OR ""project manager"")",daily,Broader Greenhouse catch
-ats-greenhouse-alt,ATS Platform,"site:job-boards.greenhouse.io ""{{keyword}}""",weekly,Alternate Greenhouse URL
-ats-icims,ATS Platform,"site:icims.com ""{{keyword}} administrator""",daily,Enterprise companies
-ats-eightfold,ATS Platform,"site:eightfold.ai ""{{keyword}} administrator""",daily,Large enterprises
-ats-lever,ATS Platform,"site:jobs.lever.co ""{{keyword}} administrator""",daily,Tech startups
-ats-phenom,ATS Platform,"site:phenom.com ""{{keyword}} administrator""",weekly,Enterprise companies
-ats-smartrecruiters,ATS Platform,"site:smartrecruiters.com ""{{keyword}} administrator""",weekly,Mid-market companies
-ats-bamboohr,ATS Platform,"site:bamboohr.com ""{{keyword}} administrator""",weekly,Small-mid companies
-ats-ashby,ATS Platform,"site:jobs.ashbyhq.com ""{{keyword}} administrator""",weekly,Tech startups
-ats-jobvite,ATS Platform,"site:jobs.jobvite.com ""{{keyword}} administrator""",weekly,Various companies
+ats-workday,ATS Platform,"site:myworkdayjobs.com ""{{keyword}} administrator"" (""remote"" OR ""United States"")",daily,Most Fortune 500 companies — US/remote only
+ats-workday-broad,ATS Platform,"site:myworkdayjobs.com ""{{keyword}}"" (""administrator"" OR ""admin"" OR ""business analyst"") (""remote"" OR ""United States"")",daily,Broader Workday catch — US/remote only
+ats-workday-subdomains,ATS Platform,"(site:wd5.myworkdayjobs.com OR site:wd1.myworkdayjobs.com OR site:wd3.myworkdayjobs.com) ""{{keyword}}"" (""remote"" OR ""United States"")",weekly,Try wd1-wd5 variants — US/remote only
+ats-greenhouse,ATS Platform,"site:boards.greenhouse.io ""{{keyword}} administrator"" (""remote"" OR ""United States"")",daily,Startups & mid-market tech — US/remote only
+ats-greenhouse-broad,ATS Platform,"site:boards.greenhouse.io ""{{keyword}}"" (""administrator"" OR ""business analyst"" OR ""project manager"") (""remote"" OR ""United States"")",daily,Broader Greenhouse catch — US/remote only
+ats-greenhouse-alt,ATS Platform,"site:job-boards.greenhouse.io ""{{keyword}}"" (""remote"" OR ""United States"")",weekly,Alternate Greenhouse URL — US/remote only
+ats-icims,ATS Platform,"site:icims.com ""{{keyword}} administrator"" (""remote"" OR ""United States"")",daily,Enterprise companies — US/remote only
+ats-eightfold,ATS Platform,"site:eightfold.ai ""{{keyword}} administrator"" (""remote"" OR ""United States"")",daily,Large enterprises — US/remote only
+ats-lever,ATS Platform,"site:jobs.lever.co ""{{keyword}} administrator"" (""remote"" OR ""United States"")",daily,Tech startups — US/remote only
+ats-phenom,ATS Platform,"site:phenom.com ""{{keyword}} administrator"" (""remote"" OR ""United States"")",weekly,Enterprise companies — US/remote only
+ats-smartrecruiters,ATS Platform,"site:smartrecruiters.com ""{{keyword}} administrator"" (""remote"" OR ""United States"")",weekly,Mid-market companies — US/remote only
+ats-bamboohr,ATS Platform,"site:bamboohr.com ""{{keyword}} administrator"" (""remote"" OR ""United States"")",weekly,Small-mid companies — US/remote only
+ats-ashby,ATS Platform,"site:jobs.ashbyhq.com ""{{keyword}} administrator"" (""remote"" OR ""United States"")",weekly,Tech startups — US/remote only
+ats-jobvite,ATS Platform,"site:jobs.jobvite.com ""{{keyword}} administrator"" (""remote"" OR ""United States"")",weekly,Various companies — US/remote only
 loc-all-ats,Location,"""{{keyword}} administrator"" {{locations_or}} (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com OR site:eightfold.ai)",daily,All major ATS with configured locations
 loc-ats-broad,Location,"""{{keyword}}"" {{locations_or}} (site:myworkdayjobs.com OR site:boards.greenhouse.io)",daily,Broad keyword with configured locations
-role-sf-admin,Role Specific,"""{{keyword}} administrator"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",daily,Admin roles across ATS
-role-sf-ba,Role Specific,"""{{keyword}}"" ""business analyst"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",daily,BA roles
-role-sf-pm,Role Specific,"""{{keyword}}"" ""project manager"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",daily,PM roles
-role-revops,Role Specific,"""revenue operations"" ""{{keyword}}"" (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,RevOps roles
-role-sf-flow,Role Specific,"""{{keyword}}"" ""flow"" (""administrator"" OR ""admin"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Flow-specific roles
-combo-remote-all,Power Combo,"""{{keyword}} administrator"" ""remote"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com OR site:eightfold.ai OR site:jobs.lever.co)",daily,Cast wide net for remote
-combo-education,Power Combo,"""{{keyword}}"" (""education cloud"" OR ""higher education"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Education sector
-combo-nonprofit,Power Combo,"""{{keyword}}"" (""nonprofit"" OR ""NPSP"" OR ""nonprofit cloud"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Nonprofit sector
-combo-experience-cloud,Power Combo,"""{{keyword}}"" ""experience cloud"" (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",weekly,Community/portal roles
+role-sf-admin,Role Specific,"""{{keyword}} administrator"" (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",daily,Admin roles across ATS — US/remote only
+role-sf-ba,Role Specific,"""{{keyword}}"" ""business analyst"" (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",daily,BA roles — US/remote only
+role-sf-pm,Role Specific,"""{{keyword}}"" ""project manager"" (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",daily,PM roles — US/remote only
+role-revops,Role Specific,"""revenue operations"" ""{{keyword}}"" (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,RevOps roles — US/remote only
+role-sf-flow,Role Specific,"""{{keyword}}"" ""flow"" (""administrator"" OR ""admin"") (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Flow-specific roles — US/remote only
+combo-remote-us,Power Combo,"""{{keyword}} administrator"" ""remote"" (""United States"" OR ""US"") (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com OR site:eightfold.ai OR site:jobs.lever.co)",daily,Remote US jobs across all ATS
+combo-remote-et,Power Combo,"""{{keyword}}"" ""remote"" (""Eastern"" OR ""EST"" OR ""ET"") (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com OR site:jobs.lever.co)",daily,Remote Eastern Time zone jobs
+combo-education,Power Combo,"""{{keyword}}"" (""education cloud"" OR ""higher education"") (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Education sector — US/remote only
+combo-nonprofit,Power Combo,"""{{keyword}}"" (""nonprofit"" OR ""NPSP"" OR ""nonprofit cloud"") (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Nonprofit sector — US/remote only
+combo-experience-cloud,Power Combo,"""{{keyword}}"" ""experience cloud"" (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",weekly,Community/portal roles — US/remote only

@@ -112,7 +112,8 @@
       "Bash(python:*)",
       "WebFetch(domain:careers.elliottdavis.com)",
       "WebFetch(domain:www.challenger.org)",
-      "WebFetch(*)"
+      "WebFetch(*)",
+      "Bash(npm run test:dorks:*)"
     ]
   }
 }

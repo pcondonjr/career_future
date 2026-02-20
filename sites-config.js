@@ -24,7 +24,7 @@ export function getLocations() {
  * @param {boolean} onlyEnabled - Only return sites where enabled=true
  * @returns {Promise<Array>} Array of site configurations
  */
-export async function loadSitesFromCSV(csvPath = './companies.csv', onlyEnabled = true) {
+export async function loadSitesFromCSV(csvPath = './data/companies.csv', onlyEnabled = true) {
   try {
     const fileContent = await fs.readFile(csvPath, 'utf-8');
     
@@ -78,7 +78,7 @@ export async function loadSitesFromCSV(csvPath = './companies.csv', onlyEnabled 
  * Add a new company to the CSV
  * @param {Object} company - Company configuration object
  */
-export async function addCompanyToCSV(company, csvPath = './companies.csv') {
+export async function addCompanyToCSV(company, csvPath = './data/companies.csv') {
   const newRow = [
     company.name,
     company.url,
@@ -102,7 +102,7 @@ export async function addCompanyToCSV(company, csvPath = './companies.csv') {
 /**
  * Validate CSV format and required fields
  */
-export async function validateCSV(csvPath = './companies.csv') {
+export async function validateCSV(csvPath = './data/companies.csv') {
   try {
     const fileContent = await fs.readFile(csvPath, 'utf-8');
     const records = parse(fileContent, {

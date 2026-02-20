@@ -5,15 +5,37 @@
     <title>Career Future - Job Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="stylesheet" href="/css/resume_optimizer_styles.css">
+    <style>
+        .tab-bar { display: flex; align-items: center; border-bottom: 2px solid var(--pico-muted-border-color); margin-bottom: 1rem; }
+        .tab-btn { background: none; border: none; padding: 0.6rem 1.2rem; cursor: pointer; font-size: 1rem; color: var(--pico-muted-color); border-bottom: 3px solid transparent; margin-bottom: -2px; }
+        .tab-btn.active { color: var(--pico-primary); border-bottom-color: var(--pico-primary); font-weight: 600; }
+        .tab-btn:hover:not(.active) { color: var(--pico-color); }
+        .tab-last-run { margin-left: auto; font-size: 0.85rem; color: var(--pico-muted-color); white-space: nowrap; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        #log-panel { display: none; margin-bottom: 1rem; }
+        #log-panel.visible { display: block; }
+        #log-output {
+            background: var(--pico-card-background-color, #1a1a2e);
+            color: var(--pico-color, #c8c8d0);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            padding: 0.75rem;
+            border-radius: 6px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border: 1px solid var(--pico-muted-border-color);
+        }
+        #log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+        #log-header small { color: var(--pico-muted-color); }
+    </style>
 </head>
 <body>
     <main class="container">
         <h1>Career Future!<%= lastRun && lastRun.searchValue ? ' - ' + lastRun.searchValue : '' %></h1>
-        <% if (lastRun && lastRun.timestamp) { %>
-            <p style="margin-top: -0.5rem; color: var(--muted-color);">
-                Last run: <%= new Date(lastRun.timestamp).toLocaleDateString() %> at <%= new Date(lastRun.timestamp).toLocaleTimeString() %> &mdash; <%= lastRun.runName %>
-            </p>
-        <% } %>
         <div class="grid">
             <div><strong>Total Jobs:</strong> <%= stats.total %></div>
             <div><strong>Last 24h:</strong> <%= stats.last24Hours %></div>
@@ -65,28 +87,74 @@
         <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
             <button id="run-daily-btn" class="outline">Run Companies List Now</button>
             <button id="run-weekly-btn" class="outline">Run Companies-Weekly List Now</button>
+            <button id="run-dorks-btn" class="outline">Run Applicant Tracking</button>
+            <button id="stop-btn" class="outline secondary" style="display:none;">Stop</button>
             <span id="scraper-status" style="align-self: center;"></span>
         </div>
+
+        <div id="log-panel">
+            <div id="log-header">
+                <small>Live Output</small>
+                <button id="log-toggle-btn" class="outline secondary" style="padding: 0.2rem 0.6rem; font-size: 0.75rem;">Hide</button>
+            </div>
+            <div id="log-output"></div>
+        </div>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="jobs">Job Results (<%= jobs.length %>)</button>
+            <button class="tab-btn" data-tab="ats">Applicant Tracking (<%= dorkJobs.length %>)</button>
+            <span class="tab-last-run" id="tab-last-run">
+                <% if (lastRun && lastRun.timestamp) { %>
+                    Last run: <%= new Date(lastRun.timestamp).toLocaleDateString() %> at <%= new Date(lastRun.timestamp).toLocaleTimeString() %> &mdash; <%= lastRun.runName %>
+                <% } %>
+            </span>
+        </div>
+
         <p id="search-results-count" style="display:none;"></p>
-        <% if (jobs.length === 0) { %>
-            <p>No jobs found yet. Run a search to start finding jobs!</p>
-        <% } else { %>
-            <% jobs.forEach(job => { %>
-                <article class="job-card" data-url="<%= job.url %>"
-                         data-title="<%= job.title %>"
-                         data-company="<%= job.company %>"
-                         data-location="<%= job.location || '' %>">
-                    <h3 class="job-title"><%= job.title %></h3>
-                    <p class="job-company"><strong><%= job.company %></strong></p>
-                    <p class="job-location"><%= job.location || 'Location not specified' %></p>
-                    <p>Found: <%= new Date(job.firstSeen).toLocaleDateString() %></p>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                        <a href="<%= job.url %>" target="_blank" role="button">View Job</a>
-                        <button class="btn-optimize-resume" type="button">Optimize Resume</button>
-                    </div>
-                </article>
-            <% }); %>
-        <% } %>
+
+        <div id="tab-jobs" class="tab-content active">
+            <% if (jobs.length === 0) { %>
+                <p>No jobs found yet. Run a search to start finding jobs!</p>
+            <% } else { %>
+                <% jobs.forEach(job => { %>
+                    <article class="job-card" data-url="<%= job.url %>"
+                             data-title="<%= job.title %>"
+                             data-company="<%= job.company %>"
+                             data-location="<%= job.location || '' %>">
+                        <h3 class="job-title"><%= job.title %></h3>
+                        <p class="job-company"><strong><%= job.company %></strong></p>
+                        <p class="job-location"><%= job.location || 'Location not specified' %></p>
+                        <p>Found: <%= new Date(job.firstSeen).toLocaleDateString() %></p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <a href="<%= job.url %>" target="_blank" role="button">View Job</a>
+                            <button class="btn-optimize-resume" type="button">Optimize Resume</button>
+                        </div>
+                    </article>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <div id="tab-ats" class="tab-content">
+            <% if (dorkJobs.length === 0) { %>
+                <p>No applicant tracking jobs found yet. Click "Run Applicant Tracking" to search ATS platforms!</p>
+            <% } else { %>
+                <% dorkJobs.forEach(job => { %>
+                    <article class="job-card" data-url="<%= job.url %>"
+                             data-title="<%= job.title %>"
+                             data-company="<%= job.company %>"
+                             data-location="<%= job.location || '' %>">
+                        <h3 class="job-title"><%= job.title %></h3>
+                        <p class="job-company"><strong><%= job.company %></strong></p>
+                        <p class="job-location"><%= job.location || 'Location not specified' %></p>
+                        <p>Found: <%= new Date(job.firstSeen).toLocaleDateString() %></p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <a href="<%= job.url %>" target="_blank" role="button">View Job</a>
+                            <button class="btn-optimize-resume" type="button">Optimize Resume</button>
+                        </div>
+                    </article>
+                <% }); %>
+            <% } %>
+        </div>
     </main>
     <script>
     (function() {
@@ -95,10 +163,49 @@
       const value = document.getElementById('search-value');
       const clearBtn = document.getElementById('search-clear');
       const countEl = document.getElementById('search-results-count');
-      const cards = document.querySelectorAll('.job-card');
+
+      // Tab switching
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabContents = { jobs: document.getElementById('tab-jobs'), ats: document.getElementById('tab-ats') };
+      const tabLastRun = document.getElementById('tab-last-run');
+
+      const lastRunData = {
+        jobs: '<%= lastRun && lastRun.timestamp ? `Last run: ${new Date(lastRun.timestamp).toLocaleDateString()} at ${new Date(lastRun.timestamp).toLocaleTimeString()} — ${lastRun.runName}` : "" %>',
+        ats: '<%= dorkLastRun && dorkLastRun.timestamp ? `Last run: ${new Date(dorkLastRun.timestamp).toLocaleDateString()} at ${new Date(dorkLastRun.timestamp).toLocaleTimeString()} — ${dorkLastRun.runName}` : "" %>'
+      };
+
+      let activeTab = 'jobs';
+
+      function switchTab(tab) {
+        activeTab = tab;
+        tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+        Object.entries(tabContents).forEach(([k, el]) => el.classList.toggle('active', k === tab));
+        tabLastRun.textContent = lastRunData[tab] || '';
+
+        // Update URL
+        const p = new URLSearchParams(window.location.search);
+        if (tab === 'jobs') p.delete('tab'); else p.set('tab', tab);
+        history.replaceState(null, '', '/?' + p.toString());
+
+        // Re-apply filter to new tab
+        applyFilter();
+      }
+
+      tabBtns.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+      // Restore tab from URL
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('tab') === 'ats') switchTab('ats');
+
+      function getActiveCards() {
+        const container = tabContents[activeTab];
+        return container.querySelectorAll('.job-card');
+      }
 
       function applyFilter() {
         const searchVal = value.value.toLowerCase().trim();
+        const cards = getActiveCards();
+
         if (!searchVal) {
           cards.forEach(c => c.style.display = '');
           countEl.style.display = 'none';
@@ -126,7 +233,6 @@
       }
 
       // Restore search state from URL params on page load
-      const params = new URLSearchParams(window.location.search);
       if (params.get('field')) field.value = params.get('field');
       if (params.get('modifier')) modifier.value = params.get('modifier');
       if (params.get('search')) { value.value = params.get('search'); applyFilter(); }
@@ -150,21 +256,48 @@
       // Scraper run buttons
       const dailyBtn = document.getElementById('run-daily-btn');
       const weeklyBtn = document.getElementById('run-weekly-btn');
+      const dorksBtn = document.getElementById('run-dorks-btn');
+      const stopBtn = document.getElementById('stop-btn');
       const statusEl = document.getElementById('scraper-status');
+
+      // Track which type of search is running so Stop knows what to call
+      let activeSearchType = null; // 'scraper' or 'dorks'
+      let activePoll = null;
+      let activeRunBtn = null;
 
       function searchParams() {
         const p = new URLSearchParams();
         p.set('range', timeRange.value);
+        if (activeTab !== 'jobs') p.set('tab', activeTab);
         if (field.value) p.set('field', field.value);
         if (modifier.value) p.set('modifier', modifier.value);
         if (value.value.trim()) p.set('search', value.value.trim());
         return p.toString();
       }
 
-      async function runScraper(mode, btn) {
+      function setRunningState(btn, label) {
+        activeRunBtn = btn;
         btn.setAttribute('disabled', true);
         btn.setAttribute('aria-busy', 'true');
-        statusEl.textContent = `Running ${mode} search...`;
+        statusEl.textContent = label;
+        stopBtn.style.display = '';
+      }
+
+      function clearRunningState() {
+        if (activePoll) { clearInterval(activePoll); activePoll = null; }
+        if (activeRunBtn) {
+          activeRunBtn.removeAttribute('disabled');
+          activeRunBtn.removeAttribute('aria-busy');
+          activeRunBtn = null;
+        }
+        stopBtn.style.display = 'none';
+        activeSearchType = null;
+      }
+
+      async function runScraper(mode, btn) {
+        if (activeSearchType) return;
+        activeSearchType = 'scraper';
+        setRunningState(btn, `Running ${mode} search...`);
 
         try {
           const res = await fetch('/api/run-scraper', {
@@ -176,29 +309,134 @@
 
           if (!res.ok) {
             statusEl.textContent = data.error || 'Error starting search';
-            btn.removeAttribute('disabled');
-            btn.removeAttribute('aria-busy');
+            clearRunningState();
             return;
           }
 
-          // Poll for completion then reload with search state preserved
-          const poll = setInterval(async () => {
+          activePoll = setInterval(async () => {
             const s = await fetch('/api/scraper-status').then(r => r.json());
             if (!s.running) {
-              clearInterval(poll);
+              clearRunningState();
               const qs = searchParams();
               window.location.href = '/' + (qs ? '?' + qs : '');
             }
           }, 3000);
         } catch (err) {
           statusEl.textContent = 'Failed to start search';
-          btn.removeAttribute('disabled');
-          btn.removeAttribute('aria-busy');
+          clearRunningState();
         }
+      }
+
+      async function runDorks() {
+        if (activeSearchType) return;
+        activeSearchType = 'dorks';
+        setRunningState(dorksBtn, 'Running Applicant Tracking search...');
+
+        try {
+          const res = await fetch('/api/run-dorks', { method: 'POST' });
+          const data = await res.json();
+
+          if (!res.ok) {
+            statusEl.textContent = data.error || 'Error starting search';
+            clearRunningState();
+            return;
+          }
+
+          activePoll = setInterval(async () => {
+            const s = await fetch('/api/dork-status').then(r => r.json());
+            if (!s.running) {
+              clearRunningState();
+              const p = new URLSearchParams(window.location.search);
+              p.set('tab', 'ats');
+              window.location.href = '/?' + p.toString();
+            }
+          }, 3000);
+        } catch (err) {
+          statusEl.textContent = 'Failed to start search';
+          clearRunningState();
+        }
+      }
+
+      async function stopSearch() {
+        const endpoint = activeSearchType === 'dorks' ? '/api/stop-dorks' : '/api/stop-scraper';
+        stopBtn.setAttribute('disabled', true);
+        stopBtn.setAttribute('aria-busy', 'true');
+
+        try {
+          await fetch(endpoint, { method: 'POST' });
+          statusEl.textContent = 'Search stopped';
+        } catch {
+          statusEl.textContent = 'Failed to stop search';
+        }
+        clearRunningState();
+        stopBtn.removeAttribute('disabled');
+        stopBtn.removeAttribute('aria-busy');
       }
 
       dailyBtn.addEventListener('click', () => runScraper('daily', dailyBtn));
       weeklyBtn.addEventListener('click', () => runScraper('weekly', weeklyBtn));
+      dorksBtn.addEventListener('click', runDorks);
+      stopBtn.addEventListener('click', stopSearch);
+
+      // --- Live log panel ---
+      const logPanel = document.getElementById('log-panel');
+      const logOutput = document.getElementById('log-output');
+      const logToggleBtn = document.getElementById('log-toggle-btn');
+      let logVisible = true;
+      let eventSource = null;
+
+      logToggleBtn.addEventListener('click', () => {
+        logVisible = !logVisible;
+        logOutput.style.display = logVisible ? '' : 'none';
+        logToggleBtn.textContent = logVisible ? 'Hide' : 'Show';
+      });
+
+      function showLogPanel() {
+        logPanel.classList.add('visible');
+        logOutput.textContent = '';
+      }
+
+      function hideLogPanel() {
+        // Keep panel visible so user can review the final output
+      }
+
+      function connectLogStream() {
+        if (eventSource) return;
+        eventSource = new EventSource('/api/logs/stream');
+        eventSource.onmessage = (e) => {
+          try {
+            const entry = JSON.parse(e.data);
+            logOutput.textContent += entry.text + '\n';
+            // Auto-scroll to bottom
+            logOutput.scrollTop = logOutput.scrollHeight;
+          } catch { /* ignore parse errors */ }
+        };
+        eventSource.onerror = () => {
+          // Reconnect handled automatically by EventSource
+        };
+      }
+
+      function disconnectLogStream() {
+        if (eventSource) {
+          eventSource.close();
+          eventSource = null;
+        }
+      }
+
+      // Patch setRunningState / clearRunningState to manage log stream
+      const origSetRunning = setRunningState;
+      setRunningState = function(btn, label) {
+        origSetRunning(btn, label);
+        showLogPanel();
+        connectLogStream();
+      };
+
+      const origClearRunning = clearRunningState;
+      clearRunningState = function() {
+        origClearRunning();
+        // Brief delay so final log lines arrive before disconnect
+        setTimeout(disconnectLogStream, 2000);
+      };
     })();
     </script>
     <script src="/js/public_resume_optimizer.js"></script>

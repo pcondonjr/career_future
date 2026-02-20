@@ -137,7 +137,7 @@ export class Scheduler {
   async runDorkSearch(frequency = 'daily') {
     const dbPaths = config.getDatabasePaths();
     const dorksDbPath = resolveWritableFile('jobs_database_dorks.json');
-    const dorksCsvPath = resolveResourceFile('google-dorks.csv');
+    const dorksCsvPath = resolveResourceFile('data/ats-list.csv');
 
     console.log('\n' + '='.repeat(60));
     console.log(`Starting Google Dorks (${frequency}) search at ${new Date().toLocaleString()}`);

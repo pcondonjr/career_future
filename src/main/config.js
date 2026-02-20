@@ -214,12 +214,12 @@ const schema = {
   companies: {
     type: 'object',
     properties: {
-      dailyPath: { type: 'string', default: 'companies.csv' },
-      weeklyPath: { type: 'string', default: 'companies-weekly.csv' }
+      dailyPath: { type: 'string', default: 'data/companies.csv' },
+      weeklyPath: { type: 'string', default: 'data/companies-weekly.csv' }
     },
     default: {
-      dailyPath: 'companies.csv',
-      weeklyPath: 'companies-weekly.csv'
+      dailyPath: 'data/companies.csv',
+      weeklyPath: 'data/companies-weekly.csv'
     }
   },
   database: {
@@ -414,8 +414,8 @@ class ConfigManager {
 
   getCompaniesPaths() {
     return {
-      daily: this.store.get('companies.dailyPath', 'companies.csv'),
-      weekly: this.store.get('companies.weeklyPath', 'companies-weekly.csv')
+      daily: this.store.get('companies.dailyPath', 'data/companies.csv'),
+      weekly: this.store.get('companies.weeklyPath', 'data/companies-weekly.csv')
     };
   }
 

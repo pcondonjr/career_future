@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import fs from 'fs/promises';
 import puppeteer from 'puppeteer-core';
 import { JobDatabase } from './database.js';
@@ -61,7 +61,9 @@ app.set('view engine', 'ejs');
 // Static files and views — configured in startDashboard() after paths are set
 // Defaults here for legacy `node dashboard.js` usage
 let db;
+let dorkDb;
 let lastRunFile;
+let dorkLastRunFile;
 
 async function loadLastRun() {
   try {
@@ -76,10 +78,25 @@ async function saveLastRun(info) {
   await fs.writeFile(lastRunFile, JSON.stringify(info, null, 2));
 }
 
+async function loadDorkLastRun() {
+  try {
+    const data = await fs.readFile(dorkLastRunFile, 'utf-8');
+    return JSON.parse(data);
+  } catch {
+    return null;
+  }
+}
+
+async function saveDorkLastRun(info) {
+  await fs.writeFile(dorkLastRunFile, JSON.stringify(info, null, 2));
+}
+
 app.get('/', async (req, res) => {
   try {
     await db.load();
+    await dorkDb.load();
     const stats = db.getStats();
+    const dorkStats = dorkDb.getStats();
 
     const range = req.query.range || '30d';
     let cutoff = null;
@@ -88,6 +105,10 @@ app.get('/', async (req, res) => {
       cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
     }
     const jobs = Array.from(db.jobs.values())
+      .filter(job => !cutoff || new Date(job.firstSeen) >= cutoff)
+      .sort((a, b) => new Date(b.firstSeen) - new Date(a.firstSeen));
+
+    const dorkJobs = Array.from(dorkDb.jobs.values())
       .filter(job => !cutoff || new Date(job.firstSeen) >= cutoff)
       .sort((a, b) => new Date(b.firstSeen) - new Date(a.firstSeen));
 
@@ -100,13 +121,17 @@ app.get('/', async (req, res) => {
     });
 
     const lastRun = await loadLastRun();
+    const dorkLastRun = await loadDorkLastRun();
 
     res.render('index', {
       stats,
+      dorkStats,
       jobs,
+      dorkJobs,
       byCompany,
       totalCompanies: Object.keys(byCompany).length,
       lastRun,
+      dorkLastRun,
       range
     });
   } catch (error) {
@@ -164,7 +189,7 @@ app.get('/api/export', async (req, res) => {
 
 app.get('/companies', async (req, res) => {
   try {
-    const csvPath = path.join(resourcesBase, 'companies.csv');
+    const csvPath = path.join(resourcesBase, 'data/companies.csv');
     const validation = await validateCSV(csvPath);
     const sites = await loadSitesFromCSV(csvPath, false);
 
@@ -176,7 +201,7 @@ app.get('/companies', async (req, res) => {
 
 app.get('/companies-weekly', async (req, res) => {
   try {
-    const csvPath = path.join(resourcesBase, 'companies-weekly.csv');
+    const csvPath = path.join(resourcesBase, 'data/companies-weekly.csv');
     const validation = await validateCSV(csvPath);
     const sites = await loadSitesFromCSV(csvPath, false);
 
@@ -186,16 +211,67 @@ app.get('/companies-weekly', async (req, res) => {
   }
 });
 
-// Run scraper endpoints — signal/bat files in writable location
+// Run scraper endpoints — track child processes so they can be stopped
 let scraperSignalFile;
-let scraperBatFile;
+let dorkSignalFile;
 
-async function isScraperRunning() {
-  try {
-    await fs.access(scraperSignalFile);
-    return true;
-  } catch {
-    return false;
+// Track running child processes for stop functionality
+let scraperProcess = null;
+let dorkProcess = null;
+
+// Live log buffer — ring buffer of recent output lines
+const LOG_MAX_LINES = 500;
+let logBuffer = [];
+let logClients = new Set(); // SSE clients listening for log updates
+
+function appendLog(line) {
+  const entry = { ts: Date.now(), text: line };
+  logBuffer.push(entry);
+  if (logBuffer.length > LOG_MAX_LINES) logBuffer.shift();
+  // Push to all SSE clients
+  for (const client of logClients) {
+    client.write(`data: ${JSON.stringify(entry)}\n\n`);
+  }
+}
+
+function clearLog() {
+  logBuffer = [];
+}
+
+function pipeProcessOutput(proc) {
+  if (proc.stdout) {
+    proc.stdout.on('data', (chunk) => {
+      const lines = chunk.toString().split('\n').filter(l => l.trim());
+      lines.forEach(l => appendLog(l));
+    });
+  }
+  if (proc.stderr) {
+    proc.stderr.on('data', (chunk) => {
+      const lines = chunk.toString().split('\n').filter(l => l.trim());
+      lines.forEach(l => appendLog(l));
+    });
+  }
+}
+
+function isScraperRunning() {
+  return scraperProcess !== null && !scraperProcess.killed;
+}
+
+function isDorkRunning() {
+  return dorkProcess !== null && !dorkProcess.killed;
+}
+
+async function cleanupSignalFile(filePath) {
+  try { await fs.unlink(filePath); } catch { /* already gone */ }
+}
+
+function stopProcess(proc) {
+  if (!proc || proc.killed) return;
+  // On Windows, taskkill /T kills the process tree (node + chrome children)
+  if (process.platform === 'win32') {
+    exec(`taskkill /pid ${proc.pid} /T /F`, () => {});
+  } else {
+    proc.kill('SIGTERM');
   }
 }
 
@@ -203,34 +279,122 @@ app.post('/api/run-scraper', async (req, res) => {
   const mode = req.body.mode === 'weekly' ? 'weekly' : 'daily';
   const searchValue = (req.body.searchValue || '').trim();
 
-  if (await isScraperRunning()) {
+  if (isScraperRunning()) {
     return res.status(409).json({ error: 'A search is already running' });
   }
 
   const runName = mode === 'weekly' ? 'Companies List Weekly' : 'Companies List';
   await saveLastRun({ searchValue, runName, timestamp: new Date().toISOString() });
-  await fs.writeFile(scraperSignalFile, mode);
+
+  clearLog();
+  appendLog(`Starting ${runName} search...`);
 
   const weeklyFlag = mode === 'weekly' ? ' --weekly' : '';
-  const batContent = [
-    '@echo off',
-    `cd /d "${writableBase}"`,
-    `node index.js --now${weeklyFlag}`,
-    `del "${scraperSignalFile}"`,
-    'echo.',
-    'echo Search complete. Press any key to close.',
-    'pause > nul',
-    'exit'
-  ].join('\r\n');
+  const args = `--now${weeklyFlag}`;
 
-  await fs.writeFile(scraperBatFile, batContent);
-  exec(`start "${runName}" "${scraperBatFile}"`);
+  scraperProcess = spawn('node', ['index.js', ...args.split(' ').filter(Boolean)], {
+    cwd: writableBase,
+    stdio: ['ignore', 'pipe', 'pipe'],
+    detached: false,
+    shell: true
+  });
+
+  pipeProcessOutput(scraperProcess);
+
+  scraperProcess.on('close', (code) => {
+    appendLog(code === 0 ? 'Search complete.' : `Search exited with code ${code}`);
+    scraperProcess = null;
+  });
+  scraperProcess.on('error', (err) => {
+    appendLog(`Error: ${err.message}`);
+    scraperProcess = null;
+  });
 
   res.json({ message: `${mode} search started` });
 });
 
+app.post('/api/stop-scraper', async (req, res) => {
+  if (!isScraperRunning()) {
+    await cleanupSignalFile(scraperSignalFile);
+    return res.json({ message: 'No search running' });
+  }
+
+  stopProcess(scraperProcess);
+  scraperProcess = null;
+  appendLog('Search stopped by user.');
+  await cleanupSignalFile(scraperSignalFile);
+
+  res.json({ message: 'Search stopped' });
+});
+
 app.get('/api/scraper-status', async (req, res) => {
-  res.json({ running: await isScraperRunning() });
+  res.json({ running: isScraperRunning() });
+});
+
+app.post('/api/run-dorks', async (req, res) => {
+  if (isDorkRunning()) {
+    return res.status(409).json({ error: 'Applicant Tracking search is already running' });
+  }
+
+  await saveDorkLastRun({ runName: 'Applicant Tracking', timestamp: new Date().toISOString() });
+
+  clearLog();
+  appendLog('Starting Applicant Tracking search...');
+
+  dorkProcess = spawn('node', ['index.js', '--now', '--dorks'], {
+    cwd: writableBase,
+    stdio: ['ignore', 'pipe', 'pipe'],
+    detached: false,
+    shell: true
+  });
+
+  pipeProcessOutput(dorkProcess);
+
+  dorkProcess.on('close', (code) => {
+    appendLog(code === 0 ? 'Applicant Tracking search complete.' : `Search exited with code ${code}`);
+    dorkProcess = null;
+  });
+  dorkProcess.on('error', (err) => {
+    appendLog(`Error: ${err.message}`);
+    dorkProcess = null;
+  });
+
+  res.json({ message: 'Applicant Tracking search started' });
+});
+
+app.post('/api/stop-dorks', async (req, res) => {
+  if (!isDorkRunning()) {
+    await cleanupSignalFile(dorkSignalFile);
+    return res.json({ message: 'No search running' });
+  }
+
+  stopProcess(dorkProcess);
+  dorkProcess = null;
+  appendLog('Applicant Tracking search stopped by user.');
+  await cleanupSignalFile(dorkSignalFile);
+
+  res.json({ message: 'Applicant Tracking search stopped' });
+});
+
+app.get('/api/dork-status', async (req, res) => {
+  res.json({ running: isDorkRunning() });
+});
+
+// SSE endpoint — streams live log output to the Dashboard
+app.get('/api/logs/stream', (req, res) => {
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive'
+  });
+
+  // Send buffered lines so the client catches up
+  for (const entry of logBuffer) {
+    res.write(`data: ${JSON.stringify(entry)}\n\n`);
+  }
+
+  logClients.add(res);
+  req.on('close', () => { logClients.delete(res); });
 });
 
 // Fetch job description from URL using Puppeteer
@@ -364,9 +528,15 @@ export function startDashboard(options = {}) {
 
   // Initialize path-dependent variables
   db = new JobDatabase(path.join(writableBase, 'jobs_database.json'));
+  dorkDb = new JobDatabase(path.join(writableBase, 'jobs_database_dorks.json'));
   lastRunFile = path.join(writableBase, 'last_run.json');
+  dorkLastRunFile = path.join(writableBase, 'last_run_dorks.json');
   scraperSignalFile = path.join(writableBase, '.scraper-running');
-  scraperBatFile = path.join(writableBase, '.run-scraper.bat');
+  dorkSignalFile = path.join(writableBase, '.dork-running');
+
+  // Clean up any stale signal files left from previous crashes
+  cleanupSignalFile(scraperSignalFile);
+  cleanupSignalFile(dorkSignalFile);
 
   // Make resourcesBase available to sub-routers via app.locals
   app.locals.resourcesBase = resourcesBase;
@@ -381,5 +551,6 @@ export function startDashboard(options = {}) {
 // Start when run directly (legacy mode: node dashboard.js)
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
 if (isMain) {
-  startDashboard();
+  const configManager = (await import('./src/main/config.js')).default;
+  startDashboard({ config: configManager });
 }

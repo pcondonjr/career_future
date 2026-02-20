@@ -32,12 +32,12 @@ extraResources:
     to: app-data/resume/
     filter:
       - "**/*"
-  - from: companies.csv
-    to: app-data/companies.csv
-  - from: companies-weekly.csv
-    to: app-data/companies-weekly.csv
-  - from: google-dorks.csv
-    to: app-data/google-dorks.csv
+  - from: data/companies.csv
+    to: app-data/data/companies.csv
+  - from: data/companies-weekly.csv
+    to: app-data/data/companies-weekly.csv
+  - from: data/ats-list.csv
+    to: app-data/data/ats-list.csv
 
 asar: true
 

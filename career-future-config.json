@@ -1,0 +1,50 @@
+{
+  "firstRunComplete": false,
+  "license": {},
+  "user": {},
+  "search": {
+    "keywords": [
+      "Salesforce Administrator"
+    ],
+    "locations": [
+      "remote",
+      "greenville",
+      "south carolina",
+      "sc",
+      "charlotte",
+      "atlanta",
+      "hybrid"
+    ],
+    "schedule": {
+      "enabled": true,
+      "dailyTimes": [
+        "08:00",
+        "17:00"
+      ],
+      "weeklyDay": 0,
+      "weeklyTime": "10:00"
+    }
+  },
+  "email": {
+    "service": "gmail"
+  },
+  "anthropic": {},
+  "resume": {},
+  "companies": {
+    "dailyPath": "data/companies.csv",
+    "weeklyPath": "data/companies-weekly.csv"
+  },
+  "database": {
+    "path": "jobs_database.json",
+    "weeklyPath": "jobs_database_weekly.json"
+  },
+  "dashboard": {
+    "port": 3000,
+    "autoOpen": true
+  },
+  "system": {
+    "autoStart": false,
+    "minimizeToTray": true,
+    "checkUpdates": true
+  }
+}

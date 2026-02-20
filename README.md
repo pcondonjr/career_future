@@ -174,7 +174,7 @@ The dashboard includes the following protections:
 
 ### Add/Remove Companies
 
-Edit `companies.csv` in Excel or any text editor:
+Edit `data/companies.csv` in Excel or any text editor:
 
 ```csv
 company_name,careers_url,job_card_selector,title_selector,location_selector,link_selector,enabled,notes
@@ -216,7 +216,10 @@ cron.schedule('0 */4 * * *', runJobSearch);
 ```
 career-future/
 ├── .env                 # Your credentials (create from .env.example)
-├── companies.csv        # Company list (EDIT THIS!)
+├── data/
+│   ├── companies.csv    # Company list (EDIT THIS!)
+│   ├── companies-weekly.csv  # Weekly company list
+│   └── ats-list.csv     # Google dork query templates
 ├── jobs_database.json   # Tracked jobs (auto-generated)
 ├── package.json         # Dependencies
 ├── index.js             # Main scheduler + dashboard launcher
@@ -259,7 +262,7 @@ career-future/
 1. Check email for new job alerts
 2. Visit dashboard at http://localhost:3000 to see all jobs
 3. Export to CSV for tracking applications
-4. Update `companies.csv` as needed
+4. Update `data/companies.csv` as needed
 
 ## License
 

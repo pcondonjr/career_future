@@ -47,7 +47,7 @@ Career Future is a desktop application that automates your job search. It search
 |------|----------|
 | Your settings | `%APPDATA%\Career Future\career-future-config.json` |
 | Job databases | `%APPDATA%\Career Future\jobs_database.json` |
-| Company lists | `%APPDATA%\Career Future\companies.csv` |
+| Company lists | `%APPDATA%\Career Future\data\companies.csv` |
 
 Your data is stored separately from the application files, so it is preserved when you update to a new version.
 
@@ -178,8 +178,8 @@ Career Future searches two separate lists of company career pages:
 
 | List | File | Purpose |
 |------|------|---------|
-| Daily | `companies.csv` | Your core target companies, checked frequently |
-| Weekly | `companies-weekly.csv` | A broader set of companies, checked once per week |
+| Daily | `data/companies.csv` | Your core target companies, checked frequently |
+| Weekly | `data/companies-weekly.csv` | A broader set of companies, checked once per week |
 
 ### Viewing Company Lists
 
@@ -365,8 +365,8 @@ Copy the entire `%APPDATA%\Career Future\` folder to a safe location. This inclu
 - `career-future-config.json` — All your settings
 - `jobs_database.json` — Your daily job history
 - `jobs_database_weekly.json` — Your weekly job history
-- `companies.csv` — Your daily company list
-- `companies-weekly.csv` — Your weekly company list
+- `data/companies.csv` — Your daily company list
+- `data/companies-weekly.csv` — Your weekly company list
 
 **To open this folder:** Press `Win + R`, type `%APPDATA%\Career Future`, and press Enter.
 
