@@ -7,13 +7,14 @@
 3. [Dashboard](#3-dashboard)
 4. [Running a Search](#4-running-a-search)
 5. [Managing Company Lists](#5-managing-company-lists)
-6. [Email Notifications](#6-email-notifications)
-7. [AI Resume Optimizer](#7-ai-resume-optimizer)
-8. [Settings](#8-settings)
-9. [System Tray](#9-system-tray)
-10. [License Activation](#10-license-activation)
-11. [Backup & Restore](#11-backup--restore)
-12. [Troubleshooting](#12-troubleshooting)
+6. [ATS List Search](#6-ats-list-search)
+7. [Email Notifications](#7-email-notifications)
+8. [AI Resume Optimizer](#8-ai-resume-optimizer)
+9. [Settings](#9-settings)
+10. [System Tray](#10-system-tray)
+11. [License Activation](#11-license-activation)
+12. [Backup & Restore](#12-backup--restore)
+13. [Troubleshooting](#13-troubleshooting)
 
 ---
 
@@ -147,6 +148,18 @@ Use the filter bar to narrow your results:
 | **Analyze External Job** | Paste any job description for AI analysis |
 | **Run Companies List Now** | Manually trigger a daily search |
 | **Run Companies-Weekly List Now** | Manually trigger a weekly search |
+| **Run ATS List Now** | Manually trigger an ATS (Applicant Tracking System) search using Google Dork queries |
+| **Stop** | Appears while a search is running — click to cancel the current search |
+
+### Live Log Panel
+
+When a search is running, a live log panel appears at the bottom of the dashboard showing real-time output from the search process. You can:
+
+- **Show/Hide** the log panel with the toggle button
+- Watch progress as each company page is visited
+- See errors if a company page fails to load
+
+The log panel auto-scrolls to show the latest output and disappears when the search completes.
 
 ---
 
@@ -168,7 +181,11 @@ You can trigger a search at any time:
 - **From the dashboard:** Click **Run Companies List Now** or **Run Companies-Weekly List Now**
 - **From the system tray:** Right-click the tray icon > **Run Search Now** > **Daily Search** or **Weekly Search**
 
-While a search is running, a status indicator on the dashboard shows the current operation.
+While a search is running, a status indicator on the dashboard shows the current operation. A **Stop** button appears so you can cancel the search at any time, and a live log panel shows real-time progress.
+
+### Stopping a Search
+
+Click the **Stop** button on the dashboard to cancel any running search. This immediately terminates the search process and any browser instances it launched.
 
 ---
 
@@ -201,7 +218,38 @@ Old Company,https://old.example.com/jobs,false
 
 ---
 
-## 6. Email Notifications
+## 6. ATS List Search
+
+In addition to searching company career pages directly, Career Future can search Google for job listings using targeted search queries (Google Dorks) and the Serper API.
+
+### How It Works
+
+The ATS list search uses template-based Google search queries defined in `data/ats-list.csv`. Each query targets specific Applicant Tracking Systems (ATS) like Workday, Greenhouse, Lever, and others using your configured keywords and locations.
+
+### Running an ATS Search
+
+- **From the dashboard:** Click **Run ATS List Now**
+- **Automatically:** ATS searches run 30 minutes after scheduled company searches
+
+### Results
+
+ATS search results are stored in a separate database (`jobs_database_dorks.json`) and appear on the dashboard alongside your company search results. Results are filtered to:
+
+- Only include US-based positions
+- Exclude dead links (404/410 pages)
+- Skip international results
+
+### Serper Jobs API
+
+Career Future also uses the Serper Jobs API to pull structured job data directly from Google Jobs. This runs automatically at :45 past the hour and stores results in `jobs_database_jobs.json`.
+
+### API Key Required
+
+ATS list search requires a Serper API key. Set the `SERPER_API_KEY` in your `.env` file. The free tier provides 2,500 queries, after which usage costs $50/month for 50,000 queries.
+
+---
+
+## 7. Email Notifications
 
 When configured, Career Future sends you email alerts:
 
