@@ -37,8 +37,12 @@ node enrich-with-apollo.js [input.csv] [output.csv]
 node seed-apify-store.js [companies.csv]
 ```
 - Default input: `./companies-weekly.csv`
-- Pre-seeds the KV store so the Maps actor skips known companies
+- Also auto-loads `./excluded-companies.csv` if present
+- Pre-seeds the KV store so the Maps actor skips known AND rejected companies
 - Use `--list` flag to view current store contents
+
+### Exclusion list
+`excluded-companies.csv` — companies evaluated and rejected (no website, too small, wrong industry, etc.). Format: `name,reason`. These get seeded into the KV store so Apify won't rediscover them. Add rejected companies here after each enrichment review.
 
 ### Migrate old KV stores
 ```bash
@@ -58,3 +62,4 @@ node migrate-existing-stores.js --list       # show run log
 4. **Enrich** with Apollo: `npm run enrich`
 5. **Review** `enriched-companies.csv` — check employee counts, find career URLs
 6. **Import** qualifying companies into `data/companies-weekly.csv` in Career Future
+7. **Exclude** rejected companies by adding them to `excluded-companies.csv`

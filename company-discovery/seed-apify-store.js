@@ -2,15 +2,16 @@
  * seed-apify-store.js
  *
  * Pre-seeds the Apify Key Value Store "scraped-companies-master-list"
- * with companies from your companies-weekly.csv so the Google Maps
- * actor skips them (deduplication) and backfills Place IDs on future runs.
+ * with companies from your companies-weekly.csv AND excluded-companies.csv
+ * so the Google Maps actor skips them (deduplication).
  *
  * Usage:
  *   1. npm install apify-client csv-parser
  *   2. Set APIFY_API_TOKEN in your .env or environment
- *   3. node seed-apify-store.js [path-to-csv]
+ *   3. node seed-apify-store.js [path-to-weekly-csv]
  *
  * Default CSV path: ./companies-weekly.csv
+ * Exclusion file:   ./excluded-companies.csv (auto-loaded if present)
  */
 
 import dotenv from 'dotenv';
@@ -23,6 +24,7 @@ import csvParser from 'csv-parser';
 const APIFY_TOKEN = process.env.APIFY_API_TOKEN || process.env.APIFY_TOKEN;
 const STORE_NAME = 'scraped-companies-master-list';
 const CSV_PATH = process.argv[2] || './companies-weekly.csv';
+const EXCLUDED_CSV_PATH = './excluded-companies.csv';
 
 if (!APIFY_TOKEN) {
     console.error('❌ Missing APIFY_API_TOKEN in .env or environment');
@@ -66,6 +68,29 @@ async function readCSV(csvPath) {
     });
 }
 
+/**
+ * Read excluded companies from CSV (name,reason format)
+ */
+async function readExcludedCSV(csvPath) {
+    const excluded = [];
+
+    return new Promise((resolve, reject) => {
+        fs.createReadStream(csvPath)
+            .pipe(csvParser())
+            .on('data', (row) => {
+                const name = (row.name || '').trim();
+                if (!name || name.startsWith('#')) return;
+
+                excluded.push({
+                    name: name,
+                    reason: (row.reason || '').trim(),
+                });
+            })
+            .on('end', () => resolve(excluded))
+            .on('error', reject);
+    });
+}
+
 async function main() {
     console.log(`\n📂 Reading companies from: ${CSV_PATH}`);
 
@@ -77,6 +102,13 @@ async function main() {
     const companies = await readCSV(CSV_PATH);
     console.log(`   Found ${companies.length} companies (excluding comments)\n`);
 
+    // Load excluded companies if file exists
+    let excluded = [];
+    if (fs.existsSync(EXCLUDED_CSV_PATH)) {
+        excluded = await readExcludedCSV(EXCLUDED_CSV_PATH);
+        console.log(`🚫 Found ${excluded.length} excluded companies from: ${EXCLUDED_CSV_PATH}\n`);
+    }
+
     // Open (or create) the Key Value Store
     console.log(`🔗 Connecting to Apify store: "${STORE_NAME}"...`);
     const store = await client.keyValueStores().getOrCreate(STORE_NAME);
@@ -86,11 +118,11 @@ async function main() {
     let skipped = 0;
     let errors = 0;
 
+    // Seed companies from weekly CSV
     for (const company of companies) {
         const key = nameToKey(company.name);
 
         try {
-            // Check if this company already exists in the store
             const existing = await storeClient.getRecord(key);
 
             if (existing) {
@@ -98,7 +130,6 @@ async function main() {
                 continue;
             }
 
-            // Seed the record (no placeId yet — actor will backfill)
             const record = {
                 name: company.name,
                 placeId: null,
@@ -123,10 +154,49 @@ async function main() {
         }
     }
 
+    // Seed excluded companies
+    let excludedSeeded = 0;
+    let excludedSkipped = 0;
+
+    for (const company of excluded) {
+        const key = nameToKey(company.name);
+
+        try {
+            const existing = await storeClient.getRecord(key);
+
+            if (existing) {
+                excludedSkipped++;
+                continue;
+            }
+
+            const record = {
+                name: company.name,
+                placeId: null,
+                dateSeeded: new Date().toISOString(),
+                source: 'excluded-companies-csv',
+                excluded: true,
+                reason: company.reason,
+            };
+
+            await storeClient.setRecord({
+                key: key,
+                value: record,
+                contentType: 'application/json',
+            });
+
+            excludedSeeded++;
+            console.log(`   🚫 ${company.name} → ${key} (excluded: ${company.reason})`);
+        } catch (err) {
+            errors++;
+            console.error(`   ❌ ${company.name}: ${err.message}`);
+        }
+    }
+
     console.log(`\n${'='.repeat(50)}`);
     console.log(`📊 Results:`);
-    console.log(`   ✅ Seeded:  ${seeded}`);
-    console.log(`   ⏭️  Skipped: ${skipped} (already in store)`);
+    console.log(`   ✅ Seeded:  ${seeded} from weekly CSV`);
+    console.log(`   🚫 Seeded:  ${excludedSeeded} from exclusion list`);
+    console.log(`   ⏭️  Skipped: ${skipped + excludedSkipped} (already in store)`);
     console.log(`   ❌ Errors:  ${errors}`);
     console.log(`   📦 Store:   ${STORE_NAME}`);
     console.log(`${'='.repeat(50)}\n`);
