@@ -1,0 +1,16 @@
+{
+  "name": "company-discovery",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Discover and qualify companies using Apify Google Maps + Apollo.io enrichment",
+  "scripts": {
+    "enrich": "node enrich-with-apollo.js",
+    "seed": "node seed-apify-store.js",
+    "migrate": "node migrate-existing-stores.js"
+  },
+  "dependencies": {
+    "apify-client": "^2.22.1",
+    "csv-parser": "^3.2.0",
+    "dotenv": "^16.4.7"
+  }
+}

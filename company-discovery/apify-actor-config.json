@@ -1,0 +1,23 @@
+{
+    "extendOutputFunction": "async ({ item, data, Apify }) => {\n    const store = await Apify.openKeyValueStore('scraped-companies-master-list');\n    const placeId = item.placeId || item.id;\n    const companyName = (item.title || item.name || '').trim().toLowerCase();\n    \n    if (!placeId && !companyName) return item;\n\n    const nameKey = 'name_' + companyName.replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '');\n\n    if (placeId) {\n        const alreadyScraped = await store.getValue(placeId);\n        if (alreadyScraped) {\n            console.log(`Skipping duplicate (placeId): ${item.title || item.name}`);\n            return null;\n        }\n    }\n\n    const nameMatch = await store.getValue(nameKey);\n    if (nameMatch) {\n        if (placeId && !nameMatch.placeId) {\n            nameMatch.placeId = placeId;\n            nameMatch.dateUpdated = new Date().toISOString();\n            await store.setValue(nameKey, nameMatch);\n            await store.setValue(placeId, {\n                name: item.title || item.name,\n                dateScraped: nameMatch.dateScraped,\n                dateUpdated: new Date().toISOString(),\n                source: 'backfilled'\n            });\n            console.log(`Backfilled placeId for: ${item.title || item.name}`);\n        } else {\n            console.log(`Skipping duplicate (name): ${item.title || item.name}`);\n        }\n        return null;\n    }\n\n    const record = {\n        name: item.title || item.name,\n        placeId: placeId || null,\n        dateScraped: new Date().toISOString(),\n        source: 'google-maps-actor'\n    };\n    \n    if (placeId) {\n        await store.setValue(placeId, record);\n    }\n    await store.setValue(nameKey, record);\n\n    const runLog = await store.getValue('_run_log') || [];\n    const runId = process.env.APIFY_DEFAULT_KEY_VALUE_STORE_ID || 'unknown';\n    const exists = runLog.find(r => r.storeId === runId);\n    if (!exists) {\n        runLog.push({\n            storeId: runId,\n            timestamp: new Date().toISOString(),\n            search: 'google-maps-actor'\n        });\n        await store.setValue('_run_log', runLog);\n    }\n\n    const dataset = await Apify.openDataset('latest-new-companies');\n    await dataset.pushData({\n        name: item.title || item.name,\n        placeId: placeId || null,\n        website: item.website || item.url || null,\n        address: item.address || null,\n        phone: item.phone || null,\n        dateFound: new Date().toISOString()\n    });\n\n    return item;\n}",
+    "includeWebResults": false,
+    "language": "en",
+    "locationQuery": "Greenville, South Carolina, USA",
+    "maxCrawledPlacesPerSearch": 50,
+    "maxImages": 0,
+    "maximumLeadsEnrichmentRecords": 0,
+    "scrapeContacts": false,
+    "scrapeDirectories": false,
+    "scrapeImageAuthors": false,
+    "scrapePlaceDetailPage": false,
+    "scrapeReviewsPersonalData": false,
+    "scrapeTableReservationProvider": false,
+    "searchStringsArray": [
+        "Software companies near Greenville SC",
+        "Technology companies near Greenville SC",
+        "Healthcare companies near Greenville SC"
+    ],
+    "skipClosedPlaces": false,
+    "website": "withWebsite",
+    "zoom": 12
+}
