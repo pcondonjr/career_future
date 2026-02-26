@@ -7,10 +7,13 @@
     <link rel="stylesheet" href="/css/resume_optimizer_styles.css">
     <style>
         .tab-bar { display: flex; align-items: center; border-bottom: 2px solid var(--pico-muted-border-color); margin-bottom: 1rem; }
-        .tab-btn { background: none; border: none; padding: 0.6rem 1.2rem; cursor: pointer; font-size: 1rem; color: var(--pico-muted-color); border-bottom: 3px solid transparent; margin-bottom: -2px; }
-        .tab-btn.active { color: var(--pico-primary); border-bottom-color: var(--pico-primary); font-weight: 600; }
-        .tab-btn:hover:not(.active) { color: var(--pico-color); }
-        .tab-last-run { margin-left: auto; font-size: 0.85rem; color: var(--pico-muted-color); white-space: nowrap; }
+        .tab-btn { background: none !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; padding: 0.6rem 1.2rem; cursor: pointer; font-size: 1rem; color: var(--pico-muted-color); border-bottom: 3px solid transparent !important; margin-bottom: -2px; }
+        .tab-btn.active { color: var(--pico-primary); border-bottom-color: var(--pico-primary) !important; font-weight: 600; }
+        .tab-btn:hover:not(.active) { color: var(--pico-color); background: none !important; }
+        .tab-btn:focus { box-shadow: none !important; outline: none; }
+        .action-btns { display: flex; gap: 8px; margin-bottom: 1rem; }
+        .action-btns a, .action-btns button { flex: 1; font-size: 0.85rem; padding: 0.45rem 0.75rem; text-align: center; }
+        .action-btns .btn-spacer { flex: 0 0 1px; width: 1px; padding: 0; margin: 0 4px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         #log-panel { display: none; margin-bottom: 1rem; }
@@ -31,26 +34,15 @@
         }
         #log-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
         #log-header small { color: var(--pico-muted-color); }
+        .tab-stats { background: var(--pico-card-background-color); border: 1px solid var(--pico-muted-border-color); border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+        .tab-stats .grid { margin-bottom: 0; }
+        .tab-stats strong { font-size: 0.9rem; }
     </style>
 </head>
 <body>
     <main class="container">
-        <h1>Career Future!<%= lastRun && lastRun.searchValue ? ' - ' + lastRun.searchValue : '' %></h1>
-        <div class="grid">
-            <div><strong>Total Jobs:</strong> <%= stats.total %></div>
-            <div><strong>Last 24h:</strong> <%= stats.last24Hours %></div>
-            <div><strong>This Week:</strong> <%= stats.lastWeek %></div>
-            <div><strong>Companies:</strong> <%= totalCompanies %></div>
-        </div>
-        <hr>
-        <div class="grid">
-            <a href="/api/export" role="button" class="outline">Export CSV</a>
-            <a href="/companies" role="button" class="outline">Daily Companies</a>
-            <a href="/companies-weekly" role="button" class="outline">Weekly Companies</a>
-            <a href="/settings" role="button" class="outline">Settings</a>
-            <button id="analyze-external-job-btn" class="contrast outline">Analyze External Job</button>
-        </div>
-        <hr>
+        <h1>Career Future!<%= headerSearchValue ? ' - ' + headerSearchValue : '' %></h1>
+
         <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: end; margin-bottom: 1rem;">
             <label>
                 Time Range
@@ -84,13 +76,16 @@
             </label>
             <button id="search-clear" class="outline secondary">Clear</button>
         </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
-            <button id="run-daily-btn" class="outline">Run Companies List Now</button>
-            <button id="run-weekly-btn" class="outline">Run Companies-Weekly List Now</button>
-            <button id="run-dorks-btn" class="outline">Run Applicant Tracking</button>
-            <button id="stop-btn" class="outline secondary" style="display:none;">Stop</button>
-            <span id="scraper-status" style="align-self: center;"></span>
+
+        <div class="action-btns">
+            <a href="/companies" role="button" class="outline">Daily Companies</a>
+            <a href="/companies-weekly" role="button" class="outline">Weekly Companies</a>
+            <a href="/ats-list" role="button" class="outline">ATS Firms</a>
+            <div class="btn-spacer"></div>
+            <a href="/settings" role="button" class="outline">Settings</a>
+            <button id="analyze-external-job-btn" class="contrast outline">Analyze External Job</button>
         </div>
+        <hr>
 
         <div id="log-panel">
             <div id="log-header">
@@ -101,22 +96,38 @@
         </div>
 
         <div class="tab-bar">
-            <button class="tab-btn active" data-tab="jobs">Job Results (<%= jobs.length %>)</button>
-            <button class="tab-btn" data-tab="ats">Applicant Tracking (<%= dorkJobs.length %>)</button>
-            <span class="tab-last-run" id="tab-last-run">
-                <% if (lastRun && lastRun.timestamp) { %>
-                    Last run: <%= new Date(lastRun.timestamp).toLocaleDateString() %> at <%= new Date(lastRun.timestamp).toLocaleTimeString() %> &mdash; <%= lastRun.runName %>
-                <% } %>
-            </span>
+            <button class="tab-btn<%= defaultTab === 'daily' ? ' active' : '' %>" data-tab="daily">Daily Results (<%= dailyJobs.length %>)</button>
+            <button class="tab-btn<%= defaultTab === 'weekly' ? ' active' : '' %>" data-tab="weekly">Weekly Results (<%= weeklyJobs.length %>)</button>
+            <button class="tab-btn<%= defaultTab === 'ats' ? ' active' : '' %>" data-tab="ats">Applicant Tracking (<%= dorkJobs.length %>)</button>
         </div>
 
-        <p id="search-results-count" style="display:none;"></p>
-
-        <div id="tab-jobs" class="tab-content active">
-            <% if (jobs.length === 0) { %>
+        <%# ==================== DAILY RESULTS TAB ==================== %>
+        <div id="tab-daily" class="tab-content<%= defaultTab === 'daily' ? ' active' : '' %>">
+            <div class="tab-stats">
+                <div class="grid">
+                    <div><strong>Companies Enabled:</strong> <%= tabStats.daily.companiesEnabled %></div>
+                    <div><strong>Companies Disabled:</strong> <%= tabStats.daily.companiesDisabled %></div>
+                    <div><strong>Jobs (<%= range %>):</strong> <%= tabStats.daily.jobCount %></div>
+                    <div><strong>Last Run:</strong>
+                        <% if (tabStats.daily.lastRun && tabStats.daily.lastRun.timestamp) { %>
+                            <%= new Date(tabStats.daily.lastRun.timestamp).toLocaleDateString() %> at <%= new Date(tabStats.daily.lastRun.timestamp).toLocaleTimeString() %>
+                        <% } else { %>
+                            Never
+                        <% } %>
+                    </div>
+                    <div><strong>Search Value:</strong> <%= (tabStats.daily.lastRun && tabStats.daily.lastRun.searchValue) ? tabStats.daily.lastRun.searchValue : 'Title, Location or Company' %></div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
+                <button id="run-daily-btn" class="outline">Run Daily Companies Now</button>
+                <button class="stop-btn outline secondary" style="display:none;">Stop</button>
+                <span class="scraper-status" style="align-self: center;"></span>
+            </div>
+            <p class="search-results-count" id="search-results-count-daily" style="display:none;"></p>
+            <% if (dailyJobs.length === 0) { %>
                 <p>No jobs found yet. Run a search to start finding jobs!</p>
             <% } else { %>
-                <% jobs.forEach(job => { %>
+                <% dailyJobs.forEach(job => { %>
                     <article class="job-card" data-url="<%= job.url %>"
                              data-title="<%= job.title %>"
                              data-company="<%= job.company %>"
@@ -134,9 +145,74 @@
             <% } %>
         </div>
 
-        <div id="tab-ats" class="tab-content">
+        <%# ==================== WEEKLY RESULTS TAB ==================== %>
+        <div id="tab-weekly" class="tab-content<%= defaultTab === 'weekly' ? ' active' : '' %>">
+            <div class="tab-stats">
+                <div class="grid">
+                    <div><strong>Companies Enabled:</strong> <%= tabStats.weekly.companiesEnabled %></div>
+                    <div><strong>Companies Disabled:</strong> <%= tabStats.weekly.companiesDisabled %></div>
+                    <div><strong>Jobs (<%= range %>):</strong> <%= tabStats.weekly.jobCount %></div>
+                    <div><strong>Last Run:</strong>
+                        <% if (tabStats.weekly.lastRun && tabStats.weekly.lastRun.timestamp) { %>
+                            <%= new Date(tabStats.weekly.lastRun.timestamp).toLocaleDateString() %> at <%= new Date(tabStats.weekly.lastRun.timestamp).toLocaleTimeString() %>
+                        <% } else { %>
+                            Never
+                        <% } %>
+                    </div>
+                    <div><strong>Search Value:</strong> <%= (tabStats.weekly.lastRun && tabStats.weekly.lastRun.searchValue) ? tabStats.weekly.lastRun.searchValue : 'Title, Location or Company' %></div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
+                <button id="run-weekly-btn" class="outline">Run Weekly Companies Now</button>
+                <button class="stop-btn outline secondary" style="display:none;">Stop</button>
+                <span class="scraper-status" style="align-self: center;"></span>
+            </div>
+            <p class="search-results-count" id="search-results-count-weekly" style="display:none;"></p>
+            <% if (weeklyJobs.length === 0) { %>
+                <p>No weekly jobs found yet. Run a weekly search to start finding jobs!</p>
+            <% } else { %>
+                <% weeklyJobs.forEach(job => { %>
+                    <article class="job-card" data-url="<%= job.url %>"
+                             data-title="<%= job.title %>"
+                             data-company="<%= job.company %>"
+                             data-location="<%= job.location || '' %>">
+                        <h3 class="job-title"><%= job.title %></h3>
+                        <p class="job-company"><strong><%= job.company %></strong></p>
+                        <p class="job-location"><%= job.location || 'Location not specified' %></p>
+                        <p>Found: <%= new Date(job.firstSeen).toLocaleDateString() %></p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <a href="<%= job.url %>" target="_blank" role="button">View Job</a>
+                            <button class="btn-optimize-resume" type="button">Optimize Resume</button>
+                        </div>
+                    </article>
+                <% }); %>
+            <% } %>
+        </div>
+
+        <%# ==================== APPLICANT TRACKING TAB ==================== %>
+        <div id="tab-ats" class="tab-content<%= defaultTab === 'ats' ? ' active' : '' %>">
+            <div class="tab-stats">
+                <div class="grid">
+                    <div><strong>ATS Queries:</strong> <%= tabStats.ats.queriesCount %></div>
+                    <div><strong>Jobs (<%= range %>):</strong> <%= tabStats.ats.jobCount %></div>
+                    <div><strong>Last Run:</strong>
+                        <% if (tabStats.ats.lastRun && tabStats.ats.lastRun.timestamp) { %>
+                            <%= new Date(tabStats.ats.lastRun.timestamp).toLocaleDateString() %> at <%= new Date(tabStats.ats.lastRun.timestamp).toLocaleTimeString() %>
+                        <% } else { %>
+                            Never
+                        <% } %>
+                    </div>
+                    <div><strong>Search Value:</strong> <%= (tabStats.ats.lastRun && tabStats.ats.lastRun.searchValue) ? tabStats.ats.lastRun.searchValue : 'Title, Location or Company' %></div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
+                <button id="run-dorks-btn" class="outline">Run Applicant Tracking Now</button>
+                <button class="stop-btn outline secondary" style="display:none;">Stop</button>
+                <span class="scraper-status" style="align-self: center;"></span>
+            </div>
+            <p class="search-results-count" id="search-results-count-ats" style="display:none;"></p>
             <% if (dorkJobs.length === 0) { %>
-                <p>No applicant tracking jobs found yet. Click "Run Applicant Tracking" to search ATS platforms!</p>
+                <p>No applicant tracking jobs found yet. Click "Run Applicant Tracking Now" to search ATS platforms!</p>
             <% } else { %>
                 <% dorkJobs.forEach(job => { %>
                     <article class="job-card" data-url="<%= job.url %>"
@@ -162,29 +238,25 @@
       const modifier = document.getElementById('search-modifier');
       const value = document.getElementById('search-value');
       const clearBtn = document.getElementById('search-clear');
-      const countEl = document.getElementById('search-results-count');
 
-      // Tab switching
+      // Tab switching — three tabs
       const tabBtns = document.querySelectorAll('.tab-btn');
-      const tabContents = { jobs: document.getElementById('tab-jobs'), ats: document.getElementById('tab-ats') };
-      const tabLastRun = document.getElementById('tab-last-run');
-
-      const lastRunData = {
-        jobs: '<%= lastRun && lastRun.timestamp ? `Last run: ${new Date(lastRun.timestamp).toLocaleDateString()} at ${new Date(lastRun.timestamp).toLocaleTimeString()} — ${lastRun.runName}` : "" %>',
-        ats: '<%= dorkLastRun && dorkLastRun.timestamp ? `Last run: ${new Date(dorkLastRun.timestamp).toLocaleDateString()} at ${new Date(dorkLastRun.timestamp).toLocaleTimeString()} — ${dorkLastRun.runName}` : "" %>'
+      const tabContents = {
+        daily: document.getElementById('tab-daily'),
+        weekly: document.getElementById('tab-weekly'),
+        ats: document.getElementById('tab-ats')
       };
 
-      let activeTab = 'jobs';
+      let activeTab = '<%= defaultTab %>';
 
       function switchTab(tab) {
         activeTab = tab;
         tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
         Object.entries(tabContents).forEach(([k, el]) => el.classList.toggle('active', k === tab));
-        tabLastRun.textContent = lastRunData[tab] || '';
 
         // Update URL
         const p = new URLSearchParams(window.location.search);
-        if (tab === 'jobs') p.delete('tab'); else p.set('tab', tab);
+        if (tab === 'daily') p.delete('tab'); else p.set('tab', tab);
         history.replaceState(null, '', '/?' + p.toString());
 
         // Re-apply filter to new tab
@@ -193,22 +265,31 @@
 
       tabBtns.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
-      // Restore tab from URL
+      // Restore tab from URL (overrides server default)
       const params = new URLSearchParams(window.location.search);
-      if (params.get('tab') === 'ats') switchTab('ats');
+      const urlTab = params.get('tab');
+      if (urlTab && tabContents[urlTab]) switchTab(urlTab);
 
       function getActiveCards() {
         const container = tabContents[activeTab];
         return container.querySelectorAll('.job-card');
       }
 
+      function getActiveCountEl() {
+        return document.getElementById('search-results-count-' + activeTab);
+      }
+
       function applyFilter() {
         const searchVal = value.value.toLowerCase().trim();
         const cards = getActiveCards();
+        const countEl = getActiveCountEl();
+
+        // Hide all other tabs' count elements
+        document.querySelectorAll('.search-results-count').forEach(el => el.style.display = 'none');
 
         if (!searchVal) {
           cards.forEach(c => c.style.display = '');
-          countEl.style.display = 'none';
+          if (countEl) countEl.style.display = 'none';
           return;
         }
 
@@ -228,8 +309,10 @@
           if (match) shown++;
         });
 
-        countEl.textContent = `Showing ${shown} of ${cards.length} jobs`;
-        countEl.style.display = '';
+        if (countEl) {
+          countEl.textContent = `Showing ${shown} of ${cards.length} jobs`;
+          countEl.style.display = '';
+        }
       }
 
       // Restore search state from URL params on page load
@@ -253,30 +336,32 @@
         window.location.href = '/?' + p.toString();
       });
 
-      // Scraper run buttons
+      // Scraper run buttons (per-tab)
       const dailyBtn = document.getElementById('run-daily-btn');
       const weeklyBtn = document.getElementById('run-weekly-btn');
       const dorksBtn = document.getElementById('run-dorks-btn');
-      const stopBtn = document.getElementById('stop-btn');
-      const statusEl = document.getElementById('scraper-status');
 
       // Track which type of search is running so Stop knows what to call
       let activeSearchType = null; // 'scraper' or 'dorks'
       let activePoll = null;
       let activeRunBtn = null;
+      let activeStopBtn = null;
+      let activeStatusEl = null;
 
       function searchParams() {
         const p = new URLSearchParams();
         p.set('range', timeRange.value);
-        if (activeTab !== 'jobs') p.set('tab', activeTab);
+        if (activeTab !== 'daily') p.set('tab', activeTab);
         if (field.value) p.set('field', field.value);
         if (modifier.value) p.set('modifier', modifier.value);
         if (value.value.trim()) p.set('search', value.value.trim());
         return p.toString();
       }
 
-      function setRunningState(btn, label) {
+      function setRunningState(btn, stopBtn, statusEl, label) {
         activeRunBtn = btn;
+        activeStopBtn = stopBtn;
+        activeStatusEl = statusEl;
         btn.setAttribute('disabled', true);
         btn.setAttribute('aria-busy', 'true');
         statusEl.textContent = label;
@@ -290,14 +375,30 @@
           activeRunBtn.removeAttribute('aria-busy');
           activeRunBtn = null;
         }
-        stopBtn.style.display = 'none';
+        if (activeStopBtn) {
+          activeStopBtn.style.display = 'none';
+          activeStopBtn = null;
+        }
+        if (activeStatusEl) {
+          activeStatusEl = null;
+        }
         activeSearchType = null;
+      }
+
+      function getTabControls(tabKey) {
+        const container = tabContents[tabKey];
+        return {
+          stopBtn: container.querySelector('.stop-btn'),
+          statusEl: container.querySelector('.scraper-status')
+        };
       }
 
       async function runScraper(mode, btn) {
         if (activeSearchType) return;
         activeSearchType = 'scraper';
-        setRunningState(btn, `Running ${mode} search...`);
+        const tabKey = mode === 'weekly' ? 'weekly' : 'daily';
+        const { stopBtn, statusEl } = getTabControls(tabKey);
+        setRunningState(btn, stopBtn, statusEl, `Running ${mode} search...`);
 
         try {
           const res = await fetch('/api/run-scraper', {
@@ -317,8 +418,11 @@
             const s = await fetch('/api/scraper-status').then(r => r.json());
             if (!s.running) {
               clearRunningState();
-              const qs = searchParams();
-              window.location.href = '/' + (qs ? '?' + qs : '');
+              // Redirect preserving current tab
+              const p = new URLSearchParams(window.location.search);
+              p.set('tab', tabKey);
+              p.set('range', timeRange.value);
+              window.location.href = '/?' + p.toString();
             }
           }, 3000);
         } catch (err) {
@@ -330,7 +434,8 @@
       async function runDorks() {
         if (activeSearchType) return;
         activeSearchType = 'dorks';
-        setRunningState(dorksBtn, 'Running Applicant Tracking search...');
+        const { stopBtn, statusEl } = getTabControls('ats');
+        setRunningState(dorksBtn, stopBtn, statusEl, 'Running Applicant Tracking search...');
 
         try {
           const res = await fetch('/api/run-dorks', { method: 'POST' });
@@ -348,6 +453,7 @@
               clearRunningState();
               const p = new URLSearchParams(window.location.search);
               p.set('tab', 'ats');
+              p.set('range', timeRange.value);
               window.location.href = '/?' + p.toString();
             }
           }, 3000);
@@ -359,24 +465,28 @@
 
       async function stopSearch() {
         const endpoint = activeSearchType === 'dorks' ? '/api/stop-dorks' : '/api/stop-scraper';
-        stopBtn.setAttribute('disabled', true);
-        stopBtn.setAttribute('aria-busy', 'true');
+        if (activeStopBtn) {
+          activeStopBtn.setAttribute('disabled', true);
+          activeStopBtn.setAttribute('aria-busy', 'true');
+        }
 
         try {
           await fetch(endpoint, { method: 'POST' });
-          statusEl.textContent = 'Search stopped';
+          if (activeStatusEl) activeStatusEl.textContent = 'Search stopped';
         } catch {
-          statusEl.textContent = 'Failed to stop search';
+          if (activeStatusEl) activeStatusEl.textContent = 'Failed to stop search';
         }
         clearRunningState();
-        stopBtn.removeAttribute('disabled');
-        stopBtn.removeAttribute('aria-busy');
       }
 
       dailyBtn.addEventListener('click', () => runScraper('daily', dailyBtn));
       weeklyBtn.addEventListener('click', () => runScraper('weekly', weeklyBtn));
       dorksBtn.addEventListener('click', runDorks);
-      stopBtn.addEventListener('click', stopSearch);
+
+      // All stop buttons delegate to the same handler
+      document.querySelectorAll('.stop-btn').forEach(btn => {
+        btn.addEventListener('click', stopSearch);
+      });
 
       // --- Live log panel ---
       const logPanel = document.getElementById('log-panel');
@@ -396,10 +506,6 @@
         logOutput.textContent = '';
       }
 
-      function hideLogPanel() {
-        // Keep panel visible so user can review the final output
-      }
-
       function connectLogStream() {
         if (eventSource) return;
         eventSource = new EventSource('/api/logs/stream');
@@ -407,7 +513,6 @@
           try {
             const entry = JSON.parse(e.data);
             logOutput.textContent += entry.text + '\n';
-            // Auto-scroll to bottom
             logOutput.scrollTop = logOutput.scrollHeight;
           } catch { /* ignore parse errors */ }
         };
@@ -425,8 +530,8 @@
 
       // Patch setRunningState / clearRunningState to manage log stream
       const origSetRunning = setRunningState;
-      setRunningState = function(btn, label) {
-        origSetRunning(btn, label);
+      setRunningState = function(btn, stopBtn, statusEl, label) {
+        origSetRunning(btn, stopBtn, statusEl, label);
         showLogPanel();
         connectLogStream();
       };

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ATS Firms - Career Future</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        .query-cell { font-family: monospace; font-size: 0.8rem; max-width: 400px; word-break: break-all; }
+        .freq-daily { color: var(--pico-primary); }
+        .freq-weekly { color: var(--pico-muted-color); }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <a href="/">&larr; Back to Dashboard</a>
+        <h1>Career Future - ATS Firms &amp; Queries</h1>
+        <p>Found <strong><%= total %></strong> queries in <code>data/ats-list.csv</code>.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Category</th>
+                    <th>Query</th>
+                    <th>Frequency</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% rows.forEach(row => { %>
+                    <tr>
+                        <td><strong><%= row.id %></strong></td>
+                        <td><%= row.category %></td>
+                        <td class="query-cell"><%= row.query %></td>
+                        <td class="<%= row.frequency === 'daily' ? 'freq-daily' : 'freq-weekly' %>"><%= row.frequency %></td>
+                        <td><%= row.notes || '-' %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

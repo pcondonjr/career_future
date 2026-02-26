@@ -286,9 +286,14 @@ if (process.argv.includes('--validate')) {
   // Run Jobs API search immediately for testing
   runSerperJobsSearch();
 } else if (process.argv.includes('--now') && process.argv.includes('--dorks')) {
-  // Run dork search immediately for testing
-  const frequency = isWeekly ? 'weekly' : 'daily';
-  runDorkSearch(frequency);
+  // Run dork search immediately — --all runs both frequencies sequentially
+  if (process.argv.includes('--all')) {
+    await runDorkSearch('daily');
+    await runDorkSearch('weekly');
+  } else {
+    const frequency = isWeekly ? 'weekly' : 'daily';
+    await runDorkSearch(frequency);
+  }
 } else if (process.argv.includes('--now')) {
   // Run immediately for testing
   const mode = isWeekly ? 'weekly' : 'daily';
