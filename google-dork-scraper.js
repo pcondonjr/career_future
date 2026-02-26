@@ -115,9 +115,21 @@ export class GoogleDorkScraper {
     const title = this._cleanTitle(item.title);
     const company = this._extractCompany(item.title, item.displayedLink || '');
     const location = this._extractLocation(item.snippet || '');
-    const url = item.link;
+    const url = this._cleanUrl(item.link);
 
     return { title, company, url, location };
+  }
+
+  /**
+   * Normalize a job URL — strip deep apply paths that don't show the job description.
+   * e.g. Workday: ".../job/Title_ID/apply/applyManually" → ".../job/Title_ID"
+   */
+  _cleanUrl(url) {
+    // Workday: strip /apply, /apply/applyManually, /apply/autofillWithResume etc.
+    if (/myworkdayjobs\.com/i.test(url)) {
+      return url.replace(/\/apply(\/[^/?#]*)?(\?.*)?$/, '');
+    }
+    return url;
   }
 
   async runDorkSearch(csvPath, frequency = 'daily') {
@@ -141,9 +153,10 @@ export class GoogleDorkScraper {
 
       let skipped = 0;
       for (const item of items) {
-        // Deduplicate within this run by URL
-        if (seenUrls.has(item.link)) continue;
-        seenUrls.add(item.link);
+        // Deduplicate within this run by cleaned URL
+        const cleanedLink = this._cleanUrl(item.link);
+        if (seenUrls.has(cleanedLink)) continue;
+        seenUrls.add(cleanedLink);
 
         // Filter out non-job results and international locations
         if (!this._isLikelyJob(item) || !this._isRelevantLocation(item)) {
@@ -225,7 +238,7 @@ export class GoogleDorkScraper {
     return {
       title: item.title || '',
       company: item.companyName || '',
-      url: item.link || '',
+      url: this._cleanUrl(item.link || ''),
       location: item.location || '',
       date: item.date || '',
       extensions: item.extensions || [],
@@ -249,8 +262,9 @@ export class GoogleDorkScraper {
       let skipped = 0;
 
       for (const item of items) {
-        if (!item.link || seenUrls.has(item.link)) continue;
-        seenUrls.add(item.link);
+        const cleanedLink = this._cleanUrl(item.link || '');
+        if (!cleanedLink || seenUrls.has(cleanedLink)) continue;
+        seenUrls.add(cleanedLink);
 
         // Reuse location filter — item shape differs from organic, adapt it
         const asOrganic = { title: item.title || '', snippet: item.snippet || '', link: item.link };
@@ -427,16 +441,20 @@ export class GoogleDorkScraper {
   }
 
   /**
-   * Check if a job URL is still live. Returns false for 404/410 or
-   * redirects that strip the job-specific path (i.e. "position filled" redirects).
+   * Check if a job URL is still live. Returns false for 404/410,
+   * redirects that strip the job-specific path (i.e. "position filled" redirects),
+   * or Workday pages where postingAvailable is false.
    */
   async _validateUrl(url) {
     try {
+      const isWorkday = /myworkdayjobs\.com/i.test(url);
+
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 8000);
 
+      // Workday returns 200 even for dead postings — must GET and inspect body
       let res = await fetch(url, {
-        method: 'HEAD',
+        method: isWorkday ? 'GET' : 'HEAD',
         signal: controller.signal,
         redirect: 'follow',
         headers: {
@@ -446,7 +464,7 @@ export class GoogleDorkScraper {
       clearTimeout(timeout);
 
       // Some servers block HEAD — retry with GET
-      if (res.status === 405 || res.status === 403) {
+      if (!isWorkday && (res.status === 405 || res.status === 403)) {
         const ctrl2 = new AbortController();
         const t2 = setTimeout(() => ctrl2.abort(), 8000);
         res = await fetch(url, {
@@ -469,6 +487,14 @@ export class GoogleDorkScraper {
         const originalPath = new URL(url).pathname;
         const finalPath = new URL(finalUrl).pathname;
         if (originalPath.length - finalPath.length > 10 && originalPath.startsWith(finalPath)) {
+          return false;
+        }
+      }
+
+      // Workday-specific: check for "postingAvailable": false in page body
+      if (isWorkday && res.body) {
+        const body = await res.text();
+        if (/"postingAvailable"\s*:\s*false/i.test(body)) {
           return false;
         }
       }
