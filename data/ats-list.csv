@@ -25,3 +25,16 @@ combo-remote-et,Power Combo,"""{{keyword}}"" ""remote"" (""Eastern"" OR ""EST"" 
 combo-education,Power Combo,"""{{keyword}}"" (""education cloud"" OR ""higher education"") (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Education sector — US/remote only
 combo-nonprofit,Power Combo,"""{{keyword}}"" (""nonprofit"" OR ""NPSP"" OR ""nonprofit cloud"") (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io)",weekly,Nonprofit sector — US/remote only
 combo-experience-cloud,Power Combo,"""{{keyword}}"" ""experience cloud"" (""remote"" OR ""United States"") (site:myworkdayjobs.com OR site:boards.greenhouse.io OR site:icims.com)",weekly,Community/portal roles — US/remote only
+board-flexjobs,Remote Job Board,"site:flexjobs.com ""{{keyword}}"" (""remote"" OR ""United States"")",daily,Pre-screened listings — zero scams
+board-justremote,Remote Job Board,"site:justremote.co/remote-*-jobs ""{{keyword}}""",daily,URL pattern: /remote-[category]-jobs/[slug]-[uuid]
+board-weworkremotely,Remote Job Board,"site:weworkremotely.com/remote-jobs ""{{keyword}}""",daily,URL pattern: /remote-jobs/[company]-[title] — 3M+ seekers
+board-remoteco,Remote Job Board,"site:remote.co/remote-jobs ""{{keyword}}""",daily,Jobs plus salary data and guides
+board-virtualvocations,Remote Job Board,"site:virtualvocations.com/jobs ""{{keyword}}""",daily,URL pattern: /jobs/c-[category] — curated daily
+board-workingnomads,Remote Job Board,"site:workingnomads.com/remote-*-jobs ""{{keyword}}""",weekly,URL pattern: /remote-[category]-jobs — updated every 24h
+board-remotive,Remote Job Board,"site:remotive.com/remote-jobs ""{{keyword}}""",daily,URL pattern: /remote-jobs/[category]/[title]-[id] — devs & designers
+board-arc,Remote Job Board,"site:arc.dev/remote-jobs ""{{keyword}}""",weekly,URL pattern: /remote-jobs/[specialty] — engineers
+board-remoteok,Remote Job Board,"site:remoteok.com/remote-*-jobs ""{{keyword}}""",daily,URL pattern: /remote-[type]-jobs — live updates
+board-authenticjobs,Remote Job Board,"site:authenticjobs.com ""{{keyword}}"" ""remote""",weekly,Design/dev/creative — uses ?search_location=remote filter
+board-jobspresso,Remote Job Board,"site:jobspresso.co/job ""{{keyword}}""",weekly,URL pattern: /job/[company]-[location]-[category]-[title] — quality focus
+board-all,Remote Job Board,"""{{keyword}}"" (""remote"" OR ""United States"") (site:flexjobs.com OR site:justremote.co OR site:remotive.com OR site:remoteok.com OR site:weworkremotely.com)",daily,All major remote boards combined — US/remote only
+board-all-weekly,Remote Job Board,"""{{keyword}}"" (""remote"" OR ""United States"") (site:virtualvocations.com OR site:workingnomads.com OR site:arc.dev OR site:authenticjobs.com OR site:jobspresso.co OR site:remote.co)",weekly,Secondary remote boards combined — US/remote only
