@@ -61,8 +61,10 @@ app.set('view engine', 'ejs');
 // Static files and views — configured in startDashboard() after paths are set
 // Defaults here for legacy `node dashboard.js` usage
 let db;
+let weeklyDb;
 let dorkDb;
 let lastRunFile;
+let weeklyLastRunFile;
 let dorkLastRunFile;
 
 async function loadLastRun() {
@@ -87,6 +89,19 @@ async function loadDorkLastRun() {
   }
 }
 
+async function loadWeeklyLastRun() {
+  try {
+    const data = await fs.readFile(weeklyLastRunFile, 'utf-8');
+    return JSON.parse(data);
+  } catch {
+    return null;
+  }
+}
+
+async function saveWeeklyLastRun(info) {
+  await fs.writeFile(weeklyLastRunFile, JSON.stringify(info, null, 2));
+}
+
 async function saveDorkLastRun(info) {
   await fs.writeFile(dorkLastRunFile, JSON.stringify(info, null, 2));
 }
@@ -94,44 +109,85 @@ async function saveDorkLastRun(info) {
 app.get('/', async (req, res) => {
   try {
     await db.load();
+    await weeklyDb.load();
     await dorkDb.load();
-    const stats = db.getStats();
-    const dorkStats = dorkDb.getStats();
 
+    // Time range filtering (shared across all tabs)
     const range = req.query.range || '30d';
     let cutoff = null;
     if (range !== 'all') {
       const days = range === '24h' ? 1 : range === '7d' ? 7 : range === '30d' ? 30 : 30;
       cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
     }
-    const jobs = Array.from(db.jobs.values())
-      .filter(job => !cutoff || new Date(job.firstSeen) >= cutoff)
-      .sort((a, b) => new Date(b.firstSeen) - new Date(a.firstSeen));
 
-    const dorkJobs = Array.from(dorkDb.jobs.values())
-      .filter(job => !cutoff || new Date(job.firstSeen) >= cutoff)
-      .sort((a, b) => new Date(b.firstSeen) - new Date(a.firstSeen));
+    const filterAndSort = (database) =>
+      Array.from(database.jobs.values())
+        .filter(job => !cutoff || new Date(job.firstSeen) >= cutoff)
+        .sort((a, b) => new Date(b.firstSeen) - new Date(a.firstSeen));
 
-    const byCompany = {};
-    jobs.forEach(job => {
-      if (!byCompany[job.company]) {
-        byCompany[job.company] = [];
-      }
-      byCompany[job.company].push(job);
-    });
+    const dailyJobs = filterAndSort(db);
+    const weeklyJobs = filterAndSort(weeklyDb);
+    const dorkJobs = filterAndSort(dorkDb);
 
-    const lastRun = await loadLastRun();
+    // Count enabled/disabled companies from CSVs
+    const dailyCsvPath = path.join(resourcesBase, 'data/companies.csv');
+    const weeklyCsvPath = path.join(resourcesBase, 'data/companies-weekly.csv');
+    const atsCsvPath = path.join(resourcesBase, 'data/ats-list.csv');
+
+    const dailySites = await loadSitesFromCSV(dailyCsvPath, false);
+    const weeklySites = await loadSitesFromCSV(weeklyCsvPath, false);
+
+    // Count ATS queries (non-comment, non-empty lines minus header)
+    let atsQueryCount = 0;
+    try {
+      const atsContent = await fs.readFile(atsCsvPath, 'utf-8');
+      atsQueryCount = atsContent.split('\n')
+        .filter(l => l.trim() && !l.trim().startsWith('#')).length - 1;
+    } catch { atsQueryCount = 0; }
+
+    // Load all last-run data
+    const dailyLastRun = await loadLastRun();
+    const weeklyLastRun = await loadWeeklyLastRun();
     const dorkLastRun = await loadDorkLastRun();
 
+    // Per-tab stats
+    const tabStats = {
+      daily: {
+        companiesEnabled: dailySites.filter(s => s.enabled).length,
+        companiesDisabled: dailySites.filter(s => !s.enabled).length,
+        jobCount: dailyJobs.length,
+        lastRun: dailyLastRun
+      },
+      weekly: {
+        companiesEnabled: weeklySites.filter(s => s.enabled).length,
+        companiesDisabled: weeklySites.filter(s => !s.enabled).length,
+        jobCount: weeklyJobs.length,
+        lastRun: weeklyLastRun
+      },
+      ats: {
+        queriesCount: atsQueryCount,
+        jobCount: dorkJobs.length,
+        lastRun: dorkLastRun
+      }
+    };
+
+    // Determine most recent run and default tab
+    const allRuns = [
+      dailyLastRun && { ...dailyLastRun, _tab: 'daily' },
+      weeklyLastRun && { ...weeklyLastRun, _tab: 'weekly' },
+      dorkLastRun && { ...dorkLastRun, _tab: 'ats' }
+    ].filter(Boolean);
+    const mostRecent = allRuns.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+    const headerSearchValue = mostRecent?.searchValue || null;
+    const defaultTab = mostRecent?._tab || 'daily';
+
     res.render('index', {
-      stats,
-      dorkStats,
-      jobs,
+      tabStats,
+      dailyJobs,
+      weeklyJobs,
       dorkJobs,
-      byCompany,
-      totalCompanies: Object.keys(byCompany).length,
-      lastRun,
-      dorkLastRun,
+      headerSearchValue,
+      defaultTab,
       range
     });
   } catch (error) {
@@ -159,34 +215,6 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
-app.get('/api/export', async (req, res) => {
-  try {
-    await db.load();
-    const jobs = Array.from(db.jobs.values());
-    
-    const csvRows = [
-      'Title,Company,Location,URL,First Seen,Last Seen'
-    ];
-    
-    jobs.forEach(job => {
-      csvRows.push([
-        `"${job.title.replace(/"/g, '""')}"`,
-        `"${job.company}"`,
-        `"${job.location || 'N/A'}"`,
-        `"${job.url}"`,
-        job.firstSeen,
-        job.lastSeen
-      ].join(','));
-    });
-    
-    res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename=jobs_export.csv');
-    res.send(csvRows.join('\n'));
-  } catch (error) {
-    res.status(500).send('Error exporting jobs: ' + error.message);
-  }
-});
-
 app.get('/companies', async (req, res) => {
   try {
     const csvPath = path.join(resourcesBase, 'data/companies.csv');
@@ -196,6 +224,33 @@ app.get('/companies', async (req, res) => {
     res.render('companies', { sites, validation });
   } catch (error) {
     res.status(500).send('Error loading companies: ' + error.message);
+  }
+});
+
+app.get('/ats-list', async (req, res) => {
+  try {
+    const csvPath = path.join(resourcesBase, 'data/ats-list.csv');
+    const content = await fs.readFile(csvPath, 'utf-8');
+    const lines = content.split('\n').filter(l => l.trim() && !l.trim().startsWith('#'));
+    const header = lines[0];
+    const rows = [];
+    // Simple CSV parse — fields may be quoted
+    for (let i = 1; i < lines.length; i++) {
+      const cols = [];
+      let cur = '', inQuote = false;
+      for (const ch of lines[i]) {
+        if (ch === '"') { inQuote = !inQuote; }
+        else if (ch === ',' && !inQuote) { cols.push(cur); cur = ''; }
+        else { cur += ch; }
+      }
+      cols.push(cur);
+      if (cols.length >= 5) {
+        rows.push({ id: cols[0], category: cols[1], query: cols[2], frequency: cols[3], notes: cols[4] });
+      }
+    }
+    res.render('ats-list', { rows, total: rows.length });
+  } catch (error) {
+    res.status(500).send('Error loading ATS list: ' + error.message);
   }
 });
 
@@ -283,8 +338,13 @@ app.post('/api/run-scraper', async (req, res) => {
     return res.status(409).json({ error: 'A search is already running' });
   }
 
-  const runName = mode === 'weekly' ? 'Companies List Weekly' : 'Companies List';
-  await saveLastRun({ searchValue, runName, timestamp: new Date().toISOString() });
+  const runName = mode === 'weekly' ? 'Weekly Companies' : 'Daily Companies';
+  const runInfo = { searchValue, runName, timestamp: new Date().toISOString() };
+  if (mode === 'weekly') {
+    await saveWeeklyLastRun(runInfo);
+  } else {
+    await saveLastRun(runInfo);
+  }
 
   clearLog();
   appendLog(`Starting ${runName} search...`);
@@ -341,7 +401,7 @@ app.post('/api/run-dorks', async (req, res) => {
   clearLog();
   appendLog('Starting Applicant Tracking search...');
 
-  dorkProcess = spawn('node', ['index.js', '--now', '--dorks'], {
+  dorkProcess = spawn('node', ['index.js', '--now', '--dorks', '--all'], {
     cwd: writableBase,
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: false,
@@ -427,6 +487,48 @@ app.post('/api/fetch-job-description', async (req, res) => {
 
 // Resume optimizer API routes (rate-limited — these call the Anthropic API)
 app.use('/api', rateLimiter, resumeRoutes);
+
+// --- Sort company CSV ---
+app.post('/api/sort-companies', async (req, res) => {
+  const { file } = req.body; // 'daily' or 'weekly'
+  const csvFile = file === 'weekly' ? 'data/companies-weekly.csv' : 'data/companies.csv';
+  const csvPath = path.join(resourcesBase, csvFile);
+
+  try {
+    const content = await fs.readFile(csvPath, 'utf-8');
+    const lines = content.split('\n');
+    const header = lines[0];
+    const rows = lines.slice(1).filter(l => l.trim() && !l.trim().startsWith('#'));
+
+    // Parse each row respecting quoted fields
+    function parseRow(line) {
+      const cols = [];
+      let cur = '', inQuote = false;
+      for (const ch of line) {
+        if (ch === '"') { inQuote = !inQuote; }
+        else if (ch === ',' && !inQuote) { cols.push(cur); cur = ''; }
+        else { cur += ch; }
+      }
+      cols.push(cur);
+      return { line, name: cols[0].toLowerCase(), enabled: cols[6] === 'true' };
+    }
+
+    const parsed = rows.map(parseRow);
+    parsed.sort((a, b) => {
+      if (a.enabled !== b.enabled) return a.enabled ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    const result = header + '\n' + parsed.map(r => r.line).join('\n') + '\n';
+    await fs.writeFile(csvPath, result);
+
+    const enabled = parsed.filter(r => r.enabled).length;
+    const disabled = parsed.filter(r => !r.enabled).length;
+    res.json({ success: true, enabled, disabled, total: parsed.length });
+  } catch (error) {
+    res.status(500).json({ error: 'Sort failed: ' + error.message });
+  }
+});
 
 // --- Settings routes ---
 
@@ -528,8 +630,10 @@ export function startDashboard(options = {}) {
 
   // Initialize path-dependent variables
   db = new JobDatabase(path.join(writableBase, 'jobs_database.json'));
+  weeklyDb = new JobDatabase(path.join(writableBase, 'jobs_database_weekly.json'));
   dorkDb = new JobDatabase(path.join(writableBase, 'jobs_database_dorks.json'));
   lastRunFile = path.join(writableBase, 'last_run.json');
+  weeklyLastRunFile = path.join(writableBase, 'last_run_weekly.json');
   dorkLastRunFile = path.join(writableBase, 'last_run_dorks.json');
   scraperSignalFile = path.join(writableBase, '.scraper-running');
   dorkSignalFile = path.join(writableBase, '.dork-running');
