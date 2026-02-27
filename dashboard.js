@@ -656,5 +656,6 @@ export function startDashboard(options = {}) {
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
 if (isMain) {
   const configManager = (await import('./src/main/config.js')).default;
-  startDashboard({ config: configManager });
+  const { findChromePath } = await import('./src/main/paths.js');
+  startDashboard({ config: configManager, chromePath: findChromePath() });
 }
