@@ -6,7 +6,7 @@
     "location": "",
     "source": "ats-workday",
     "firstSeen": "2026-02-17T20:47:13.814Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9rYXIud2QxLm15d29ya2Rh"
   },
   "aHR0cHM6Ly9tYW51bGlmZS53ZDMubXl3": {
@@ -76,7 +76,7 @@
     "location": "",
     "source": "ats-workday",
     "firstSeen": "2026-02-17T20:47:13.814Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9kYXRhc2l0ZS53ZDEubXl3"
   },
   "aHR0cHM6Ly9mZml2ZS53ZDUubXl3b3Jr": {
@@ -86,7 +86,7 @@
     "location": "",
     "source": "ats-workday",
     "firstSeen": "2026-02-17T20:47:13.814Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9mZml2ZS53ZDUubXl3b3Jr"
   },
   "aHR0cHM6Ly9tYWN1LndkNS5teXdvcmtk": {
@@ -116,7 +116,7 @@
     "location": "",
     "source": "ats-workday",
     "firstSeen": "2026-02-17T20:47:13.814Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly9wcm9vZnBvaW50LndkNS5t"
   },
   "aHR0cHM6Ly9vbmVkaWdpdGFsLndkNS5t": {
@@ -126,7 +126,7 @@
     "location": "Atlanta, GA",
     "source": "ats-workday",
     "firstSeen": "2026-02-17T20:47:13.814Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly9vbmVkaWdpdGFsLndkNS5t"
   },
   "aHR0cHM6Ly9jYW1iaXVtbGVhcm5pbmcu": {
@@ -136,7 +136,7 @@
     "location": "",
     "source": "ats-workday",
     "firstSeen": "2026-02-17T20:47:13.814Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-01T21:25:26.718Z",
     "id": "aHR0cHM6Ly9jYW1iaXVtbGVhcm5pbmcu"
   },
   "aHR0cHM6Ly9yYmMud2QzLm15d29ya2Rh": {
@@ -186,7 +186,7 @@
     "location": "",
     "source": "ats-workday-broad",
     "firstSeen": "2026-02-17T20:47:13.814Z",
-    "lastSeen": "2026-02-26T19:11:49.237Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly9icm9hZHJpZGdlLndkNS5t"
   },
   "aHR0cHM6Ly9hYWFtaWRhdGxhbnRpYy53": {
@@ -206,7 +206,7 @@
     "location": "",
     "source": "ats-workday-broad",
     "firstSeen": "2026-02-17T20:47:13.814Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9sYWJjb3JwLndkMS5teXdv"
   },
   "aHR0cHM6Ly9hbHRlcmEud2QxLm15d29y": {
@@ -226,7 +226,7 @@
     "location": "Remote",
     "source": "ats-workday-broad",
     "firstSeen": "2026-02-17T20:47:13.814Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9maXJzdGFtLndkMS5teXdv"
   },
   "aHR0cHM6Ly9ib2FyZHMuZ3JlZW5ob3Vz": {
@@ -236,7 +236,7 @@
     "location": "Remote",
     "source": "ats-greenhouse",
     "firstSeen": "2026-02-17T20:47:13.815Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9ib2FyZHMuZ3JlZW5ob3Vz"
   },
   "aHR0cHM6Ly9lbmdsaXNoY2FyZWVycy1i": {
@@ -256,7 +256,7 @@
     "location": "",
     "source": "ats-icims",
     "firstSeen": "2026-02-17T20:47:13.815Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9jYXJlZXJzLW9uZWlkZW50"
   },
   "aHR0cHM6Ly9zb2NpYWwuaWNpbXMuY29t": {
@@ -426,7 +426,7 @@
     "location": "",
     "source": "ats-lever",
     "firstSeen": "2026-02-17T20:47:13.815Z",
-    "lastSeen": "2026-02-17T20:47:13.815Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL3Rl"
   },
   "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL2gx": {
@@ -506,7 +506,7 @@
     "location": "Hybrid",
     "source": "loc-all-ats",
     "firstSeen": "2026-02-17T20:47:13.815Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-01T21:23:47.153Z",
     "id": "aHR0cHM6Ly9iYmluc3VyYW5jZS53ZDEu"
   },
   "aHR0cHM6Ly9jb21zY29yZS53ZDUubXl3": {
@@ -516,7 +516,7 @@
     "location": "Remote",
     "source": "loc-all-ats",
     "firstSeen": "2026-02-17T20:47:13.815Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9jb21zY29yZS53ZDUubXl3"
   },
   "aHR0cHM6Ly9hY2Uud2Q1Lm15d29ya2Rh": {
@@ -566,7 +566,7 @@
     "location": "",
     "source": "role-sf-admin",
     "firstSeen": "2026-02-17T20:47:13.815Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly91aHl1cy53ZDEyLm15d29y"
   },
   "aHR0cHM6Ly9jaXNjby53ZDUubXl3b3Jr": {
@@ -726,7 +726,7 @@
     "location": "Remote",
     "source": "combo-remote-all",
     "firstSeen": "2026-02-17T20:47:13.815Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9lcm0ud2QzLm15d29ya2Rh"
   },
   "aHR0cHM6Ly91bmhjci53ZDMubXl3b3Jr": {
@@ -746,7 +746,7 @@
     "location": "Remote",
     "source": "ats-workday",
     "firstSeen": "2026-02-25T13:31:24.690Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9kYW5haGVyLndkMS5teXdv"
   },
   "aHR0cHM6Ly9udmVudC53ZDUubXl3b3Jr": {
@@ -756,7 +756,7 @@
     "location": "",
     "source": "ats-workday",
     "firstSeen": "2026-02-25T13:31:24.690Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9udmVudC53ZDUubXl3b3Jr"
   },
   "aHR0cHM6Ly9xdHNkYXRhY2VudGVycy53": {
@@ -766,7 +766,7 @@
     "location": "",
     "source": "ats-workday",
     "firstSeen": "2026-02-25T13:31:24.690Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9xdHNkYXRhY2VudGVycy53"
   },
   "aHR0cHM6Ly9kYXZpdGEud2QxLm15d29y": {
@@ -776,7 +776,7 @@
     "location": "",
     "source": "ats-workday",
     "firstSeen": "2026-02-25T13:31:24.690Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9kYXZpdGEud2QxLm15d29y"
   },
   "aHR0cHM6Ly9jb3VudHJ5ZmluYW5jaWFs": {
@@ -786,7 +786,7 @@
     "location": "COUNTRY is headquartered in Bloomington, IL",
     "source": "loc-all-ats",
     "firstSeen": "2026-02-25T13:31:24.691Z",
-    "lastSeen": "2026-02-26T17:14:42.011Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly9jb3VudHJ5ZmluYW5jaWFs"
   },
   "aHR0cHM6Ly91bWdjLndkMS5teXdvcmtk": {
@@ -796,7 +796,7 @@
     "location": "Hybrid",
     "source": "loc-ats-broad",
     "firstSeen": "2026-02-25T13:31:24.691Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly91bWdjLndkMS5teXdvcmtk"
   },
   "aHR0cHM6Ly9mbGV4ZXJhc29mdHdhcmUu": {
@@ -826,7 +826,7 @@
     "location": "Remote",
     "source": "ats-workday-broad",
     "firstSeen": "2026-02-26T13:31:28.787Z",
-    "lastSeen": "2026-02-26T17:14:42.011Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9zdGJhbmNvcnAud2Q1Lm15"
   },
   "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL2dv": {
@@ -836,7 +836,7 @@
     "location": "",
     "source": "ats-lever",
     "firstSeen": "2026-02-26T13:31:28.787Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL2dv"
   },
   "aHR0cHM6Ly93d3cuZmxleGpvYnMuY29t": {
@@ -846,7 +846,7 @@
     "location": "Remote",
     "source": "board-flexjobs",
     "firstSeen": "2026-02-26T17:14:42.011Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly93d3cuZmxleGpvYnMuY29t"
   },
   "aHR0cHM6Ly9yZW1vdGl2ZS5jb20vcmVt": {
@@ -856,7 +856,7 @@
     "location": "Remote",
     "source": "board-all",
     "firstSeen": "2026-02-26T17:14:42.011Z",
-    "lastSeen": "2026-02-27T02:14:34.052Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
     "id": "aHR0cHM6Ly9yZW1vdGl2ZS5jb20vcmVt"
   },
   "aHR0cHM6Ly9zaGF3aW5jLndkMS5teXdv": {
@@ -876,7 +876,7 @@
     "location": "Remote",
     "source": "ats-greenhouse-alt",
     "firstSeen": "2026-02-27T02:16:15.924Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cDovL2pvYi1ib2FyZHMuZ3JlZW5o"
   },
   "aHR0cHM6Ly9qb2ItYm9hcmRzLmdyZWVu": {
@@ -886,7 +886,7 @@
     "location": "Remote",
     "source": "ats-greenhouse-alt",
     "firstSeen": "2026-02-27T02:16:15.924Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9qb2ItYm9hcmRzLmdyZWVu"
   },
   "aHR0cHM6Ly9qb2JzLnNtYXJ0cmVjcnVp": {
@@ -896,7 +896,7 @@
     "location": "",
     "source": "ats-smartrecruiters",
     "firstSeen": "2026-02-27T02:16:15.924Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9qb2JzLnNtYXJ0cmVjcnVp"
   },
   "aHR0cHM6Ly9qb2JzLmFzaGJ5aHEuY29t": {
@@ -906,7 +906,7 @@
     "location": "Remote",
     "source": "ats-ashby",
     "firstSeen": "2026-02-27T02:16:15.924Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9qb2JzLmFzaGJ5aHEuY29t"
   },
   "aHR0cHM6Ly9qb2JzLmpvYnZpdGUuY29t": {
@@ -916,7 +916,7 @@
     "location": "Remote",
     "source": "ats-jobvite",
     "firstSeen": "2026-02-27T02:16:15.924Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly9qb2JzLmpvYnZpdGUuY29t"
   },
   "aHR0cHM6Ly93d3cud29ya2luZ25vbWFk": {
@@ -926,7 +926,7 @@
     "location": "Remote",
     "source": "board-all-weekly",
     "firstSeen": "2026-02-27T02:16:15.924Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly93d3cud29ya2luZ25vbWFk"
   },
   "aHR0cHM6Ly93d3cudmlydHVhbHZvY2F0": {
@@ -936,7 +936,67 @@
     "location": "Remote",
     "source": "board-all-weekly",
     "firstSeen": "2026-02-27T02:16:15.924Z",
-    "lastSeen": "2026-02-27T02:16:15.924Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
     "id": "aHR0cHM6Ly93d3cudmlydHVhbHZvY2F0"
+  },
+  "aHR0cHM6Ly9yYXltb25kamFtZXMud2Qx": {
+    "title": "Senior Salesforce Administrator",
+    "company": "Myworkdayjobs.com",
+    "url": "https://raymondjames.wd1.myworkdayjobs.com/en-US/raymondjamescareers/job/Pittsburgh-Pennsylvania---United-States/Senior-Salesforce-Administrator_R-0007271",
+    "location": "Sc",
+    "source": "ats-workday",
+    "firstSeen": "2026-03-01T21:23:47.153Z",
+    "lastSeen": "2026-03-01T21:23:47.153Z",
+    "id": "aHR0cHM6Ly9yYXltb25kamFtZXMud2Qx"
+  },
+  "aHR0cHM6Ly9zYW11ZWxtZXJyaXR0Lndk": {
+    "title": "Salesforce Administrator/Admission Operation Coordinator (remote)",
+    "company": "",
+    "url": "https://samuelmerritt.wd1.myworkdayjobs.com/smucareers/job/oakland-campus/salesforce-administrator-admission-operation-coordinator--remote----part-time_jr101413",
+    "location": "Remote",
+    "source": "loc-ats-broad",
+    "firstSeen": "2026-03-01T21:23:47.153Z",
+    "lastSeen": "2026-03-03T16:18:43.147Z",
+    "id": "aHR0cHM6Ly9zYW11ZWxtZXJyaXR0Lndk"
+  },
+  "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL2lu": {
+    "title": "Salesforce Administrator",
+    "company": "Innovative Solutions",
+    "url": "https://jobs.lever.co/innovativesol-2/02e55cd1-4d4b-4cdc-9316-b24c06b85b7b",
+    "location": "Remote",
+    "source": "combo-remote-us",
+    "firstSeen": "2026-03-01T21:23:47.153Z",
+    "lastSeen": "2026-03-01T21:23:47.153Z",
+    "id": "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL2lu"
+  },
+  "aHR0cHM6Ly9nYWlnLndkMS5teXdvcmtk": {
+    "title": "Salesforce Administrator",
+    "company": "Careers at Great American Insurance Group",
+    "url": "https://gaig.wd1.myworkdayjobs.com/GAIG_External/job/Cincinnati-OH-USA/Salesforce-Administrator_R8627",
+    "location": "Remote",
+    "source": "ats-workday-broad",
+    "firstSeen": "2026-03-03T16:17:08.006Z",
+    "lastSeen": "2026-03-03T16:18:43.148Z",
+    "id": "aHR0cHM6Ly9nYWlnLndkMS5teXdvcmtk"
+  },
+  "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL3N3": {
+    "title": "Sword Health - Salesforce Administrator / Developer",
+    "company": "Salesforce Administrator / Developer",
+    "url": "https://jobs.lever.co/swordhealth/38462c52-daf4-4a68-b3e8-2ddfb54a0fac",
+    "location": "",
+    "source": "ats-lever",
+    "firstSeen": "2026-03-03T16:17:08.006Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
+    "id": "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL3N3"
+  },
+  "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL3N1": {
+    "title": "Salesforce Administrator, Revenue Operations",
+    "company": "Superside",
+    "url": "https://jobs.lever.co/superside/81d835fd-129a-4dd1-9782-7a65b8fafd25/apply?ref=levels.fyi&src=levels.fyi&utm_source=levels.fyi&lever-origin=applied&lever-source%5B%5D=levels.fyi",
+    "location": "",
+    "source": "ats-lever",
+    "firstSeen": "2026-03-03T16:17:08.006Z",
+    "lastSeen": "2026-03-03T16:17:08.006Z",
+    "id": "aHR0cHM6Ly9qb2JzLmxldmVyLmNvL3N1"
   }
 }

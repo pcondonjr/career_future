@@ -656,6 +656,15 @@ export function startDashboard(options = {}) {
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
 if (isMain) {
   const configManager = (await import('./src/main/config.js')).default;
-  const { findChromePath } = await import('./src/main/paths.js');
-  startDashboard({ config: configManager, chromePath: findChromePath() });
+  // Inline Chrome discovery — can't import paths.js (depends on Electron)
+  const fsSync = await import('fs');
+  const candidates = [
+    path.join(process.env['PROGRAMFILES'] || '', 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    path.join(process.env['PROGRAMFILES(X86)'] || '', 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    path.join(process.env['LOCALAPPDATA'] || '', 'Google', 'Chrome', 'Application', 'chrome.exe'),
+    path.join(process.env['PROGRAMFILES(X86)'] || '', 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+    path.join(process.env['PROGRAMFILES'] || '', 'Microsoft', 'Edge', 'Application', 'msedge.exe'),
+  ];
+  const detectedChrome = candidates.find(c => c && fsSync.existsSync(c)) || null;
+  startDashboard({ config: configManager, chromePath: detectedChrome });
 }

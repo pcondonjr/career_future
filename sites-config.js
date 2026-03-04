@@ -32,13 +32,14 @@ export async function loadSitesFromCSV(csvPath = './data/companies.csv', onlyEna
       columns: true,
       skip_empty_lines: true,
       trim: true,
-      comment: '#'
+      comment: '#',
+      relax_column_count: true
     });
 
     const sites = records
       .filter(row => {
         // Filter by enabled status if requested
-        if (onlyEnabled && row.enabled.toLowerCase() !== 'true') {
+        if (onlyEnabled && (row.enabled || '').toLowerCase() !== 'true') {
           return false;
         }
         
@@ -59,7 +60,7 @@ export async function loadSitesFromCSV(csvPath = './data/companies.csv', onlyEna
           location: row.location_selector,
           link: row.link_selector
         },
-        enabled: row.enabled.toLowerCase() === 'true',
+        enabled: (row.enabled || '').toLowerCase() === 'true',
         skipKeywordFilter: row.skip_keyword_filter?.toLowerCase() === 'true',
         useAIExtraction: row.use_ai_extraction?.toLowerCase() === 'true',
         notes: row.notes || ''
@@ -108,7 +109,8 @@ export async function validateCSV(csvPath = './data/companies.csv') {
     const records = parse(fileContent, {
       columns: true,
       skip_empty_lines: true,
-      comment: '#'
+      comment: '#',
+      relax_column_count: true
     });
 
     const errors = [];
