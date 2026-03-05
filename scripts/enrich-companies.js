@@ -27,6 +27,7 @@ const ROOT = path.resolve(__dirname, '..');
 const INPUT_CSV = path.join(ROOT, 'enriched-companies-0306.csv');
 const WEEKLY_CSV = path.join(ROOT, 'data', 'companies-weekly.csv');
 const DAILY_CSV = path.join(ROOT, 'data', 'companies.csv');
+const SIMPLE_INPUT_CSV = path.join(ROOT, 'data', 'companies-to-enrich.csv');
 const PROGRESS_FILE = path.join(__dirname, 'enrich-progress.json');
 
 // === Configuration ===
@@ -116,18 +117,42 @@ function matchAts(urlStr) {
 // ============================================================
 // Data loading
 // ============================================================
-async function loadInputCSV() {
-  const content = await fsp.readFile(INPUT_CSV, 'utf-8');
+async function loadInputCSV(csvPath = null) {
+  // Try simple input first, fall back to Apollo CSV
+  const inputPath = csvPath || (fs.existsSync(SIMPLE_INPUT_CSV) ? SIMPLE_INPUT_CSV : INPUT_CSV);
+  const content = await fsp.readFile(inputPath, 'utf-8');
   const records = parse(content, { columns: true, skip_empty_lines: true, relax_column_count: true });
-  return records
-    .filter(r => r['Website'] && r['Website'].trim())
-    .map(r => ({
-      companyName: (r['Company Name-Apollo'] || r['Company Name'] || '').replace(/-Apollo$/, '').trim(),
-      website: normalizeUrl(r['Website']),
-      city: (r['Company City'] || '').trim(),
-      state: (r['Company State'] || '').trim(),
-      employees: (r['# Employees'] || '').trim(),
-    }));
+
+  if (records.length === 0) return { companies: [], isSimpleFormat: false };
+
+  const columns = Object.keys(records[0]);
+  const isSimpleFormat = columns.includes('company_name') && columns.includes('website');
+
+  const companies = records
+    .filter(r => {
+      const website = isSimpleFormat ? r['website'] : r['Website'];
+      return website && website.trim();
+    })
+    .map(r => {
+      if (isSimpleFormat) {
+        return {
+          companyName: (r['company_name'] || '').trim(),
+          website: normalizeUrl(r['website']),
+          city: '',
+          state: '',
+          employees: '',
+        };
+      }
+      return {
+        companyName: (r['Company Name-Apollo'] || r['Company Name'] || '').replace(/-Apollo$/, '').trim(),
+        website: normalizeUrl(r['Website']),
+        city: (r['Company City'] || '').trim(),
+        state: (r['Company State'] || '').trim(),
+        employees: (r['# Employees'] || '').trim(),
+      };
+    });
+
+  return { companies, isSimpleFormat };
 }
 
 async function loadExistingNames(csvPath) {
@@ -568,10 +593,13 @@ async function runPhase3(progress) {
 
     const selectors = entry.selectors || PLACEHOLDER;
     const careersUrl = entry.careersUrl || entry.website;
-    const isUS = isUSCompany(entry);
+    const hasSelectors = entry.phase1Status === 'ats_matched' || entry.phase2Status === 'selectors_inferred';
 
-    // Enabled only if ATS matched AND US-based
-    const enabled = entry.phase1Status === 'ats_matched' && isUS;
+    // Simple format: enable if any selectors found (user hand-picked these companies)
+    // Apollo format: also require US-based
+    const enabled = progress.isSimpleFormat
+      ? hasSelectors
+      : hasSelectors && isUSCompany(entry);
 
     const row = [
       escapeCsvField(entry.companyName),
@@ -589,7 +617,7 @@ async function runPhase3(progress) {
 
   console.log(`  New rows to append: ${newRows.length}`);
   const enabledCount = newRows.filter(r => r.includes(',true,')).length;
-  console.log(`  Enabled (ATS matched + US): ${enabledCount}`);
+  console.log(`  Enabled (selectors found): ${enabledCount}`);
   console.log(`  Disabled (needs review): ${newRows.length - enabledCount}\n`);
 
   if (newRows.length > 0) {
@@ -597,6 +625,12 @@ async function runPhase3(progress) {
     console.log(`  Appended ${newRows.length} rows to data/companies-weekly.csv\n`);
   } else {
     console.log('  Nothing to append.\n');
+  }
+
+  // Clear simple input file after successful processing
+  if (progress.isSimpleFormat && fs.existsSync(SIMPLE_INPUT_CSV) && newRows.length > 0) {
+    await fsp.writeFile(SIMPLE_INPUT_CSV, 'company_name,website\n');
+    console.log(`  Cleared data/companies-to-enrich.csv (processed companies removed)\n`);
   }
 
   progress.phase3Complete = true;
@@ -653,7 +687,15 @@ function showStats(progress) {
 // ============================================================
 async function main() {
   const args = process.argv.slice(2);
-  const flag = args[0] || '';
+
+  // Parse --input flag
+  let inputPath = null;
+  const inputIdx = args.indexOf('--input');
+  if (inputIdx !== -1 && args[inputIdx + 1]) {
+    inputPath = args[inputIdx + 1];
+  }
+
+  const flag = args.find(a => a.startsWith('--') && a !== '--input' && args.indexOf(a) !== inputIdx + 1) || '';
 
   let progress = await loadProgress() || { results: [] };
 
@@ -663,7 +705,7 @@ async function main() {
   }
 
   // Load input data
-  const allCompanies = await loadInputCSV();
+  const { companies: allCompanies, isSimpleFormat } = await loadInputCSV(inputPath);
   const weeklyNames = await loadExistingNames(WEEKLY_CSV);
   const dailyNames = await loadExistingNames(DAILY_CSV);
   const companies = allCompanies.filter(c =>
@@ -671,12 +713,14 @@ async function main() {
     !dailyNames.has(c.companyName.toLowerCase())
   );
 
-  console.log(`Loaded ${allCompanies.length} companies from enriched CSV`);
+  console.log(`Loaded ${allCompanies.length} companies from ${isSimpleFormat ? 'simple' : 'Apollo'} CSV`);
   console.log(`Skipping ${allCompanies.length - companies.length} already in weekly/daily CSV`);
   console.log(`Processing ${companies.length} new companies`);
 
+  // Store format info for Phase 3
+  progress.isSimpleFormat = isSimpleFormat;
+
   const runAll = !flag || flag === '--resume';
-  const resuming = flag === '--resume';
 
   if (flag === '--phase1' || runAll) {
     await runPhase1(companies, progress);

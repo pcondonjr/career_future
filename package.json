@@ -18,7 +18,9 @@
     "test:dorks": "node index.js --now --dorks",
     "test:dorks-weekly": "node index.js --now --dorks --weekly",
     "add-company": "node add-company.js",
-    "export": "node export-jobs.js"
+    "export": "node export-jobs.js",
+    "enrich": "node scripts/enrich-companies.js",
+    "enrich:stats": "node scripts/enrich-companies.js --stats"
   },
   "keywords": [
     "career",
