@@ -359,6 +359,12 @@ export class GoogleDorkScraper {
    * Filter out results that aren't actual job postings.
    * Checks that the keyword appears in the title or snippet,
    * and rejects company/category landing pages.
+   *
+   * Note: Always uses "contains" matching regardless of the active match mode.
+   * Dork/Jobs API result titles include company names and ATS platform names
+   * (e.g. "Senior Director of Marketing - Acme Corp | Workday"), making exact
+   * matching impractical here. The match mode is fully applied in
+   * scraper.js:isRelevantJob() for company page scraping.
    */
   _isLikelyJob(item) {
     const title = (item.title || '').toLowerCase();

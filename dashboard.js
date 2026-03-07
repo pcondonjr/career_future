@@ -333,13 +333,14 @@ function stopProcess(proc) {
 app.post('/api/run-scraper', async (req, res) => {
   const mode = req.body.mode === 'weekly' ? 'weekly' : 'daily';
   const searchValue = (req.body.searchValue || '').trim();
+  const matchMode = (req.body.matchMode || '').trim() || 'contains';
 
   if (isScraperRunning()) {
     return res.status(409).json({ error: 'A search is already running' });
   }
 
   const runName = mode === 'weekly' ? 'Weekly Companies' : 'Daily Companies';
-  const runInfo = { searchValue, runName, timestamp: new Date().toISOString() };
+  const runInfo = { searchValue, matchMode, runName, timestamp: new Date().toISOString() };
   if (mode === 'weekly') {
     await saveWeeklyLastRun(runInfo);
   } else {
@@ -349,14 +350,20 @@ app.post('/api/run-scraper', async (req, res) => {
   clearLog();
   appendLog(`Starting ${runName} search...`);
 
-  const weeklyFlag = mode === 'weekly' ? ' --weekly' : '';
-  const args = `--now${weeklyFlag}`;
+  const cliArgs = ['index.js', '--now'];
+  if (mode === 'weekly') cliArgs.push('--weekly');
 
-  scraperProcess = spawn('node', ['index.js', ...args.split(' ').filter(Boolean)], {
+  // Pass search value and match mode via env vars to avoid shell word splitting
+  const env = { ...process.env };
+  if (searchValue) env.CF_SEARCH_VALUE = searchValue;
+  if (matchMode) env.CF_MATCH_MODE = matchMode;
+
+  scraperProcess = spawn('node', cliArgs, {
     cwd: writableBase,
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: false,
-    shell: true
+    shell: true,
+    env
   });
 
   pipeProcessOutput(scraperProcess);
@@ -396,16 +403,26 @@ app.post('/api/run-dorks', async (req, res) => {
     return res.status(409).json({ error: 'Applicant Tracking search is already running' });
   }
 
-  await saveDorkLastRun({ runName: 'Applicant Tracking', timestamp: new Date().toISOString() });
+  const searchValue = (req.body?.searchValue || '').trim();
+  const matchMode = (req.body?.matchMode || '').trim() || 'contains';
+  await saveDorkLastRun({ searchValue, matchMode, runName: 'Applicant Tracking', timestamp: new Date().toISOString() });
 
   clearLog();
   appendLog('Starting Applicant Tracking search...');
 
-  dorkProcess = spawn('node', ['index.js', '--now', '--dorks', '--all'], {
+  const dorkArgs = ['index.js', '--now', '--dorks', '--all'];
+
+  // Pass search value and match mode via env vars to avoid shell word splitting
+  const env = { ...process.env };
+  if (searchValue) env.CF_SEARCH_VALUE = searchValue;
+  if (matchMode) env.CF_MATCH_MODE = matchMode;
+
+  dorkProcess = spawn('node', dorkArgs, {
     cwd: writableBase,
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: false,
-    shell: true
+    shell: true,
+    env
   });
 
   pipeProcessOutput(dorkProcess);

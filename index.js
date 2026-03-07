@@ -14,6 +14,13 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Parse search override — prefer env var (set by dashboard.js), fall back to CLI arg
+const cliSearchValue = process.env.CF_SEARCH_VALUE || (() => {
+  const idx = process.argv.indexOf('--search');
+  return idx !== -1 ? process.argv[idx + 1] : null;
+})();
+const cliMatchMode = process.env.CF_MATCH_MODE || 'contains';
+
 // Build paths from Dashboard config (fall back to defaults)
 const companiesPaths = configManager.getCompaniesPaths();
 const databasePaths = configManager.getDatabasePaths();
@@ -42,6 +49,14 @@ const CONFIG = {
 
 async function runJobSearch(mode = 'daily') {
   const config = CONFIG[mode];
+
+  // If a search value was passed, temporarily override config keywords and set match mode
+  const originalKeywords = configManager.getKeywords();
+  if (cliSearchValue) {
+    configManager.setKeywords([cliSearchValue]);
+    process.env._CF_ACTIVE_MATCH_MODE = cliMatchMode;
+    console.log(`🔎 Using search value: "${cliSearchValue}" (match: ${cliMatchMode})`);
+  }
 
   console.log('\n' + '='.repeat(60));
   console.log(`🔍 Starting ${config.name} job search at ${new Date().toLocaleString()}`);
@@ -129,11 +144,23 @@ async function runJobSearch(mode = 'daily') {
     console.error('Error during job search:', error);
   } finally {
     await scraper.close();
+    if (cliSearchValue) {
+      configManager.setKeywords(originalKeywords);
+      delete process.env._CF_ACTIVE_MATCH_MODE;
+    }
   }
 }
 
 async function runDorkSearch(frequency = 'daily') {
   const config = CONFIG.dorks;
+
+  // If a search value was passed, temporarily override config keywords and set match mode
+  const originalKeywords = configManager.getKeywords();
+  if (cliSearchValue) {
+    configManager.setKeywords([cliSearchValue]);
+    process.env._CF_ACTIVE_MATCH_MODE = cliMatchMode;
+    console.log(`🔎 Using search value: "${cliSearchValue}" (match: ${cliMatchMode})`);
+  }
 
   console.log('\n' + '='.repeat(60));
   console.log(`🔍 Starting ${config.name} (${frequency}) search at ${new Date().toLocaleString()}`);
@@ -191,11 +218,24 @@ async function runDorkSearch(frequency = 'daily') {
 
   } catch (error) {
     console.error('Error during dork search:', error);
+  } finally {
+    if (cliSearchValue) {
+      configManager.setKeywords(originalKeywords);
+      delete process.env._CF_ACTIVE_MATCH_MODE;
+    }
   }
 }
 
 async function runSerperJobsSearch() {
   const config = CONFIG.jobs;
+
+  // If a search value was passed, temporarily override config keywords and set match mode
+  const originalKeywords = configManager.getKeywords();
+  if (cliSearchValue) {
+    configManager.setKeywords([cliSearchValue]);
+    process.env._CF_ACTIVE_MATCH_MODE = cliMatchMode;
+    console.log(`🔎 Using search value: "${cliSearchValue}" (match: ${cliMatchMode})`);
+  }
 
   console.log('\n' + '='.repeat(60));
   console.log(`🔍 Starting ${config.name} search at ${new Date().toLocaleString()}`);
@@ -253,6 +293,11 @@ async function runSerperJobsSearch() {
 
   } catch (error) {
     console.error('Error during Jobs API search:', error);
+  } finally {
+    if (cliSearchValue) {
+      configManager.setKeywords(originalKeywords);
+      delete process.env._CF_ACTIVE_MATCH_MODE;
+    }
   }
 }
 

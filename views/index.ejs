@@ -395,6 +395,14 @@
 
       async function runScraper(mode, btn) {
         if (activeSearchType) return;
+
+        // Warn if search field is empty
+        if (!value.value.trim()) {
+          if (!confirm('The Search field is empty. The job will use the default keywords from Settings.\n\nDo you want to continue?')) {
+            return;
+          }
+        }
+
         activeSearchType = 'scraper';
         const tabKey = mode === 'weekly' ? 'weekly' : 'daily';
         const { stopBtn, statusEl } = getTabControls(tabKey);
@@ -404,7 +412,7 @@
           const res = await fetch('/api/run-scraper', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode, searchValue: value.value.trim() })
+            body: JSON.stringify({ mode, searchValue: value.value.trim(), matchMode: modifier.value })
           });
           const data = await res.json();
 
@@ -433,12 +441,24 @@
 
       async function runDorks() {
         if (activeSearchType) return;
+
+        // Warn if search field is empty
+        if (!value.value.trim()) {
+          if (!confirm('The Search field is empty. The job will use the default keywords from Settings.\n\nDo you want to continue?')) {
+            return;
+          }
+        }
+
         activeSearchType = 'dorks';
         const { stopBtn, statusEl } = getTabControls('ats');
         setRunningState(dorksBtn, stopBtn, statusEl, 'Running Applicant Tracking search...');
 
         try {
-          const res = await fetch('/api/run-dorks', { method: 'POST' });
+          const res = await fetch('/api/run-dorks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ searchValue: value.value.trim(), matchMode: modifier.value })
+          });
           const data = await res.json();
 
           if (!res.ok) {

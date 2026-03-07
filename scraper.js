@@ -52,16 +52,24 @@ export class JobScraper {
   isRelevantJob(title, location) {
     const titleLower = title.toLowerCase();
     const locationLower = (location || '').toLowerCase();
+    const matchMode = process.env._CF_ACTIVE_MATCH_MODE || 'contains';
 
-    // Must match at least one keyword
+    // Must match at least one keyword using the active match mode
     const keywords = getKeywords();
-    const hasKeyword = keywords.some(keyword =>
-      titleLower.includes(keyword.toLowerCase())
-    );
+    const hasKeyword = keywords.some(keyword => {
+      const kw = keyword.toLowerCase();
+      switch (matchMode) {
+        case 'exact':    return titleLower === kw;
+        case 'begins':   return titleLower.startsWith(kw);
+        case 'ends':     return titleLower.endsWith(kw);
+        case 'contains':
+        default:         return titleLower.includes(kw);
+      }
+    });
 
     if (!hasKeyword) return false;
 
-    // If location specified, check if it matches preferences
+    // Location matching always uses "contains" (locations are inherently partial matches)
     if (location && locationLower) {
       const locations = getLocations();
       const hasLocation = locations.some(loc =>
