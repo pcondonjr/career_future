@@ -72,7 +72,7 @@
             </label>
             <label style="flex: 1;">
                 Search
-                <input type="search" id="search-value" placeholder="Type to filter...">
+                <input type="search" id="search-value" placeholder="Type to filter..." value="<%= typeof activeKeyword !== 'undefined' ? activeKeyword : '' %>">
             </label>
             <button id="search-clear" class="outline secondary">Clear</button>
         </div>
@@ -84,6 +84,7 @@
             <div class="btn-spacer"></div>
             <a href="/settings" role="button" class="outline">Settings</a>
             <button id="analyze-external-job-btn" class="contrast outline">Analyze External Job</button>
+            <button id="clear-databases-btn" class="outline secondary" title="Clear all saved job results (useful after changing keywords)">Clear Results</button>
         </div>
         <hr>
 
@@ -506,6 +507,24 @@
       // All stop buttons delegate to the same handler
       document.querySelectorAll('.stop-btn').forEach(btn => {
         btn.addEventListener('click', stopSearch);
+      });
+
+      // Clear databases button
+      document.getElementById('clear-databases-btn').addEventListener('click', async () => {
+        if (!confirm('This will permanently delete all saved job results from Daily, Weekly, and Applicant Tracking databases.\n\nThis is useful after changing your search keywords. You cannot undo this.\n\nContinue?')) return;
+        try {
+          const res = await fetch('/api/clear-databases', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ targets: ['daily', 'weekly', 'dorks'] })
+          });
+          const data = await res.json();
+          if (data.success) {
+            window.location.reload();
+          } else {
+            alert('Failed to clear: ' + (data.error || 'Unknown error'));
+          }
+        } catch { alert('Failed to clear databases'); }
       });
 
       // --- Live log panel ---

@@ -107,6 +107,10 @@ class FileStore {
     this._save();
   }
 
+  reload() {
+    this._load();
+  }
+
   get store() {
     return { ...this.data };
   }
@@ -294,6 +298,16 @@ class ConfigManager {
     return this.store;
   }
 
+  /**
+   * Re-read the config file from disk. Call before each scraper run
+   * so long-running cron processes pick up keyword/settings changes.
+   */
+  reload() {
+    if (this.store && typeof this.store.reload === 'function') {
+      this.store.reload();
+    }
+  }
+
   init() {
     if (app) {
       this.isElectronReady = app.isReady();
@@ -344,7 +358,9 @@ class ConfigManager {
     if (!Array.isArray(keywords)) {
       throw new Error('Keywords must be an array');
     }
-    this.store.set('search.keywords', keywords);
+    // Filter out empty/whitespace-only strings to prevent ".includes('')" matching everything
+    const cleaned = keywords.map(k => k.trim()).filter(k => k.length > 0);
+    this.store.set('search.keywords', cleaned);
   }
 
   getLocations() {

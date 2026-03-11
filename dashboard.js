@@ -120,9 +120,18 @@ app.get('/', async (req, res) => {
       cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
     }
 
+    // Server-side keyword filter: only show jobs matching current config keywords
+    const activeKeywords = configRef ? configRef.getKeywords().filter(k => k.trim()) : [];
+    const keywordFilter = (job) => {
+      if (activeKeywords.length === 0) return true;
+      const title = (job.title || '').toLowerCase();
+      return activeKeywords.some(kw => title.includes(kw.toLowerCase()));
+    };
+
     const filterAndSort = (database) =>
       Array.from(database.jobs.values())
         .filter(job => !cutoff || new Date(job.firstSeen) >= cutoff)
+        .filter(keywordFilter)
         .sort((a, b) => new Date(b.firstSeen) - new Date(a.firstSeen));
 
     const dailyJobs = filterAndSort(db);
@@ -181,6 +190,8 @@ app.get('/', async (req, res) => {
     const headerSearchValue = mostRecent?.searchValue || null;
     const defaultTab = mostRecent?._tab || 'daily';
 
+    const activeKeyword = activeKeywords[0] || '';
+
     res.render('index', {
       tabStats,
       dailyJobs,
@@ -188,7 +199,8 @@ app.get('/', async (req, res) => {
       dorkJobs,
       headerSearchValue,
       defaultTab,
-      range
+      range,
+      activeKeyword
     });
   } catch (error) {
     res.status(500).send('Error loading jobs: ' + error.message);
@@ -631,6 +643,34 @@ app.post('/api/settings', (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+// Clear all job databases (used when keywords change to remove stale results)
+app.post('/api/clear-databases', async (req, res) => {
+  try {
+    const targets = req.body.targets || ['daily', 'weekly', 'dorks'];
+    const cleared = [];
+
+    if (targets.includes('daily') && db) {
+      db.jobs = new Map();
+      await db.save();
+      cleared.push('daily');
+    }
+    if (targets.includes('weekly') && weeklyDb) {
+      weeklyDb.jobs = new Map();
+      await weeklyDb.save();
+      cleared.push('weekly');
+    }
+    if (targets.includes('dorks') && dorkDb) {
+      dorkDb.jobs = new Map();
+      await dorkDb.save();
+      cleared.push('dorks');
+    }
+
+    res.json({ success: true, cleared });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to clear databases: ' + error.message });
   }
 });
 

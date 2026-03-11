@@ -1,0 +1,22 @@
+company_name,careers_url,job_card_selector,title_selector,location_selector,link_selector,enabled,skip_keyword_filter,use_ai_extraction,notes
+AIA South Carolina,https://aiasc.org/jobs,li,a,span,a,true,true,true,WordPress blog-style job posts - architecture jobs - skip keyword filter (niche board)
+Charleston Habitat for Humanity,https://charlestonhabitat.org/open-positions,,,,,false,false,true,404 - careers page not found - check URL
+Charleston Moves,https://charlestonmoves.org/get-involved/,,,,,false,false,true,Job posted as PDF link - no structured listings - manual check only
+Coastal Conservation League,https://scccl.bamboohr.com/careers,".BambooHR-ATS-board__JobList__Item, .BambooHR-ATS-Department-Item",a,.BambooHR-ATS-Location,a,true,false,false,BambooHR ATS - JS-rendered - may need AI extraction fallback
+Communities In Schools of SC,https://www.cisofsc.org/careers,,,,,false,false,true,403 Forbidden - Squarespace blocking bots
+Dee Norton Child Advocacy Center,https://www.deenortoncenter.org/open-positions,,,,,false,false,true,404 - page not found
+Disability Rights South Carolina,https://www.disabilityrightssc.org/get-involved/donate/,,,,,false,false,true,403 Forbidden - wrong URL (donate page not careers)
+Dorchester Paws,https://dorchesterpaws.org/careers,,,,,false,false,true,Dynamic JS rendering (Gravity Forms) - no static job cards
+Family Connection of SC,https://www.familyconnectionsc.org/get-involved/,.page_item,a,span,a,true,true,true,"Elementor WordPress - job posts as child pages - AI extraction recommended"
+Girls on the Run Upstate SC,https://www.gotrupstatesc.org/careers,,,,,false,false,true,404 - page not found or JS-only rendering
+Gullah Geechee Cultural Heritage Corridor,https://gullahgeecheecorridor.org/open-positions,,,,,false,false,true,404 - page not found
+Junior Achievement of Greater South Carolina,https://greatersc.ja.org/open-positions,,,,,false,false,true,Navigation timeout - site unreachable
+Lowcountry Youth Services,https://www.lowcountryyouth.org/get-involved/careers,,,,,false,false,true,Wix site - JS-only rendering - no static HTML job cards
+Lutheran Services Carolinas,https://www.paycomonline.net/v4/ats/web.php/jobs?clientkey=BBB61291218588DA1B7C2B47B7D7CAE7,,,,,false,false,true,Paycom ATS - fully JS-rendered SPA - no static selectors available
+Respite Care Charleston,http://www.respitecarecharleston.org/open-positions,,,,,false,false,true,404 - page not found
+"Safe Passage, Inc.",https://safepassagesc.org/careers,,,,,false,false,true,No current openings - GoDaddy basic form - no ATS
+SC Historical Society,https://schistory.org/employment,p,a,span,a,true,true,true,WordPress - jobs listed as PDF links in paragraphs - skip keyword filter
+SC Thrive,https://recruiting.paylocity.com/recruiting/jobs/All/4f4377ab-1b93-4b8e-9347-52463759a0e7/SC-Thrive,.job-listing-job-item,.job-item-title a,.location-column,.job-item-title a,true,false,false,Paylocity ATS - structured job cards with clear selectors
+United Way of Horry County,https://unitedwayhorry.org/careers/,,,,,false,false,true,Not currently hiring - WordPress/Breakdance builder
+"Windwood Family Services and Windwood Farm Home for Children",https://windwoodfarm.org/open-positions,,,,,false,false,true,Timeout - site unreachable or very slow
+"Women's Rights and Empowerment Network (WREN)",http://www.scwren.org/careers,,,,,false,false,true,403 Forbidden - Squarespace blocking bots

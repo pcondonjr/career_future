@@ -23,6 +23,9 @@ export class Scheduler {
    * @param {string} mode - 'daily' or 'weekly'
    */
   async runJobSearch(mode = 'daily') {
+    // Re-read config from disk so scheduled runs pick up keyword/settings changes
+    if (typeof config.reload === 'function') config.reload();
+
     const paths = config.getCompaniesPaths();
     const dbPaths = config.getDatabasePaths();
 
@@ -135,6 +138,9 @@ export class Scheduler {
    * @param {string} frequency - 'daily' or 'weekly'
    */
   async runDorkSearch(frequency = 'daily') {
+    // Re-read config from disk so scheduled runs pick up keyword/settings changes
+    if (typeof config.reload === 'function') config.reload();
+
     const dbPaths = config.getDatabasePaths();
     const dorksDbPath = resolveWritableFile('jobs_database_dorks.json');
     const dorksCsvPath = resolveResourceFile('data/ats-list.csv');

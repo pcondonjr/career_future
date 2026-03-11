@@ -55,9 +55,10 @@ export class JobScraper {
     const matchMode = process.env._CF_ACTIVE_MATCH_MODE || 'contains';
 
     // Must match at least one keyword using the active match mode
-    const keywords = getKeywords();
+    const keywords = getKeywords().filter(k => k.trim().length > 0);
+    if (keywords.length === 0) return false; // No valid keywords — reject all
     const hasKeyword = keywords.some(keyword => {
-      const kw = keyword.toLowerCase();
+      const kw = keyword.toLowerCase().trim();
       switch (matchMode) {
         case 'exact':    return titleLower === kw;
         case 'begins':   return titleLower.startsWith(kw);
@@ -166,9 +167,27 @@ Return ONLY a valid JSON array, no other text. If no jobs are found, return [].`
       });
       
       console.log(`Scraping ${siteConfig.name}...`);
-      
+
+      // Dynamically inject current keyword into URLs with search query params
+      let targetUrl = siteConfig.url;
+      try {
+        const urlObj = new URL(targetUrl);
+        const searchParams = ['q', 'query', 'keywords', 'keyword', 'Keywords', 'search', 'field_keyword'];
+        const keywords = getKeywords().filter(k => k.trim().length > 0);
+        if (keywords.length > 0) {
+          for (const param of searchParams) {
+            if (urlObj.searchParams.has(param)) {
+              urlObj.searchParams.set(param, keywords[0]);
+            }
+          }
+        }
+        targetUrl = urlObj.toString();
+      } catch {
+        // URL parse failed — use original
+      }
+
       // Navigate with timeout
-      await page.goto(siteConfig.url, {
+      await page.goto(targetUrl, {
         waitUntil: 'networkidle2',
         timeout: 30000
       });

@@ -48,6 +48,10 @@ export class GoogleDorkScraper {
       .map(l => `"${l}"`)
       .join(' OR ');
 
+    // For multi-word keywords, the CSV dork templates already expect a single token
+    // after {{keyword}} (e.g. "{{keyword}} administrator"). If the keyword itself is
+    // a full phrase like "Senior Director of Marketing", the template produces a
+    // natural search query.
     return template
       .replace(/\{\{keyword\}\}/g, keyword)
       .replace(/\{\{locations_or\}\}/g, `(${locationsOr})`);
@@ -247,13 +251,19 @@ export class GoogleDorkScraper {
 
   async runJobsSearch() {
     const keyword = this.keywords[0] || 'salesforce';
-    const queries = GoogleDorkScraper.JOB_QUERIES;
+
+    // For non-generic keywords (multi-word phrases like "Senior Director of Marketing"),
+    // search the keyword as-is instead of appending role suffixes that won't make sense.
+    const isSingleWordKeyword = keyword.trim().split(/\s+/).length === 1;
+    const queries = isSingleWordKeyword
+      ? GoogleDorkScraper.JOB_QUERIES.map(q => ({ ...q, query: `${keyword} ${q.suffix}` }))
+      : [{ id: 'jobs-direct', query: keyword }];
 
     const allJobs = [];
     const seenUrls = new Set();
 
     for (const q of queries) {
-      const query = `${keyword} ${q.suffix}`;
+      const query = q.query;
       console.log(`🔍 Jobs API: ${q.id}`);
       console.log(`   Query: "${query}" (location: United States)`);
 
@@ -369,7 +379,10 @@ export class GoogleDorkScraper {
   _isLikelyJob(item) {
     const title = (item.title || '').toLowerCase();
     const url = (item.link || '').toLowerCase();
-    const keyword = (this.keywords[0] || 'salesforce').toLowerCase();
+    const keyword = (this.keywords[0] || 'salesforce').toLowerCase().trim();
+
+    // Guard: empty keyword would match everything via "".includes("") === true
+    if (!keyword) return false;
 
     // Keyword MUST appear in the title — snippet-only matches are too noisy
     if (!title.includes(keyword)) {
@@ -387,7 +400,7 @@ export class GoogleDorkScraper {
   }
 
   _cleanTitle(rawTitle) {
-    const keyword = (this.keywords[0] || 'salesforce').toLowerCase();
+    const keyword = (this.keywords[0] || 'salesforce').toLowerCase().trim();
 
     // Strip known ATS platform suffixes like "Job Title - Company | Workday"
     let title = rawTitle
@@ -396,7 +409,7 @@ export class GoogleDorkScraper {
 
     // Only strip the last " - Whatever" segment if the keyword survives
     const stripped = title.replace(/\s*[\|–—-]\s*[^|–—-]+$/, '').trim();
-    if (stripped && stripped.toLowerCase().includes(keyword)) {
+    if (keyword && stripped && stripped.toLowerCase().includes(keyword)) {
       title = stripped;
     }
 

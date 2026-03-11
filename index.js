@@ -50,6 +50,9 @@ const CONFIG = {
 async function runJobSearch(mode = 'daily') {
   const config = CONFIG[mode];
 
+  // Re-read config from disk so cron processes pick up keyword/settings changes
+  configManager.reload();
+
   // If a search value was passed, temporarily override config keywords and set match mode
   const originalKeywords = configManager.getKeywords();
   if (cliSearchValue) {
@@ -154,6 +157,9 @@ async function runJobSearch(mode = 'daily') {
 async function runDorkSearch(frequency = 'daily') {
   const config = CONFIG.dorks;
 
+  // Re-read config from disk so cron processes pick up keyword/settings changes
+  configManager.reload();
+
   // If a search value was passed, temporarily override config keywords and set match mode
   const originalKeywords = configManager.getKeywords();
   if (cliSearchValue) {
@@ -228,6 +234,9 @@ async function runDorkSearch(frequency = 'daily') {
 
 async function runSerperJobsSearch() {
   const config = CONFIG.jobs;
+
+  // Re-read config from disk so cron processes pick up keyword/settings changes
+  configManager.reload();
 
   // If a search value was passed, temporarily override config keywords and set match mode
   const originalKeywords = configManager.getKeywords();
