@@ -54,14 +54,6 @@
                 </select>
             </label>
             <label>
-                Field
-                <select id="search-field">
-                    <option value="title">Title</option>
-                    <option value="company">Company</option>
-                    <option value="location">Location</option>
-                </select>
-            </label>
-            <label>
                 Match
                 <select id="search-modifier">
                     <option value="contains">Contains</option>
@@ -116,7 +108,7 @@
                             Never
                         <% } %>
                     </div>
-                    <div><strong>Search Value:</strong> <%= (tabStats.daily.lastRun && tabStats.daily.lastRun.searchValue) ? tabStats.daily.lastRun.searchValue : 'Title, Location or Company' %></div>
+                    <div><strong>Search Value:</strong> <%= (tabStats.daily.lastRun && tabStats.daily.lastRun.searchValue) ? tabStats.daily.lastRun.searchValue : 'Default keywords from Settings' %></div>
                 </div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
@@ -160,7 +152,7 @@
                             Never
                         <% } %>
                     </div>
-                    <div><strong>Search Value:</strong> <%= (tabStats.weekly.lastRun && tabStats.weekly.lastRun.searchValue) ? tabStats.weekly.lastRun.searchValue : 'Title, Location or Company' %></div>
+                    <div><strong>Search Value:</strong> <%= (tabStats.weekly.lastRun && tabStats.weekly.lastRun.searchValue) ? tabStats.weekly.lastRun.searchValue : 'Default keywords from Settings' %></div>
                 </div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
@@ -203,7 +195,7 @@
                             Never
                         <% } %>
                     </div>
-                    <div><strong>Search Value:</strong> <%= (tabStats.ats.lastRun && tabStats.ats.lastRun.searchValue) ? tabStats.ats.lastRun.searchValue : 'Title, Location or Company' %></div>
+                    <div><strong>Search Value:</strong> <%= (tabStats.ats.lastRun && tabStats.ats.lastRun.searchValue) ? tabStats.ats.lastRun.searchValue : 'Default keywords from Settings' %></div>
                 </div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
@@ -235,7 +227,6 @@
     </main>
     <script>
     (function() {
-      const field = document.getElementById('search-field');
       const modifier = document.getElementById('search-modifier');
       const value = document.getElementById('search-value');
       const clearBtn = document.getElementById('search-clear');
@@ -296,7 +287,7 @@
 
         let shown = 0;
         cards.forEach(card => {
-          const fieldVal = (card.dataset[field.value] || '').toLowerCase();
+          const fieldVal = (card.dataset.title || '').toLowerCase();
           let match = false;
 
           switch (modifier.value) {
@@ -317,12 +308,10 @@
       }
 
       // Restore search state from URL params on page load
-      if (params.get('field')) field.value = params.get('field');
       if (params.get('modifier')) modifier.value = params.get('modifier');
       if (params.get('search')) { value.value = params.get('search'); applyFilter(); }
 
       value.addEventListener('input', applyFilter);
-      field.addEventListener('change', applyFilter);
       modifier.addEventListener('change', applyFilter);
       clearBtn.addEventListener('click', () => {
         value.value = '';
@@ -353,7 +342,6 @@
         const p = new URLSearchParams();
         p.set('range', timeRange.value);
         if (activeTab !== 'daily') p.set('tab', activeTab);
-        if (field.value) p.set('field', field.value);
         if (modifier.value) p.set('modifier', modifier.value);
         if (value.value.trim()) p.set('search', value.value.trim());
         return p.toString();

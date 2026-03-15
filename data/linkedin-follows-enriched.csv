@@ -1,0 +1,176 @@
+company_name,careers_url,job_card_selector,title_selector,location_selector,link_selector,enabled,notes
+1st Responders Healthcare Services,https://avua.com/jobs/personal-care-aide-pca-923736,.job-card,a,span,a,false,Needs AI extraction - none
+Abundance Capital,,,,,,false,No website found via search
+Accion Labs,https://www.accionlabs.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+AdminNow,https://www.onlinejobs.ph/jobseekers/job/Customer-Acquisition-Specialist-1265695,.job-card,a,span,a,false,Needs AI extraction - none
+AFF | group,https://affgroup.com/about/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+AlertMedia,https://www.alertmedia.com/careers/openings/,.opening,a,.location,a,true,Greenhouse ATS - iframe: https://job-boards.greenhouse.io/embed/job_board?for=alertmedia&validityToken=mVDybyMeqbmJIprIRE3Tv9-6q312GCYtQNo9sav4ZMuUSkCQEyVrAXTPtMW4v9e4yIB-SkAU5qrl4SjO4IUQDV95QizVjtprvWoV6f6X7WgCJC1cAZqgckQL9cEuXEUzjTjpQAW_C4oUDLOxNsoJ9iCj5FztouqAOSiE47u76d1ek-SjXbid34LmQV8MH-4p2ZWF56BkhPU5dVHI69ps8BycpuxZH6SbS854Jm75KeYXs5J6FF8ECR_NWyF2wkeH035iO_r-co015N6uVhgGq2ulPUPahh9NWx5mMoSncQFRyVxD6VTX1x3A9hUS2jfx_NZ47i8tSwqCJ15RbZvDyg%3D%3D
+Altum Solutions,https://altum-solutions.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+American Cancer Society,https://www.cancer.org/about-us/employment-opportunities.html,.job-card,a,span,a,false,Needs AI extraction - none
+American Cancer Society - Arkansas,https://secure.acsevents.org,,,,,false,Homepage: https://secure.acsevents.org - no careers page found
+"AMSimpkins & Associates (""AMSA"")",,,,,,false,No website found via search
+Another Angle Solutions LLC,https://www.thecsgap.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Anthropic,https://www.anthropic.com/careers/jobs,.job-card,a,span,a,false,Needs AI extraction - none
+ASAP (Appalachian Sustainable Agriculture Project),https://asapconnections.org/about-us/join-our-team/,,,,,false,No current openings
+Asymbl Consulting,https://careers.asymbl.com/s/,.job-card,a,span,a,false,Needs AI extraction - none
+Athletes in Action,https://athletesinaction.org/join-us/hourly-salaried/,.job-card,a,span,a,false,Needs AI extraction - none
+Attain Partners,https://attainpartners.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Beliminal,https://www.beliminal.com,,,,,false,Homepage: https://www.beliminal.com - no careers page found
+Berkadia,https://www.berkadia.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Big Ass Fans,https://bigassfans.com/company/careers/,.job-card,a,span,a,false,Needs AI extraction - error - Navigation timeout of 20000 ms exceeded
+"Big Brothers Big Sisters of WNC, Inc.",https://www.linkedin.com/jobs/view/stewardship-coordinator-at-big-brothers-big-sisters-of-wnc-inc-4366365217,.job-card,a,span,a,false,Needs AI extraction - none
+BillionToOne,https://www.billiontoone.com/careers/open-positions,.job-card,a,span,a,false,Needs AI extraction - none
+BlackLine,https://careers.blackline.com/careers-home/jobs,.job-card,a,span,a,false,Needs AI extraction - none
+Blackthorn,https://blackthorn.io/careers/,.opening,a,.location,a,true,Greenhouse ATS - iframe: https://boards.greenhouse.io/blackthorn
+Bloomfire,https://apply.workable.com/bloomfire/?lng=en,"li[data-ui=""job""]",a,"span[data-ui=""job-location""]",a,true,Workable ATS
+BluSky Restoration Contractors,https://www.goblusky.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+BoardStrong,https://boardstrong.org,,,,,false,Homepage: https://boardstrong.org - no careers page found
+Bolt Data,https://www.bolt-data.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+BridgeTek Solutions | Now Lockstep Technology Group,,,,,,false,No website found via search
+Buncombe County Government,"https://www.ziprecruiter.com/Jobs/Buncombe-County-Government/-in-Buncombe-County,NC",.job-card,a,span,a,false,Needs AI extraction - none
+BurstIQ,https://burstiq.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+ButterflyMX,https://butterflymx.com/careers/,.ashby-job-posting-brief-list div[data-testid],a,span,a,true,Ashby ATS - iframe: https://jobs.ashbyhq.com/butterflymx?embed=js
+CALSTART,https://calstart.org/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Capable | Atlassian Marketplace Partner,,,,,,false,No website found via search
+Capacity,https://www.capacityllc.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+"CareAR, Inc.",https://carear.com,,,,,false,Homepage: https://carear.com - no careers page found
+"Carolina Health Centers, Inc.",https://www.carolinahealthcenters.org/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Carolina Orthopaedic & Neurosurgical Associates,https://www.healthecareers.com/employers/jobposting,.job-card,a,span,a,false,Needs AI extraction - none
+CentralSquare Technologies,https://www.centralsquare.com/why-centralsquare/careers/open-roles,.job-card,a,span,a,false,Needs AI extraction - none
+CGI Digital,https://cgidigital.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Chowbus,http://job-boards.greenhouse.io/chowbus,.opening,a,.location,a,true,Greenhouse ATS
+Christian Brothers Automotive,https://www.cbautojobs.com/jobs,.job-listing,a,span,a,true,Heuristic match (181 items) - sample: Automotive Technician | Up to $45/hr & Climate Controlled Shop | Daphne
+Clearly Consulting,https://www.clearly-consulting.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Climate Lead,http://job-boards.greenhouse.io/climatelead,.opening,a,.location,a,true,Greenhouse ATS
+Coefficient Giving,https://coefficientgiving.org/about-us/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Common-Unite,https://apply.workable.com/happyday/?lng=en,"li[data-ui=""job""]",a,"span[data-ui=""job-location""]",a,true,Workable ATS
+CommunityWorks,"https://www.indeed.com/cmp/Communityworks,-LLC/jobs",.job-card,a,span,a,false,Needs AI extraction - none
+"Competitive Social Ventures, LLC",https://www.indeed.com/cmp/Competitive-Social-Ventures/jobs?clearPrefilter=1#cmp-skip-header-desktop,.job-card,a,span,a,false,Needs AI extraction - none
+Condrey Corporation,https://condreycorp.com/company/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Connected by Community,https://business.lynchburgregion.org/jobs,.job-card,a,span,a,false,Needs AI extraction - none
+Creative Builders Inc.,https://creativebuilders.net/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+"Credit Central, LLC",https://www.indeed.com/cmp/Credit-Central/jobs,.job-card,a,span,a,false,Needs AI extraction - none
+Cultivation Capital,https://cultivationcapital.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Cystic Fibrosis Foundation,https://www.linkedin.com/jobs/cystic-fibrosis-foundation-jobs,.job-card,a,span,a,false,Needs AI extraction - none
+Dataforce,https://www.linkedin.com/jobs/dataforce-jobs-worldwide,.job-card,a,span,a,false,Needs AI extraction - none
+Dayforce,https://www.dayforce.com/who-we-are/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Develop Carolina,https://buildcarolina.org,,,,,false,Homepage: https://buildcarolina.org - no careers page found
+"Development Consulting Partners, LLC",https://www.developmentconsultingpartners.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Digital Site Box,https://home.digitalsitebox.us,,,,,false,Homepage: https://home.digitalsitebox.us - no careers page found
+"Digitrol, Inc.",https://digitrolinc.com,,,,,false,Homepage: https://digitrolinc.com - no careers page found
+EAS Professionals,https://eas-pro.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+East Fork,https://www.eastfork.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Edge Total Intelligence,https://edgeti.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Eggs Up Grill,https://www.ziprecruiter.com/Jobs/Eggs-Up-Grill/--in-Georgia,.job-card,a,span,a,false,Needs AI extraction - none
+EnerSys,https://jobs.enersys.com/,.job-card,a,span,a,false,Needs AI extraction - none
+erg group,https://www.erg.eu/en/careers,.job-card,a,span,a,false,Needs AI extraction - none
+ESS Industrial,https://www.totaljobs.com/jobs/manager-ess-industrial?q=Manager%2Fess+-+Industrial,.job-card,a,span,a,false,Needs AI extraction - none
+Family Reach,https://familyreach.org/join-our-team/,.job-card,a,span,a,false,Needs AI extraction - none
+Farmer Enterprises,https://farmerenterprises.com,,,,,false,Homepage: https://farmerenterprises.com - no careers page found
+First Watch Restaurants,https://careers.firstwatch.com/,.job-card,a,span,a,false,Needs AI extraction - none
+Flock,https://www.flocksafety.com/careers/positions,.job-card,a,span,a,false,Needs AI extraction - none
+Flux Technologies,https://fluxtech.me/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Follett,https://follett.com/about-us/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Fortafy,https://fortafy.us,,,,,false,Homepage: https://fortafy.us - no careers page found
+Foundation Risk Partners,https://foundationrp.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+FranÃ§ois & Co.,,,,,,false,No website found via search
+FreeRx.com,https://www.linkedin.com/jobs/view/bilingual-customer-service-representative-at-benefits-in-a-card-4371206219,.job-card,a,span,a,false,Needs AI extraction - none
+"French Broad Chocolates, PBC",,,,,,false,No website found via search
+Fundraise Up,https://fundraiseup.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Funraise,https://www.funraise.org/jobs,,,,,false,No current openings
+Get Connected by Galaxy Digital,https://www.galaxydigital.com,,,,,false,Homepage: https://www.galaxydigital.com - no careers page found
+GitLab,https://about.gitlab.com/jobs/all-jobs/,.job-card,a,span,a,false,Needs AI extraction - none
+Givebutter,https://givebutter.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+GiveWell,https://www.givewell.org/about/jobs,.job-card,a,span,a,false,Needs AI extraction - none
+Go Raven,https://www.reddit.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Gray Fox Strategic,https://www.glassdoor.com/Jobs/Gray-Fox-Strategic-Jobs-E9454655.htm,,,,,false,No current openings
+"Harmonia Holdings Group, LLC",https://harmonia.com/job-openings/,.job-card,a,span,a,false,Needs AI extraction - none
+Hispanic Alliance of SC,https://hispanicalliancesc.com/jobs,.job-card,a,span,a,false,Needs AI extraction - none
+Hobsons,,,,,,false,No website found via search
+Hughes Agency,https://hughesstaffingagency.com/job-openings/,.job-card,a,span,a,false,Needs AI extraction - none
+Inception,https://www.inceptionfertility.com/about-us/careers,.job-card,a,span,a,false,Needs AI extraction - none
+inKind,http://job-boards.greenhouse.io/inkind,.opening,a,.location,a,true,Greenhouse ATS
+iorad,https://www.iorad.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+"IT Resource Market, LLC",https://itresourcemarket.com/job-seekers-1,.job-card,a,span,a,false,Needs AI extraction - none
+"JELD-WEN, Inc.",https://www.corporate.jeld-wen.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Kahoot!,https://kahoot.com/open-positions/,.job-card,a,span,a,false,Needs AI extraction - none
+KamisPro,https://www.linkedin.com/jobs/kamispro-jobs-worldwide,.job-card,a,span,a,false,Needs AI extraction - none
+KANDER®,https://www.kanderconsult.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+King University,https://www.king.edu/about/employment-opportunities/,.job-card,a,span,a,false,Needs AI extraction - none
+Knowles Corporation,https://careers.knowles.com/,.job-card,a,span,a,false,Needs AI extraction - none
+Kulturata,https://eprints.uklo.edu.mk/7645/1/careers-2022-v3.pdf,.job-card,a,span,a,false,Needs AI extraction - none
+LastPass,https://www.lastpass.com/company/careers,.career-listing,h2,.career-listing-filters__select--location,a,true,Heuristic match (1 items) - sample: Current job openings
+Lattice,https://lattice.com/careers,.opening,a,.location,a,true,Greenhouse ATS - iframe: https://job-boards.greenhouse.io/embed/job_board?for=lattice&validityToken=QInE3jrETIe6925Z7jhzlAhQIu_LAlpK8iMY6eczzwhRZIuHq_SVNyq_RK7qgcy9I4nohj_0RqdE6jk4LbGuPeXUldKoNEUAV6qxe3c06w7b3wTcmoTFQ0ZzLJK_pKNQGJ1NKoPz8MNs1jRm8vPsF9KjYjhrc5zqehnyRBCukxhnslj8ss74FKHmAOxbOqs3cLOl_-kXoazK3V6xUXa3ozfVLeGxu4Qw57HPFoTAYhdC1Jfq0UNfEl2u0Arukg-MfOqQ977QkfpKFzhLEmzjS64R1LunfxwbiR7x5807PhydLQPTHgzrz03zU5oLt-ehCQRHvTgn9NKHDMZoBpl_2w%3D%3D
+Laurens County Development Corporation,,,,,,false,No website found via search
+LevelShift,https://levelshift.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Lumivero,https://www.glassdoor.com/Jobs/Lumivero-Jobs-E8375611.htm,.job-card,a,span,a,false,Needs AI extraction - none
+MADD,https://recruiting2.ultipro.com/MOT1010MADD/JobBoard/f92168a3-e845-4761-b3f9-15ae50362b03,.opportunity,a,.opportunity-location,a,true,UltiPro/UKG ATS
+Main Digital,https://maindigital.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Mallard Alley,https://www.shugarmanarchitecture.com,,,,,false,Homepage: https://www.shugarmanarchitecture.com - no careers page found
+Maryville University of Saint Louis,https://maryville.uloop.com/jobs,.job-card,a,span,a,false,Needs AI extraction - none
+Meals on Wheels America,https://www.mealsonwheelsamerica.org/about/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Meals on Wheels of Greenville,https://jobs.togethersc.org/company/meals-on-wheels-of-greenville-18551,.job-card,a,span,a,false,Needs AI extraction - none
+MedCerts,https://medcerts.com/about/careers,.job-card,a,span,a,false,Needs AI extraction - none
+MED-Project USA,https://insightglobal.com/jobs/find_a_job/district-of-columbia/washington/project-manager/job-489580/,.job-card,a,span,a,false,Needs AI extraction - none
+Milliken & Company,https://careers.milliken.com/,.job-card,a,span,a,false,Needs AI extraction - none
+Miniat Holdings,https://www.glassdoor.com/Jobs/Miniat-Holdings-Jobs-E450518.htm,.job-card,a,span,a,false,Needs AI extraction - none
+National Association for Campus Activities,https://www.naca.org/about/staff/careers.html,,,,,false,No current openings
+National Eczema Association,https://www.linkedin.com/jobs/view/senior-director-marketing-and-communications-at-national-eczema-association-4368299694,.job-card,a,span,a,false,Needs AI extraction - none
+National University,https://www.nu.edu/careers/,.job-card,a,span,a,false,Needs AI extraction - error - Navigation timeout of 20000 ms exceeded
+NeighborWorks Home Partners,https://nwhomepartners.org/about/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+NewBold Technologies,https://newboldtech.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Nicer Studio,https://medium.com/jobs-at-medium/work-at-medium-959d1a85284e?source=--------------------------------------------,.job-card,a,span,a,false,Needs AI extraction - none
+Ninety10,https://ke.linkedin.com/jobs/view/sales-administrator-at-ninety10-properties-4037746807,.job-card,a,span,a,false,Needs AI extraction - none
+Noodle,https://about.noodle.com/careers-culture/,.career-listing,h3,span,a,true,Heuristic match (1 items) - sample: Placement Advisor
+Nuvei,https://www.nuvei.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Oldcastle APG,https://www.ziprecruiter.com/Jobs/Oldcastle-Apg,.job-card,a,span,a,false,Needs AI extraction - none
+Olo,https://www.linkedin.com/company/olo/jobs,.job-card,a,span,a,false,Needs AI extraction - none
+Passion Fruit Partners,https://www.passionfruitpartners.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+PC Matic,https://www.pcmatic.com/company/careers.asp?srsltid=AfmBOoqh4zFw0lg3cnLHGsFQkdFdw_Z4GmMM-bwbFJvt5km6dpU0XRnR,.job-card,a,span,a,false,Needs AI extraction - none
+Pharmacy Quality Alliance,https://www.pqaalliance.org/opportunities-for-all-members,.job-card,a,span,a,false,Needs AI extraction - none
+Phinney Neighborhood Association,https://www.phinneycenter.org/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Points of Light,https://www.pointsoflight.org/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+PowerSchool,https://www.powerschool.com/company/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Project Sunshine,https://projectsunshine.org/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Qgiv by Bloomerang (now Bloomerang Fundraising),,,,,,false,No website found via search
+QTS Data Centers,https://qtsdatacenters.com/join-our-team/,.job-card,a,span,a,false,Needs AI extraction - none
+Quilt,https://quiltsoftware.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Rainbow Restoration of Greenville SC,https://rainbow-international-of-greenville-county.careerplug.com/jobs?locale=en-US,.job-card,a,span,a,false,Needs AI extraction - none
+REC Solar,https://recsolar.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+RedSail Technologies,https://www.redsailtechnologies.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Reed Group,https://www.reed.com/careers/jobs,.job-card,a,span,a,false,Needs AI extraction - none
+Reset180,https://reset180.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+Restaurant365,https://jobs.lever.co/restaurant365,.posting,.posting-title h5,.posting-categories .location,a.posting-title,true,Lever ATS
+Robots & Pencils,https://robotsandpencils.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Samaritan Biologics,https://www.samaritanbiologics.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+SCBIZ,https://scbiz.com,,,,,false,Homepage: https://scbiz.com - no careers page found
+SCRA: South Carolina Research Authority,https://www.linkedin.com/jobs/view/customer-solutions-manager-at-scra-south-carolina-research-authority-4382124069,.job-card,a,span,a,false,Needs AI extraction - none
+SeamonWhiteside,https://seamonwhiteside.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Security Finance,https://careers.securityfinance.com/,.job-card,a,span,a,false,Needs AI extraction - none
+Sharecare,https://sharecare.wd1.myworkdayjobs.com/Sharecare_Careers,"[data-automation-id=""jobItem""]",a,"[data-automation-id=""locations""]",a,true,Workday ATS
+Shellpoint Mortgage Servicing,https://www.ziprecruiter.com/Jobs/Shellpoint-Mortgage,.job-card,a,span,a,false,Needs AI extraction - none
+Sierra Solutions,https://www.sierrasolutionsgroup.com/about-us/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Simon Sinek's The Optimism Company,,,,,,false,No website found via search
+SMG - Service Management Group,https://www.linkedin.com/jobs/smg-service-management-group-jobs-worldwide,.job-card,a,span,a,false,Needs AI extraction - none
+South Street Partners,https://southstreetpartners.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Stellic,https://www.stellic.com/careers,.ashby-job-posting-brief-list div[data-testid],a,span,a,true,Ashby ATS - iframe: https://jobs.ashbyhq.com/stellic?embed=js
+TCWGlobal,https://www.tcwglobal.com/join-the-family,.job-card,a,span,a,false,Needs AI extraction - none
+TeachTown,https://web.teachtown.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+"THE GORDIAN ASSOCIATES, INC. (THE GORDIAN GROUP, INC.)",,,,,,false,No website found via search
+The Pineapple Agency,https://thepineappleagency.com,,,,,false,Homepage: https://thepineappleagency.com - no careers page found
+The Planet Group,https://careers.theplanetgroup.com/,.job-card,a,span,a,false,Needs AI extraction - none
+Tim Tebow Foundation,https://timtebowfoundation.org/employment,.job-card,a,span,a,false,Needs AI extraction - none
+TreesUpstate,https://treesupstate.org/jobs/,.job-card,a,span,a,false,Needs AI extraction - none
+Trinity-Pawling School,https://www.trinitypawling.org/careers,,,,,false,No current openings
+"Tsource, LLC",https://jobs.injob.ai/jobs/669bba74afdffc7a82da4e0e,.job-card,a,span,a,false,Needs AI extraction - none
+Twenty,https://twenty.io/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+UHY-US,https://uhy-us.com/careers,.job-card,a,span,a,false,Needs AI extraction - none
+University of South Carolina,https://sc.edu/about/offices_and_divisions/human_resources/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+Upstate Federal Credit Union,,,,,,false,No website found via search
+VentureSouth,https://wellfound.com/jobs/signup?source=webflow&source_content=nav&after_sign_in=%2Fjobs,.job-card,a,span,a,false,Needs AI extraction - none
+VirtualHealth,https://wellfound.com/jobs/signup?source=webflow&source_content=nav&after_sign_in=%2Fjobs,.job-card,a,span,a,false,Needs AI extraction - none
+"Volunteer Match, Powered by Idealist",https://www.linkedin.com/jobs/view/operations-coordinator-at-volunteer-match-powered-by-idealist-4372794322,.job-card,a,span,a,false,Needs AI extraction - none
+Warp,http://job-boards.greenhouse.io/warp,.opening,a,.location,a,true,Greenhouse ATS
+Wilco Source,https://wilcosource.com/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+"WithMe, Inc.",https://withme.com/company/careers/,.job-card,a,span,a,false,Needs AI extraction - none
+XPRIZE,https://www.xprize.org/Careers,.job-card,a,span,a,false,Needs AI extraction - none

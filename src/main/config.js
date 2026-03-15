@@ -364,14 +364,12 @@ class ConfigManager {
   }
 
   getLocations() {
-    return this.store.get('search.locations', ['remote']);
+    // Locations are hardcoded — always Remote or Greenville, SC area
+    return ['remote', 'greenville', 'south carolina'];
   }
 
-  setLocations(locations) {
-    if (!Array.isArray(locations)) {
-      throw new Error('Locations must be an array');
-    }
-    this.store.set('search.locations', locations);
+  setLocations(_locations) {
+    // No-op: locations are hardcoded
   }
 
   // ===== Schedule Configuration =====

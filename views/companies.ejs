@@ -12,7 +12,7 @@
         <h1>Career Future - Manage Companies</h1>
         
         <% if (validation.valid) { %>
-            <p style="color: green;">✅ CSV is valid! Found <%= validation.totalRows %> companies.</p>
+            <p style="color: green;">✅ CSV is valid! Found <%= validation.totalRows %> companies — <strong><%= enabledCount %></strong> enabled, <strong><%= disabledCount %></strong> disabled.</p>
         <% } else { %>
             <p style="color: red;">❌ CSV validation errors:</p>
             <ul>

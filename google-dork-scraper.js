@@ -6,15 +6,6 @@ const SERPER_API = 'https://google.serper.dev/search';
 const SERPER_JOBS_API = 'https://google.serper.dev/jobs';
 
 export class GoogleDorkScraper {
-  // Role suffixes combined with the config keyword for Jobs API searches
-  static JOB_QUERIES = [
-    { suffix: 'administrator', id: 'jobs-admin' },
-    { suffix: 'admin', id: 'jobs-admin-short' },
-    { suffix: 'business analyst', id: 'jobs-ba' },
-    { suffix: 'project manager', id: 'jobs-pm' },
-    { suffix: 'developer', id: 'jobs-dev' },
-    { suffix: 'consultant', id: 'jobs-consultant' },
-  ];
 
   constructor(options = {}) {
     this.apiKey = process.env.SERPER_API_KEY;
@@ -32,9 +23,11 @@ export class GoogleDorkScraper {
 
     // Read search parameters from Dashboard config (allow overrides via options)
     this.keywords = options.keywords || configManager.getKeywords();
-    this.locations = options.locations || configManager.getLocations();
+    this.locations = ['remote', 'greenville', 'south carolina'];
+    this.matchMode = options.matchMode || process.env._CF_ACTIVE_MATCH_MODE || 'contains';
 
     console.log(`⚙️  Using keyword: "${this.keywords[0] || 'salesforce'}"`);
+    console.log(`⚙️  Using match mode: ${this.matchMode}`);
     console.log(`⚙️  Using locations: ${this.locations.join(', ')}`);
   }
 
@@ -251,13 +244,7 @@ export class GoogleDorkScraper {
 
   async runJobsSearch() {
     const keyword = this.keywords[0] || 'salesforce';
-
-    // For non-generic keywords (multi-word phrases like "Senior Director of Marketing"),
-    // search the keyword as-is instead of appending role suffixes that won't make sense.
-    const isSingleWordKeyword = keyword.trim().split(/\s+/).length === 1;
-    const queries = isSingleWordKeyword
-      ? GoogleDorkScraper.JOB_QUERIES.map(q => ({ ...q, query: `${keyword} ${q.suffix}` }))
-      : [{ id: 'jobs-direct', query: keyword }];
+    const queries = [{ id: 'jobs-direct', query: keyword }];
 
     const allJobs = [];
     const seenUrls = new Set();
@@ -367,30 +354,38 @@ export class GoogleDorkScraper {
 
   /**
    * Filter out results that aren't actual job postings.
-   * Checks that the keyword appears in the title or snippet,
-   * and rejects company/category landing pages.
-   *
-   * Note: Always uses "contains" matching regardless of the active match mode.
-   * Dork/Jobs API result titles include company names and ATS platform names
-   * (e.g. "Senior Director of Marketing - Acme Corp | Workday"), making exact
-   * matching impractical here. The match mode is fully applied in
-   * scraper.js:isRelevantJob() for company page scraping.
+   * Checks that the keyword appears in the title, respecting the active match mode.
+   * For dork results, titles include company/ATS suffixes (e.g. "Title - Company | Workday"),
+   * so we strip those before applying exact/begins/ends matching.
    */
   _isLikelyJob(item) {
-    const title = (item.title || '').toLowerCase();
+    const rawTitle = (item.title || '').toLowerCase();
     const url = (item.link || '').toLowerCase();
     const keyword = (this.keywords[0] || 'salesforce').toLowerCase().trim();
 
     // Guard: empty keyword would match everything via "".includes("") === true
     if (!keyword) return false;
 
-    // Keyword MUST appear in the title — snippet-only matches are too noisy
-    if (!title.includes(keyword)) {
-      return false;
+    // Strip ATS/company suffixes for cleaner matching: "Title - Company | Workday" → "title"
+    const cleanedTitle = rawTitle
+      .replace(/\s*[\|–—-]\s*(workday|greenhouse|icims|lever|smartrecruiters|phenom|jobvite|ashby|eightfold).*$/i, '')
+      .replace(/\s*[\|–—-]\s*[^|–—-]+$/, '')
+      .trim();
+
+    // Apply match mode against the cleaned title
+    let match = false;
+    switch (this.matchMode) {
+      case 'exact':    match = cleanedTitle === keyword; break;
+      case 'begins':   match = cleanedTitle.startsWith(keyword); break;
+      case 'ends':     match = cleanedTitle.endsWith(keyword); break;
+      case 'contains':
+      default:         match = rawTitle.includes(keyword); break;
     }
 
+    if (!match) return false;
+
     // Reject generic landing/category pages (title is just a company name or "Careers at X")
-    if (/^(careers|jobs|job search|search results)\b/i.test(title)) return false;
+    if (/^(careers|jobs|job search|search results)\b/i.test(rawTitle)) return false;
 
     // Reject URLs that are search/category pages rather than individual job posts
     const nonJobPaths = ['/search/', '/search?', '/results', '/login', '/register', '/category'];

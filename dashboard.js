@@ -232,8 +232,10 @@ app.get('/companies', async (req, res) => {
     const csvPath = path.join(resourcesBase, 'data/companies.csv');
     const validation = await validateCSV(csvPath);
     const sites = await loadSitesFromCSV(csvPath, false);
+    const enabledCount = sites.filter(s => s.enabled).length;
+    const disabledCount = sites.filter(s => !s.enabled).length;
 
-    res.render('companies', { sites, validation });
+    res.render('companies', { sites, validation, enabledCount, disabledCount });
   } catch (error) {
     res.status(500).send('Error loading companies: ' + error.message);
   }
@@ -271,8 +273,10 @@ app.get('/companies-weekly', async (req, res) => {
     const csvPath = path.join(resourcesBase, 'data/companies-weekly.csv');
     const validation = await validateCSV(csvPath);
     const sites = await loadSitesFromCSV(csvPath, false);
+    const enabledCount = sites.filter(s => s.enabled).length;
+    const disabledCount = sites.filter(s => !s.enabled).length;
 
-    res.render('companies-weekly', { sites, validation });
+    res.render('companies-weekly', { sites, validation, enabledCount, disabledCount });
   } catch (error) {
     res.status(500).send('Error loading weekly companies: ' + error.message);
   }

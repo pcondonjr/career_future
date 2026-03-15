@@ -82,7 +82,7 @@
 
     <!-- Search Settings -->
     <div class="section-card">
-      <h3>Search Keywords & Locations</h3>
+      <h3>Search Keywords</h3>
       <label>Keywords</label>
       <div class="tag-container" id="keywords-container" data-field="keywords">
         <% settings.keywords.forEach(k => { %>
@@ -92,14 +92,7 @@
       </div>
       <small>Press Enter to add a keyword</small>
 
-      <label style="margin-top: 1rem;">Locations</label>
-      <div class="tag-container" id="locations-container" data-field="locations">
-        <% settings.locations.forEach(l => { %>
-          <span class="tag"><%= l %><span class="remove" onclick="removeTag(this)">&times;</span></span>
-        <% }) %>
-        <input class="tag-input" placeholder="Add location..." onkeydown="handleTagKey(event, 'locations')">
-      </div>
-      <small>Press Enter to add a location</small>
+      <p style="margin-top: 1rem; color: var(--pico-muted-color);"><small>Locations are fixed to: Remote, Greenville, South Carolina</small></p>
 
       <button style="margin-top: 1rem;" onclick="saveSearch()">Save Search Settings</button>
     </div>
@@ -328,8 +321,7 @@
 
   function saveSearch() {
     saveSection('search', {
-      keywords: getTags('keywords-container'),
-      locations: getTags('locations-container')
+      keywords: getTags('keywords-container')
     });
   }
 
