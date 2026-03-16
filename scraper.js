@@ -166,7 +166,8 @@ Return ONLY a valid JSON array, no other text. If no jobs are found, return [].`
         }
       });
       
-      console.log(`Scraping ${siteConfig.name}...`);
+      // Progress logged by scrapeAllSites; log here only for standalone calls
+      if (!this._batchMode) console.log(`Scraping ${siteConfig.name}...`);
 
       // Dynamically inject current keyword into URLs with search query params
       let targetUrl = siteConfig.url;
@@ -189,11 +190,11 @@ Return ONLY a valid JSON array, no other text. If no jobs are found, return [].`
       // Navigate with timeout
       await page.goto(targetUrl, {
         waitUntil: 'networkidle2',
-        timeout: 30000
+        timeout: 15000
       });
-      
+
       // Wait for content to load
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Extract jobs - use AI extraction or CSS selectors
       let jobs;
@@ -285,22 +286,114 @@ Return ONLY a valid JSON array, no other text. If no jobs are found, return [].`
     }
   }
 
+  _progressPath() {
+    return path.join(process.cwd(), '.scraper-progress.json');
+  }
+
+  _writeProgress(progress) {
+    try {
+      fs.writeFileSync(this._progressPath(), JSON.stringify(progress));
+    } catch { /* best-effort */ }
+  }
+
+  _clearProgress() {
+    try {
+      const p = this._progressPath();
+      if (fs.existsSync(p)) fs.unlinkSync(p);
+    } catch { /* best-effort */ }
+  }
+
   async scrapeAllSites(sites) {
+    const CONCURRENCY = 3;
+    const RESTART_EVERY = 50; // Restart Chrome every N sites per worker
     const allJobs = [];
-    
-    for (const site of sites) {
-      try {
-        const jobs = await this.scrapeSite(site);
-        allJobs.push(...jobs);
-        
-        // Be polite - wait between sites
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-      } catch (error) {
-        console.error(`Failed to scrape ${site.name}:`, error.message);
-      }
+    const total = sites.length;
+    let completed = 0;
+    let errors = 0;
+    let queueIndex = 0;
+    const activeWorkers = new Map(); // workerId -> site name
+
+    this._batchMode = true;
+
+    const updateProgress = () => {
+      this._writeProgress({
+        total,
+        completed,
+        errors,
+        jobsFound: allJobs.length,
+        active: Array.from(activeWorkers.values()),
+        startedAt: startTime,
+        updatedAt: Date.now()
+      });
+    };
+
+    const startTime = Date.now();
+    updateProgress();
+
+    // Create worker browsers
+    const workers = [];
+    for (let w = 0; w < Math.min(CONCURRENCY, total); w++) {
+      const scraper = new JobScraper({ chromePath: this.chromePath });
+      await scraper.initialize();
+      scraper._batchMode = true;
+      workers.push(scraper);
     }
-    
+
+    const runWorker = async (workerId, scraper) => {
+      let sitesSinceRestart = 0;
+
+      while (true) {
+        const idx = queueIndex++;
+        if (idx >= total) break;
+
+        const site = sites[idx];
+        activeWorkers.set(workerId, site.name);
+        console.log(`[${idx + 1}/${total}] (w${workerId + 1}) ${site.name}`);
+        updateProgress();
+
+        // Restart browser periodically to reclaim memory
+        sitesSinceRestart++;
+        if (sitesSinceRestart > RESTART_EVERY) {
+          console.log(`  [w${workerId + 1}] Recycling Chrome after ${RESTART_EVERY} sites...`);
+          try { await scraper.close(); } catch { /* ignore */ }
+          await scraper.initialize();
+          sitesSinceRestart = 0;
+        }
+
+        try {
+          const jobs = await scraper.scrapeSite(site);
+          allJobs.push(...jobs);
+        } catch (error) {
+          errors++;
+          console.error(`  [${idx + 1}/${total}] (w${workerId + 1}) Failed: ${site.name}: ${error.message}`);
+          // If browser crashed, restart it
+          if (error.message.includes('disconnected') || error.message.includes('closed') || error.message.includes('Target closed')) {
+            console.log(`  [w${workerId + 1}] Chrome crashed, restarting...`);
+            try { await scraper.close(); } catch { /* ignore */ }
+            await scraper.initialize();
+            sitesSinceRestart = 0;
+          }
+        }
+
+        completed++;
+        activeWorkers.delete(workerId);
+        updateProgress();
+
+        // Brief pause between sites
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      // Shut down this worker's browser
+      try { await scraper.close(); } catch { /* ignore */ }
+    };
+
+    // Run all workers concurrently
+    console.log(`Starting ${workers.length} concurrent workers for ${total} sites...\n`);
+    await Promise.all(workers.map((scraper, i) => runWorker(i, scraper)));
+
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(0);
+    console.log(`\nScrape complete: ${total} sites, ${allJobs.length} jobs found, ${errors} errors, ${elapsed}s elapsed`);
+    this._clearProgress();
     return allJobs;
   }
 }

@@ -8,6 +8,7 @@ nul
 .claude/
 scripts/keys/
 scripts/ats-lookup-progress.json
+.scraper-progress.json
 release/
 docs/ADMIN_GUIDE.md
 files_apify/

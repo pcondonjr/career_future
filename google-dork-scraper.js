@@ -1,9 +1,12 @@
 import fs from 'fs/promises';
+import { writeFileSync, existsSync, unlinkSync } from 'fs';
+import path from 'path';
 import { parse } from 'csv-parse/sync';
 import configManager from './src/main/config.js';
 
 const SERPER_API = 'https://google.serper.dev/search';
 const SERPER_JOBS_API = 'https://google.serper.dev/jobs';
+const PROGRESS_PATH = path.join(process.cwd(), '.scraper-progress.json');
 
 export class GoogleDorkScraper {
 
@@ -139,11 +142,26 @@ export class GoogleDorkScraper {
 
     const allJobs = [];
     const seenUrls = new Set();
+    const total = dorks.length;
+    const startedAt = Date.now();
 
-    for (const dork of dorks) {
+    for (let i = 0; i < total; i++) {
+      const dork = dorks[i];
       const query = this._interpolateQuery(dork.query);
-      console.log(`🔍 Searching: ${dork.dork_id} (${dork.category})`);
+      console.log(`🔍 [${i + 1}/${total}] Searching: ${dork.dork_id} (${dork.category})`);
       console.log(`   Query: ${query}`);
+
+      this._writeProgress({
+        type: 'dorks',
+        phase: 'searching',
+        total,
+        completed: i,
+        jobsFound: allJobs.length,
+        errors: 0,
+        active: [dork.dork_id],
+        startedAt,
+        updatedAt: Date.now()
+      });
 
       const items = await this.searchGoogle(query);
       let added = 0;
@@ -177,13 +195,25 @@ export class GoogleDorkScraper {
 
     // Validate URLs — remove dead links (filled positions, expired postings)
     console.log(`🔗 Validating ${allJobs.length} job URLs...`);
-    const validJobs = await this._validateJobs(allJobs);
+    this._writeProgress({
+      type: 'dorks',
+      phase: 'validating',
+      total: allJobs.length,
+      completed: 0,
+      jobsFound: allJobs.length,
+      errors: 0,
+      active: ['URL validation'],
+      startedAt,
+      updatedAt: Date.now()
+    });
+    const validJobs = await this._validateJobsWithProgress(allJobs, startedAt);
     const removed = allJobs.length - validJobs.length;
     if (removed > 0) {
       console.log(`  ❌ Removed ${removed} dead link${removed === 1 ? '' : 's'}`);
     }
     console.log(`✅ ${validJobs.length} verified jobs`);
 
+    this._clearProgress();
     return validJobs;
   }
 
@@ -248,11 +278,26 @@ export class GoogleDorkScraper {
 
     const allJobs = [];
     const seenUrls = new Set();
+    const startedAt = Date.now();
+    const total = queries.length;
 
-    for (const q of queries) {
+    for (let qi = 0; qi < total; qi++) {
+      const q = queries[qi];
       const query = q.query;
       console.log(`🔍 Jobs API: ${q.id}`);
       console.log(`   Query: "${query}" (location: United States)`);
+
+      this._writeProgress({
+        type: 'jobs-api',
+        phase: 'searching',
+        total,
+        completed: qi,
+        jobsFound: allJobs.length,
+        errors: 0,
+        active: [q.id],
+        startedAt,
+        updatedAt: Date.now()
+      });
 
       const items = await this.searchGoogleJobs(query);
       let added = 0;
@@ -284,13 +329,25 @@ export class GoogleDorkScraper {
 
     // Validate URLs
     console.log(`🔗 Validating ${allJobs.length} job URLs...`);
-    const validJobs = await this._validateJobs(allJobs);
+    this._writeProgress({
+      type: 'jobs-api',
+      phase: 'validating',
+      total: allJobs.length,
+      completed: 0,
+      jobsFound: allJobs.length,
+      errors: 0,
+      active: ['URL validation'],
+      startedAt,
+      updatedAt: Date.now()
+    });
+    const validJobs = await this._validateJobsWithProgress(allJobs, startedAt);
     const removed = allJobs.length - validJobs.length;
     if (removed > 0) {
       console.log(`  ❌ Removed ${removed} dead link${removed === 1 ? '' : 's'}`);
     }
     console.log(`✅ ${validJobs.length} verified jobs`);
 
+    this._clearProgress();
     return validJobs;
   }
 
@@ -542,7 +599,46 @@ export class GoogleDorkScraper {
     return jobs.filter((_, i) => alive[i]);
   }
 
+  async _validateJobsWithProgress(jobs, startedAt) {
+    const CONCURRENCY = 5;
+    const alive = new Array(jobs.length).fill(true);
+    const total = jobs.length;
+
+    for (let i = 0; i < total; i += CONCURRENCY) {
+      const batch = jobs.slice(i, i + CONCURRENCY);
+      await Promise.all(
+        batch.map((job, idx) =>
+          this._validateUrl(job.url).then(ok => { alive[i + idx] = ok; })
+        )
+      );
+
+      this._writeProgress({
+        type: 'dorks',
+        phase: 'validating',
+        total,
+        completed: Math.min(i + CONCURRENCY, total),
+        jobsFound: jobs.length,
+        errors: alive.slice(0, Math.min(i + CONCURRENCY, total)).filter(v => !v).length,
+        active: ['URL validation'],
+        startedAt,
+        updatedAt: Date.now()
+      });
+
+      if (i + CONCURRENCY < total) await this._delay(500);
+    }
+
+    return jobs.filter((_, i) => alive[i]);
+  }
+
   _delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  _writeProgress(data) {
+    try { writeFileSync(PROGRESS_PATH, JSON.stringify(data)); } catch { /* best-effort */ }
+  }
+
+  _clearProgress() {
+    try { if (existsSync(PROGRESS_PATH)) unlinkSync(PROGRESS_PATH); } catch { /* best-effort */ }
   }
 }

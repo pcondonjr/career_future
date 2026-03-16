@@ -384,8 +384,14 @@ app.post('/api/run-scraper', async (req, res) => {
 
   pipeProcessOutput(scraperProcess);
 
-  scraperProcess.on('close', (code) => {
-    appendLog(code === 0 ? 'Search complete.' : `Search exited with code ${code}`);
+  scraperProcess.on('close', (code, signal) => {
+    if (code === 0) {
+      appendLog('Search complete.');
+    } else if (signal) {
+      appendLog(`Search killed by signal ${signal}`);
+    } else {
+      appendLog(`Search crashed with exit code ${code} — Chrome may have run out of memory`);
+    }
     scraperProcess = null;
   });
   scraperProcess.on('error', (err) => {
@@ -412,6 +418,95 @@ app.post('/api/stop-scraper', async (req, res) => {
 
 app.get('/api/scraper-status', async (req, res) => {
   res.json({ running: isScraperRunning() });
+});
+
+app.get('/api/scraper-progress', async (req, res) => {
+  const progressPath = path.join(writableBase, '.scraper-progress.json');
+  try {
+    const raw = await fs.readFile(progressPath, 'utf8');
+    return res.json(JSON.parse(raw));
+  } catch { /* file doesn't exist or parse error */ }
+  res.json(null);
+});
+
+// Phantom process detector — find orphaned Chrome/Node processes from previous scraper runs
+app.get('/api/phantom-processes', async (req, res) => {
+  try {
+    const { execSync } = await import('child_process');
+    const processes = [];
+
+    // Get all chrome.exe and node.exe processes with their command lines
+    const raw = execSync(
+      'powershell -c "Get-CimInstance Win32_Process -Filter \\"name=\'chrome.exe\' OR name=\'node.exe\'\\" | Select ProcessId,Name,CommandLine,WorkingSetSize,CreationDate | ConvertTo-Json"',
+      { encoding: 'utf8', timeout: 10000 }
+    );
+    const procs = JSON.parse(raw);
+    const procList = Array.isArray(procs) ? procs : [procs];
+
+    // Current dashboard PID and active child PIDs — these are NOT phantoms
+    const safePids = new Set([process.pid]);
+    if (scraperProcess && scraperProcess.pid) safePids.add(scraperProcess.pid);
+    if (dorkProcess && dorkProcess.pid) safePids.add(dorkProcess.pid);
+
+    for (const p of procList) {
+      if (!p || safePids.has(p.ProcessId)) continue;
+      const cmd = (p.CommandLine || '').toLowerCase();
+      const name = (p.Name || '').toLowerCase();
+      const memMB = Math.round((p.WorkingSetSize || 0) / 1024 / 1024);
+
+      let source = '';
+      let isPhantom = false;
+
+      if (name === 'node.exe') {
+        // Only flag node processes related to this project
+        if (cmd.includes('index.js') && (cmd.includes('--now') || cmd.includes('--weekly') || cmd.includes('--dorks') || cmd.includes('--jobs'))) {
+          source = 'Scraper child process';
+          isPhantom = !isScraperRunning() && !isDorkRunning();
+        }
+      } else if (name === 'chrome.exe') {
+        // Headless Chrome spawned by puppeteer (has --headless flag)
+        if (cmd.includes('--headless') && (cmd.includes('--no-sandbox') || cmd.includes('--disable-dev-shm'))) {
+          source = 'Puppeteer headless Chrome';
+          isPhantom = !isScraperRunning();
+        }
+      }
+
+      if (isPhantom) {
+        processes.push({
+          pid: p.ProcessId,
+          name: p.Name,
+          source,
+          memMB,
+          createdAt: p.CreationDate ? (() => { try { const d = new Date(p.CreationDate); return isNaN(d) ? null : d.toISOString(); } catch { return null; } })() : null
+        });
+      }
+    }
+
+    const totalMemMB = processes.reduce((sum, p) => sum + p.memMB, 0);
+    res.json({ processes, totalMemMB });
+  } catch (err) {
+    res.json({ processes: [], totalMemMB: 0, error: err.message });
+  }
+});
+
+app.post('/api/kill-phantom-processes', async (req, res) => {
+  const { pids } = req.body;
+  if (!Array.isArray(pids) || pids.length === 0) {
+    return res.status(400).json({ error: 'No PIDs provided' });
+  }
+
+  const results = [];
+  for (const pid of pids) {
+    try {
+      const numPid = parseInt(pid, 10);
+      if (isNaN(numPid) || numPid === process.pid) continue;
+      exec(`taskkill /pid ${numPid} /T /F`, () => {});
+      results.push({ pid: numPid, killed: true });
+    } catch (err) {
+      results.push({ pid, killed: false, error: err.message });
+    }
+  }
+  res.json({ results });
 });
 
 app.post('/api/run-dorks', async (req, res) => {

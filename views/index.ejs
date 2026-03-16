@@ -80,6 +80,36 @@
         </div>
         <hr>
 
+        <div id="progress-panel" style="display:none; margin-bottom: 1rem; padding: 1rem; border: 1px solid var(--pico-muted-border-color); border-radius: var(--pico-border-radius);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <strong id="progress-title">Scraping...</strong>
+                <small id="progress-elapsed" style="color: var(--pico-muted-color);"></small>
+            </div>
+            <progress id="progress-bar" value="0" max="100" style="width: 100%; margin-bottom: 0.5rem;"></progress>
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap; font-size: 0.85rem;">
+                <span><strong id="progress-completed">0</strong> / <strong id="progress-total">0</strong> sites</span>
+                <span>Jobs found: <strong id="progress-jobs">0</strong></span>
+                <span>Errors: <strong id="progress-errors">0</strong></span>
+                <span>Workers: <strong id="progress-workers">0</strong></span>
+            </div>
+            <div id="progress-active" style="font-size: 0.8rem; color: var(--pico-muted-color); margin-top: 0.4rem;"></div>
+        </div>
+
+        <dialog id="phantom-dialog">
+            <article style="max-width: 600px;">
+                <header>
+                    <button aria-label="Close" rel="prev" onclick="document.getElementById('phantom-dialog').close()"></button>
+                    <h3>Orphaned Processes Detected</h3>
+                </header>
+                <p>Found <strong id="phantom-count">0</strong> orphaned process(es) using <strong id="phantom-mem">0</strong> MB of memory from a previous scraper run.</p>
+                <div id="phantom-list" style="max-height: 200px; overflow-y: auto; font-size: 0.85rem; margin-bottom: 1rem;"></div>
+                <footer style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button id="phantom-skip-btn" class="outline secondary">Skip &amp; Run Anyway</button>
+                    <button id="phantom-kill-btn">Kill All &amp; Run</button>
+                </footer>
+            </article>
+        </dialog>
+
         <div id="log-panel">
             <div id="log-header">
                 <small>Live Output</small>
@@ -382,6 +412,56 @@
         };
       }
 
+      // --- Phantom process check ---
+      async function checkPhantomProcesses() {
+        try {
+          const data = await fetch('/api/phantom-processes').then(r => r.json());
+          if (!data.processes || data.processes.length === 0) return true; // no phantoms, proceed
+
+          // Show dialog
+          document.getElementById('phantom-count').textContent = data.processes.length;
+          document.getElementById('phantom-mem').textContent = data.totalMemMB;
+
+          const listEl = document.getElementById('phantom-list');
+          listEl.innerHTML = data.processes.map(p =>
+            `<div style="padding: 0.3rem 0; border-bottom: 1px solid var(--pico-muted-border-color);">
+              <code>PID ${p.pid}</code> — ${p.source} (${p.memMB} MB)
+              ${p.createdAt ? '<small style="color:var(--pico-muted-color);"> started ' + new Date(p.createdAt).toLocaleTimeString() + '</small>' : ''}
+            </div>`
+          ).join('');
+
+          const dialog = document.getElementById('phantom-dialog');
+          return new Promise((resolve) => {
+            const skipBtn = document.getElementById('phantom-skip-btn');
+            const killBtn = document.getElementById('phantom-kill-btn');
+
+            function cleanup() {
+              skipBtn.replaceWith(skipBtn.cloneNode(true));
+              killBtn.replaceWith(killBtn.cloneNode(true));
+              dialog.close();
+            }
+
+            document.getElementById('phantom-skip-btn').onclick = () => { cleanup(); resolve(true); };
+            document.getElementById('phantom-kill-btn').onclick = async () => {
+              const pids = data.processes.map(p => p.pid);
+              await fetch('/api/kill-phantom-processes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pids })
+              });
+              cleanup();
+              // Brief pause for processes to die
+              await new Promise(r => setTimeout(r, 1500));
+              resolve(true);
+            };
+
+            dialog.showModal();
+          });
+        } catch {
+          return true; // on error, proceed anyway
+        }
+      }
+
       async function runScraper(mode, btn) {
         if (activeSearchType) return;
 
@@ -391,6 +471,10 @@
             return;
           }
         }
+
+        // Check for phantom processes before starting
+        const proceed = await checkPhantomProcesses();
+        if (!proceed) return;
 
         activeSearchType = 'scraper';
         const tabKey = mode === 'weekly' ? 'weekly' : 'daily';
@@ -411,17 +495,19 @@
             return;
           }
 
+          showProgressPanel();
           activePoll = setInterval(async () => {
             const s = await fetch('/api/scraper-status').then(r => r.json());
+            await updateProgressPanel();
             if (!s.running) {
+              hideProgressPanel();
               clearRunningState();
-              // Redirect preserving current tab
               const p = new URLSearchParams(window.location.search);
               p.set('tab', tabKey);
               p.set('range', timeRange.value);
               window.location.href = '/?' + p.toString();
             }
-          }, 3000);
+          }, 2000);
         } catch (err) {
           statusEl.textContent = 'Failed to start search';
           clearRunningState();
@@ -437,6 +523,10 @@
             return;
           }
         }
+
+        // Check for phantom processes before starting
+        const proceed = await checkPhantomProcesses();
+        if (!proceed) return;
 
         activeSearchType = 'dorks';
         const { stopBtn, statusEl } = getTabControls('ats');
@@ -456,16 +546,19 @@
             return;
           }
 
+          showProgressPanel();
           activePoll = setInterval(async () => {
             const s = await fetch('/api/dork-status').then(r => r.json());
+            await updateProgressPanel();
             if (!s.running) {
+              hideProgressPanel();
               clearRunningState();
               const p = new URLSearchParams(window.location.search);
               p.set('tab', 'ats');
               p.set('range', timeRange.value);
               window.location.href = '/?' + p.toString();
             }
-          }, 3000);
+          }, 2000);
         } catch (err) {
           statusEl.textContent = 'Failed to start search';
           clearRunningState();
@@ -569,6 +662,92 @@
         // Brief delay so final log lines arrive before disconnect
         setTimeout(disconnectLogStream, 2000);
       };
+
+      // --- Progress panel ---
+      const progressPanel = document.getElementById('progress-panel');
+
+      function showProgressPanel() {
+        progressPanel.style.display = '';
+      }
+
+      function hideProgressPanel() {
+        progressPanel.style.display = 'none';
+      }
+
+      function formatElapsed(ms) {
+        const s = Math.floor(ms / 1000);
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return m > 0 ? `${m}m ${sec}s` : `${sec}s`;
+      }
+
+      async function updateProgressPanel() {
+        try {
+          const p = await fetch('/api/scraper-progress').then(r => r.json());
+          if (!p) return;
+
+          const pct = p.total > 0 ? Math.round((p.completed / p.total) * 100) : 0;
+          document.getElementById('progress-bar').value = pct;
+          document.getElementById('progress-completed').textContent = p.completed;
+          document.getElementById('progress-total').textContent = p.total;
+          document.getElementById('progress-jobs').textContent = p.jobsFound;
+          document.getElementById('progress-errors').textContent = p.errors;
+
+          // Adapt label based on scraper type
+          const isDork = p.type === 'dorks' || p.type === 'jobs-api';
+          const workersEl = document.getElementById('progress-workers');
+          if (isDork) {
+            workersEl.textContent = p.phase === 'validating' ? 'validating' : 'API';
+          } else {
+            workersEl.textContent = (p.active || []).length;
+          }
+
+          let title = '';
+          if (isDork) {
+            const label = p.type === 'jobs-api' ? 'Jobs API' : 'ATS Dorks';
+            title = p.phase === 'validating'
+              ? `${label} — Validating URLs ${pct}%`
+              : `${label} — Searching ${pct}%`;
+          } else {
+            title = pct >= 100 ? 'Finishing up...' : `Scraping — ${pct}%`;
+          }
+          document.getElementById('progress-title').textContent = title;
+          document.getElementById('progress-elapsed').textContent = formatElapsed(Date.now() - p.startedAt);
+
+          const activeEl = document.getElementById('progress-active');
+          if (p.active && p.active.length > 0) {
+            activeEl.textContent = 'Active: ' + p.active.join(' | ');
+          } else {
+            activeEl.textContent = '';
+          }
+        } catch { /* ignore fetch errors */ }
+      }
+
+      // On page load, check if a scrape is already running and show progress
+      (async () => {
+        try {
+          const [sStatus, dStatus] = await Promise.all([
+            fetch('/api/scraper-status').then(r => r.json()),
+            fetch('/api/dork-status').then(r => r.json())
+          ]);
+          if (sStatus.running || dStatus.running) {
+            showProgressPanel();
+            showLogPanel();
+            connectLogStream();
+            // Start polling progress
+            const resumePoll = setInterval(async () => {
+              const s = await fetch('/api/scraper-status').then(r => r.json());
+              const d = await fetch('/api/dork-status').then(r => r.json());
+              await updateProgressPanel();
+              if (!s.running && !d.running) {
+                clearInterval(resumePoll);
+                hideProgressPanel();
+                window.location.reload();
+              }
+            }, 2000);
+          }
+        } catch { /* ignore */ }
+      })();
     })();
     </script>
     <script src="/js/public_resume_optimizer.js"></script>
