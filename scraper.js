@@ -54,8 +54,12 @@ export class JobScraper {
     const locationLower = (location || '').toLowerCase();
     const matchMode = process.env._CF_ACTIVE_MATCH_MODE || 'contains';
 
-    // Must match at least one keyword using the active match mode
-    const keywords = getKeywords().filter(k => k.trim().length > 0);
+    // Use the search value from env var (set by dashboard) if available,
+    // otherwise fall back to config keywords. This avoids config reload races.
+    const searchOverride = process.env.CF_SEARCH_VALUE?.trim();
+    const keywords = searchOverride
+      ? [searchOverride]
+      : getKeywords().filter(k => k.trim().length > 0);
     if (keywords.length === 0) return false; // No valid keywords — reject all
     const hasKeyword = keywords.some(keyword => {
       const kw = keyword.toLowerCase().trim();

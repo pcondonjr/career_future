@@ -24,12 +24,14 @@ export class GoogleDorkScraper {
       throw new Error('SERPER_API_KEY must be set in .env');
     }
 
-    // Read search parameters from Dashboard config (allow overrides via options)
-    this.keywords = options.keywords || configManager.getKeywords();
+    // Use search value from env var (set by dashboard) if available,
+    // otherwise fall back to config keywords. Avoids config reload races.
+    const searchOverride = process.env.CF_SEARCH_VALUE?.trim();
+    this.keywords = options.keywords || (searchOverride ? [searchOverride] : configManager.getKeywords());
     this.locations = ['remote', 'greenville', 'south carolina'];
-    this.matchMode = options.matchMode || process.env._CF_ACTIVE_MATCH_MODE || 'contains';
+    this.matchMode = options.matchMode || process.env.CF_MATCH_MODE || process.env._CF_ACTIVE_MATCH_MODE || 'contains';
 
-    console.log(`⚙️  Using keyword: "${this.keywords[0] || 'salesforce'}"`);
+    console.log(`⚙️  Using keyword: "${this.keywords[0] || ''}"`);
     console.log(`⚙️  Using match mode: ${this.matchMode}`);
     console.log(`⚙️  Using locations: ${this.locations.join(', ')}`);
   }
@@ -39,7 +41,7 @@ export class GoogleDorkScraper {
    * with the actual values from Dashboard config.
    */
   _interpolateQuery(template) {
-    const keyword = this.keywords[0] || 'salesforce';
+    const keyword = this.keywords[0] || '';
     const locationsOr = this.locations
       .map(l => `"${l}"`)
       .join(' OR ');
@@ -273,7 +275,7 @@ export class GoogleDorkScraper {
   }
 
   async runJobsSearch() {
-    const keyword = this.keywords[0] || 'salesforce';
+    const keyword = this.keywords[0] || '';
     const queries = [{ id: 'jobs-direct', query: keyword }];
 
     const allJobs = [];
@@ -418,7 +420,7 @@ export class GoogleDorkScraper {
   _isLikelyJob(item) {
     const rawTitle = (item.title || '').toLowerCase();
     const url = (item.link || '').toLowerCase();
-    const keyword = (this.keywords[0] || 'salesforce').toLowerCase().trim();
+    const keyword = (this.keywords[0] || '').toLowerCase().trim();
 
     // Guard: empty keyword would match everything via "".includes("") === true
     if (!keyword) return false;
@@ -452,7 +454,7 @@ export class GoogleDorkScraper {
   }
 
   _cleanTitle(rawTitle) {
-    const keyword = (this.keywords[0] || 'salesforce').toLowerCase().trim();
+    const keyword = (this.keywords[0] || '').toLowerCase().trim();
 
     // Strip known ATS platform suffixes like "Job Title - Company | Workday"
     let title = rawTitle

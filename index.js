@@ -61,6 +61,13 @@ async function runJobSearch(mode = 'daily') {
     console.log(`🔎 Using search value: "${cliSearchValue}" (match: ${cliMatchMode})`);
   }
 
+  // Guard: do not run if no search term is configured
+  const activeKeywords = configManager.getKeywords().filter(k => k.trim().length > 0);
+  if (activeKeywords.length === 0) {
+    console.log(`\n⚠ ${config.name} search skipped — no search term configured. Set a keyword in the dashboard search box.`);
+    return;
+  }
+
   console.log('\n' + '='.repeat(60));
   console.log(`🔍 Starting ${config.name} job search at ${new Date().toLocaleString()}`);
   console.log('='.repeat(60) + '\n');
@@ -168,6 +175,13 @@ async function runDorkSearch(frequency = 'daily') {
     console.log(`🔎 Using search value: "${cliSearchValue}" (match: ${cliMatchMode})`);
   }
 
+  // Guard: do not run if no search term is configured
+  const activeKeywords = configManager.getKeywords().filter(k => k.trim().length > 0);
+  if (activeKeywords.length === 0) {
+    console.log(`\n⚠ ${config.name} (${frequency}) search skipped — no search term configured. Set a keyword in the dashboard search box.`);
+    return;
+  }
+
   console.log('\n' + '='.repeat(60));
   console.log(`🔍 Starting ${config.name} (${frequency}) search at ${new Date().toLocaleString()}`);
   console.log('='.repeat(60) + '\n');
@@ -244,6 +258,13 @@ async function runSerperJobsSearch() {
     configManager.setKeywords([cliSearchValue]);
     process.env._CF_ACTIVE_MATCH_MODE = cliMatchMode;
     console.log(`🔎 Using search value: "${cliSearchValue}" (match: ${cliMatchMode})`);
+  }
+
+  // Guard: do not run if no search term is configured
+  const activeKeywords = configManager.getKeywords().filter(k => k.trim().length > 0);
+  if (activeKeywords.length === 0) {
+    console.log(`\n⚠ ${config.name} search skipped — no search term configured. Set a keyword in the dashboard search box.`);
+    return;
   }
 
   console.log('\n' + '='.repeat(60));

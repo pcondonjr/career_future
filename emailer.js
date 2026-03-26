@@ -20,8 +20,8 @@ export class JobEmailer {
     const isWeekly = mode === 'weekly';
     const html = this.generateEmailHTML(jobs, stats, isWeekly);
     const subject = isWeekly
-      ? `📅 Weekly: ${jobs.length} New Salesforce Job${jobs.length > 1 ? 's' : ''} (Not in Daily List)`
-      : `🎯 ${jobs.length} New Salesforce Job${jobs.length > 1 ? 's' : ''} Found`;
+      ? `📅 Weekly: ${jobs.length} New Job${jobs.length > 1 ? 's' : ''} (Not in Daily List)`
+      : `🎯 ${jobs.length} New Job${jobs.length > 1 ? 's' : ''} Found`;
 
     try {
       await this.transporter.sendMail({
@@ -78,8 +78,8 @@ export class JobEmailer {
       : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
 
     const headerTitle = isWeekly
-      ? '📅 Weekly Salesforce Jobs Alert'
-      : '🎯 New Salesforce Jobs Alert';
+      ? '📅 Weekly Jobs Alert'
+      : '🎯 New Jobs Alert';
 
     const headerSubtitle = isWeekly
       ? `Found ${jobs.length} new position${jobs.length > 1 ? 's' : ''} not in your daily list`
@@ -158,7 +158,7 @@ export class JobEmailer {
       await this.transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: process.env.EMAIL_USER,
-        subject: '📈 Weekly Salesforce Job Search Summary',
+        subject: '📈 Weekly Job Search Summary',
         html: html
       });
       console.log('Weekly summary sent');

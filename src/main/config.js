@@ -156,7 +156,7 @@ const schema = {
       keywords: {
         type: 'array',
         items: { type: 'string' },
-        default: ['salesforce']
+        default: []
       },
       locations: {
         type: 'array',
@@ -184,7 +184,7 @@ const schema = {
       }
     },
     default: {
-      keywords: ['salesforce'],
+      keywords: [],
       locations: ['remote', 'greenville', 'south carolina', 'sc', 'charlotte', 'atlanta', 'hybrid'],
       schedule: {
         enabled: true,
@@ -351,7 +351,7 @@ class ConfigManager {
   // ===== Search Configuration =====
 
   getKeywords() {
-    return this.store.get('search.keywords', ['salesforce']);
+    return this.store.get('search.keywords', []);
   }
 
   setKeywords(keywords) {

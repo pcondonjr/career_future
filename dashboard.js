@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { exec, spawn } from 'child_process';
+import { execFile, spawn } from 'child_process';
 import fs from 'fs/promises';
 import puppeteer from 'puppeteer-core';
 import { JobDatabase } from './database.js';
@@ -340,7 +340,7 @@ function stopProcess(proc) {
   if (!proc || proc.killed) return;
   // On Windows, taskkill /T kills the process tree (node + chrome children)
   if (process.platform === 'win32') {
-    exec(`taskkill /pid ${proc.pid} /T /F`, () => {});
+    execFile('taskkill', ['/pid', String(proc.pid), '/T', '/F'], () => {});
   } else {
     proc.kill('SIGTERM');
   }
@@ -350,6 +350,10 @@ app.post('/api/run-scraper', async (req, res) => {
   const mode = req.body.mode === 'weekly' ? 'weekly' : 'daily';
   const searchValue = (req.body.searchValue || '').trim();
   const matchMode = (req.body.matchMode || '').trim() || 'contains';
+
+  if (!searchValue) {
+    return res.status(400).json({ error: 'Search term is required. Enter a value in the search box before running.' });
+  }
 
   if (isScraperRunning()) {
     return res.status(409).json({ error: 'A search is already running' });
@@ -378,7 +382,6 @@ app.post('/api/run-scraper', async (req, res) => {
     cwd: writableBase,
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: false,
-    shell: true,
     env
   });
 
@@ -500,7 +503,7 @@ app.post('/api/kill-phantom-processes', async (req, res) => {
     try {
       const numPid = parseInt(pid, 10);
       if (isNaN(numPid) || numPid === process.pid) continue;
-      exec(`taskkill /pid ${numPid} /T /F`, () => {});
+      execFile('taskkill', ['/pid', String(numPid), '/T', '/F'], () => {});
       results.push({ pid: numPid, killed: true });
     } catch (err) {
       results.push({ pid, killed: false, error: err.message });
@@ -510,12 +513,16 @@ app.post('/api/kill-phantom-processes', async (req, res) => {
 });
 
 app.post('/api/run-dorks', async (req, res) => {
+  const searchValue = (req.body?.searchValue || '').trim();
+  const matchMode = (req.body?.matchMode || '').trim() || 'contains';
+
+  if (!searchValue) {
+    return res.status(400).json({ error: 'Search term is required. Enter a value in the search box before running.' });
+  }
+
   if (isDorkRunning()) {
     return res.status(409).json({ error: 'Applicant Tracking search is already running' });
   }
-
-  const searchValue = (req.body?.searchValue || '').trim();
-  const matchMode = (req.body?.matchMode || '').trim() || 'contains';
   await saveDorkLastRun({ searchValue, matchMode, runName: 'Applicant Tracking', timestamp: new Date().toISOString() });
 
   clearLog();
@@ -532,7 +539,6 @@ app.post('/api/run-dorks', async (req, res) => {
     cwd: writableBase,
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: false,
-    shell: true,
     env
   });
 
