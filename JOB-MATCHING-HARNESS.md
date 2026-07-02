@@ -60,12 +60,12 @@ scripts/pull-claude-results.cjs (run locally, where .env already works)
 
 **Cloud routine (5 firings):** Unknown. `RemoteTrigger`'s API exposes trigger config only, not token/cost data — that lives in your claude.ai usage/billing view, not anywhere queryable from here. Routine firings draw down your normal Claude usage rather than metering separately.
 
-**Local API calls (Haiku triage + Sonnet match-score):** These scripts don't log actual token usage, so this is a reasoned estimate from real call counts and measured prompt sizes — not a measurement. No prompt caching is implemented in either script, so every call pays full price for its static content (worth adding if this scales up).
+**Local API calls (Haiku triage + Sonnet match-score):** `triage.cjs` still doesn't log actual token usage, so its line below remains a reasoned estimate. `match-score.cjs` now prompt-caches the resume + scoring rubric (identical on every call) as a `cache_control` system block and logs real `usage` totals per run — confirmed live: a 4-job test batch showed one 3,560-token cache write followed by three 3,560-token cache reads (~10% of input price each), and a same-window re-run showed 0 cache writes / all reads, since the cache was still warm from the prior call within its 5-minute TTL.
 
 | Step | Model | Calls | Est. tokens/call (in / out) | Est. cost |
 |---|---|---|---|---|
 | Triage | Haiku 4.5 ($1/$5 per MTok) | 517 | ~470 / ~25 | ~$0.31 |
-| Match-score | Sonnet 5 ($2/$10 per MTok, intro pricing through 2026-08-31) | 60 | ~2,980 / ~200 (resume is 1,990 measured tokens, sent uncached every call) | ~$0.48 |
-| **Total** | | | | **~$0.79** |
+| Match-score | Sonnet 5 ($2/$10 per MTok, intro pricing through 2026-08-31) | 60 | ~2,980 / ~200 (pre-caching backfill; resume sent uncached every call) | ~$0.48 |
+| **Total (backfill)** | | | | **~$0.79** |
 
-Ongoing cost going forward: each scheduled match-harness run only scores *new* jobs (`match_scored_at IS NULL`), so this was a one-time backfill cost, not a recurring one at this scale.
+Ongoing cost going forward: each scheduled match-harness run only scores *new* jobs (`match_scored_at IS NULL`), so the table above was a one-time backfill cost, not a recurring one at this scale. With caching, only the first match-score call after a >5-minute gap pays full price for the resume+rubric block (~3,560 tokens); every call after that in the same run — or within 5 minutes of the last one — reads it back at ~10% of input price instead.

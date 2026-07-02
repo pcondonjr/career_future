@@ -74,8 +74,17 @@ const SCORE_TOOL = {
 };
 
 function buildPrompt(job) {
-  return `RESUME:\n${RESUME_TEXT}\n\n---\n\nJOB POSTING:\nTitle: ${job.job_title}\nCompany: ${job.company_name}\nLocation: ${job.location || 'not specified'}\n\n${job.full_jd_text}`;
+  return `JOB POSTING:\nTitle: ${job.job_title}\nCompany: ${job.company_name}\nLocation: ${job.location || 'not specified'}\n\n${job.full_jd_text}`;
 }
+
+// Resume + rubric are identical on every call — cached as a system block so
+// only the first call in a run pays full input price; the rest read from
+// cache at ~10% of that price. Keep job-specific text out of this block.
+const CACHED_SYSTEM = [{
+  type: 'text',
+  text: `${SYSTEM_PROMPT}\n\nRESUME:\n${RESUME_TEXT}`,
+  cache_control: { type: 'ephemeral' },
+}];
 
 // ── Core scoring ──────────────────────────────────────────────────────────────
 
@@ -84,7 +93,7 @@ async function scoreJob(job) {
     const message = await client.messages.create({
       model:       MODEL,
       max_tokens:  1024,
-      system:      SYSTEM_PROMPT,
+      system:      CACHED_SYSTEM,
       tools:       [SCORE_TOOL],
       tool_choice: { type: 'tool', name: 'score_match' },
       messages:    [{ role: 'user', content: buildPrompt(job) }],
@@ -93,7 +102,7 @@ async function scoreJob(job) {
     const toolUse = message.content.find(b => b.type === 'tool_use');
     if (!toolUse) return { ok: false, reason: 'no tool_use block in response' };
 
-    return { ok: true, result: toolUse.input };
+    return { ok: true, result: toolUse.input, usage: message.usage };
   } catch (err) {
     return { ok: false, reason: err.message };
   }
@@ -136,27 +145,47 @@ async function run() {
 
   const client = await pool.connect();
   let scored = 0, failed = 0;
+  const usageTotals = { input: 0, cacheWrite: 0, cacheRead: 0 };
+
+  function tallyUsage(outcome) {
+    if (!outcome.usage) return;
+    usageTotals.input      += outcome.usage.input_tokens || 0;
+    usageTotals.cacheWrite += outcome.usage.cache_creation_input_tokens || 0;
+    usageTotals.cacheRead  += outcome.usage.cache_read_input_tokens || 0;
+  }
+
+  async function handleOutcome(job, outcome) {
+    tallyUsage(outcome);
+    if (outcome.ok) {
+      await saveScore(client, job.id, outcome.result);
+      scored++;
+      console.log(`  [${outcome.result.score}/${outcome.result.tier}] ${job.job_title} @ ${job.company_name}`);
+    } else {
+      failed++;
+      console.log(`  [skip] id=${job.id} "${job.job_title}" — ${outcome.reason}`);
+    }
+  }
 
   try {
     const jobs = await getPendingJobs(client, BATCH_SIZE);
     console.log(`${jobs.length} jobs pending match score`);
 
-    for (let i = 0; i < jobs.length; i += SCORE_CONCURRENCY) {
-      const chunk = jobs.slice(i, i + SCORE_CONCURRENCY);
-      await Promise.all(chunk.map(async job => {
-        const outcome = await scoreJob(job);
-        if (outcome.ok) {
-          await saveScore(client, job.id, outcome.result);
-          scored++;
-          console.log(`  [${outcome.result.score}/${outcome.result.tier}] ${job.job_title} @ ${job.company_name}`);
-        } else {
-          failed++;
-          console.log(`  [skip] id=${job.id} "${job.job_title}" — ${outcome.reason}`);
-        }
-      }));
+    if (jobs.length === 0) return { scored, failed };
+
+    // Score the first job alone to prime the prompt cache — parallel calls
+    // with an identical, not-yet-cached prefix would all miss (a cache entry
+    // is only readable once the first response begins), so only the very
+    // first call of a run needs to run solo.
+    const [firstJob, ...rest] = jobs;
+    await handleOutcome(firstJob, await scoreJob(firstJob));
+
+    for (let i = 0; i < rest.length; i += SCORE_CONCURRENCY) {
+      const chunk = rest.slice(i, i + SCORE_CONCURRENCY);
+      await Promise.all(chunk.map(async job => handleOutcome(job, await scoreJob(job))));
     }
 
     console.log(`Done. Scored: ${scored}, Failed/skipped: ${failed}`);
+    console.log(`Token usage — input: ${usageTotals.input}, cache write: ${usageTotals.cacheWrite}, cache read: ${usageTotals.cacheRead}`);
     return { scored, failed };
   } finally {
     client.release();
