@@ -20,7 +20,13 @@
     "add-company": "node add-company.js",
     "export": "node export-jobs.js",
     "enrich": "node scripts/enrich-companies.js",
-    "enrich:stats": "node scripts/enrich-companies.js --stats"
+    "enrich:stats": "node scripts/enrich-companies.js --stats",
+    "neon:scheduler": "node src/backend/neon-scheduler.cjs",
+    "neon:run": "node src/backend/neon-scheduler.cjs --now",
+    "neon:dashboard": "node neon-dashboard-server.cjs",
+    "neon:match": "node src/backend/match-harness.cjs",
+    "neon:match:dry": "node src/backend/match-harness.cjs --dry-run --batch 5",
+    "neon:import-legacy": "node scripts/import-legacy-jobs.cjs"
   },
   "keywords": [
     "career",
@@ -38,6 +44,7 @@
     "@anthropic-ai/sdk": "^0.72.1",
     "@mendable/firecrawl-js": "^4.17.0",
     "apify-client": "^2.22.1",
+    "cheerio": "^1.2.0",
     "csv-parse": "^5.6.0",
     "csv-parser": "^3.2.0",
     "csv-stringify": "^6.7.0",

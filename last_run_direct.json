@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-06-10T20:26:26.044Z",
+  "attempted": 1,
+  "ok_with_jobs": 1,
+  "ok_empty": 0,
+  "ats_blocked": 0,
+  "js_required": 0,
+  "no_careers": 0,
+  "errors": 0,
+  "jobs_scraped": 13,
+  "jobs_relevant": 3,
+  "jobs_filtered": 10,
+  "jobs_saved": 13,
+  "elapsed_ms": 7171
+}

@@ -60,6 +60,33 @@ const ATS_PATTERNS = {
   'ultipro.com':              { name: 'UKG', card: '.opportunity', title: '.opportunity-title', location: '.opportunity-location', link: 'a' },
 };
 
+// === Eastern timezone states (abbreviations and full names, as Apollo may return either) ===
+const EST_STATES = new Set([
+  'ct', 'connecticut',
+  'dc', 'district of columbia',
+  'de', 'delaware',
+  'fl', 'florida',
+  'ga', 'georgia',
+  'in', 'indiana',
+  'ky', 'kentucky',
+  'ma', 'massachusetts',
+  'md', 'maryland',
+  'me', 'maine',
+  'mi', 'michigan',
+  'nc', 'north carolina',
+  'nh', 'new hampshire',
+  'nj', 'new jersey',
+  'ny', 'new york',
+  'oh', 'ohio',
+  'pa', 'pennsylvania',
+  'ri', 'rhode island',
+  'sc', 'south carolina',
+  'tn', 'tennessee',
+  'va', 'virginia',
+  'vt', 'vermont',
+  'wv', 'west virginia',
+]);
+
 // === Career link discovery ===
 const CAREER_LINK_RE = /href=["']([^"']*(?:career|jobs|join-us|work-with-us|openings|hiring|opportunities|employment|join-our-team|current-openings|open-positions|vacancies)[^"']*)["']/gi;
 
@@ -586,10 +613,19 @@ async function runPhase3(progress) {
   const PLACEHOLDER = { card: '.job-card', title: 'h3', location: '.location', link: 'a' };
   const newRows = [];
 
+  let estSkipped = 0;
+
   for (const entry of results) {
     // Skip duplicates
     if (weeklyNames.has(entry.companyName.toLowerCase())) continue;
     if (dailyNames.has(entry.companyName.toLowerCase())) continue;
+
+    // Skip companies with no state or not in Eastern timezone
+    if (!entry.state || !EST_STATES.has(entry.state.toLowerCase())) {
+      estSkipped++;
+      console.log(`  SKIP (non-EST): ${entry.companyName} [${entry.state || 'no state'}]`);
+      continue;
+    }
 
     const selectors = entry.selectors || PLACEHOLDER;
     const careersUrl = entry.careersUrl || entry.website;
@@ -615,6 +651,7 @@ async function runPhase3(progress) {
     newRows.push(row);
   }
 
+  console.log(`  Skipped (non-EST / no state): ${estSkipped}`);
   console.log(`  New rows to append: ${newRows.length}`);
   const enabledCount = newRows.filter(r => r.includes(',true,')).length;
   console.log(`  Enabled (selectors found): ${enabledCount}`);

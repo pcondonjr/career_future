@@ -1,0 +1,1222 @@
+{
+  "exported_at": "2026-06-10T19:46:36.813Z",
+  "total": 171,
+  "note": "To rescue a company: node scripts/export-ats-blocked.cjs --rescue \"Company Name\"",
+  "by_platform": {
+    "ashby": [
+      {
+        "company_name": "8VC Jobs",
+        "careers_url": "https://jobs.8vc.com/jobs?q=salesforce",
+        "notes": "VC job board - Ashby platform - stable data-testid selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Accel Jobs",
+        "careers_url": "https://jobs.accel.com/jobs?q=salesforce",
+        "notes": "VC job board - Getro/Ashby platform - same as 8VC",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "ButterflyMX",
+        "careers_url": "https://butterflymx.com/careers/",
+        "notes": "Ashby ATS - iframe: https://jobs.ashbyhq.com/butterflymx?embed=js",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Chainlink Labs",
+        "careers_url": "https://jobs.ashbyhq.com/chainlink-labs",
+        "notes": "Ashby ATS - all remote roles - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Close",
+        "careers_url": "https://jobs.ashbyhq.com/Close",
+        "notes": "Ashby ATS - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Help Scout",
+        "careers_url": "https://jobs.ashbyhq.com/helpscout",
+        "notes": "Ashby ATS board - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Insight Partners Talent Network",
+        "careers_url": "https://jobs.insightpartners.com/jobs?q=salesforce",
+        "notes": "Ashby - schema.org markup",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Kit",
+        "careers_url": "https://jobs.ashbyhq.com/kit",
+        "notes": "Ashby ATS - formerly ConvertKit - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Lightspeed Job Board",
+        "careers_url": "https://jobs.lsvp.com/jobs?q=salesforce",
+        "notes": "Ashby - schema.org markup",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Sequoia Capital Job Board",
+        "careers_url": "https://jobs.sequoiacap.com/jobs?q=salesforce",
+        "notes": "Ashby - schema.org markup",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Stellic",
+        "careers_url": "https://www.stellic.com/careers",
+        "notes": "Ashby ATS - iframe: https://jobs.ashbyhq.com/stellic?embed=js",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Toggl",
+        "careers_url": "https://jobs.ashbyhq.com/toggl",
+        "notes": "Ashby ATS - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Zapier",
+        "careers_url": "https://jobs.ashbyhq.com/zapier",
+        "notes": "Ashby ATS - JS-rendered board",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      }
+    ],
+    "bamboohr": [
+      {
+        "company_name": "BlueSky",
+        "careers_url": "https://bsky.bamboohr.com/careers",
+        "notes": "Sandton - Gauteng - 230 employees - Needs manual review - International",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Bolt Data",
+        "careers_url": "https://boltdata.bamboohr.com/careers",
+        "notes": "Needs AI extraction - none | ATS URL found: https://boltdata.bamboohr.com/careers - retry needed",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Coastal Conservation League",
+        "careers_url": "https://scccl.bamboohr.com/careers",
+        "notes": "BambooHR ATS - JS-rendered - may need AI extraction fallback",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Copado",
+        "careers_url": "https://copado.bamboohr.com/careers",
+        "notes": "Chicago - Illinois - 600 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Dave Steel",
+        "careers_url": "https://davesteel.bamboohr.com/careers",
+        "notes": "No careers page found",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Dogwood Alliance",
+        "careers_url": "https://dogwoodalliance.bamboohr.com/careers",
+        "notes": "Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "HYCU, Inc.",
+        "careers_url": "https://hycu.bamboohr.com/careers",
+        "notes": "Boston - Massachusetts - 280 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Harper General Contractors",
+        "careers_url": "https://harpergc.bamboohr.com/jobs/",
+        "notes": "Greenville SC - Construction - BambooHR JS-rendered",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "HomeGauge",
+        "careers_url": "https://homegauge.bamboohr.com/careers",
+        "notes": "Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Lemon.io",
+        "careers_url": "https://lemonio.bamboohr.com/careers/",
+        "notes": "BambooHR ATS board",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "NHE Inc",
+        "careers_url": "https://nheincteam.bamboohr.com/jobs/",
+        "notes": "Property Mgmt - uses BambooHR external",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      }
+    ],
+    "greenhouse": [
+      {
+        "company_name": "ASSYST",
+        "careers_url": "https://boards.greenhouse.io/assystinc",
+        "notes": "Sterling - Virginia - 290 employees - Needs manual review | ATS URL found: https://boards.greenhouse.io/assystinc - retry needed",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "AlertMedia",
+        "careers_url": "https://www.alertmedia.com/careers/openings/",
+        "notes": "Greenhouse ATS - iframe: https://job-boards.greenhouse.io/embed/job_board?for=alertmedia&validityToken=mVDybyMeqbmJIprIRE3Tv9-6q312GCYtQNo9sav4ZMuUSkCQEyVrAXTPtMW4v9e4yIB-SkAU5qrl4SjO4IUQDV95QizVjtprvWoV6f6X7WgCJC1cAZqgckQL9cEuXEUzjTjpQAW_C4oUDLOxNsoJ9iCj5FztouqAOSiE47u76d1ek-SjXbid34LmQV8MH-4p2ZWF56BkhPU5dVHI69ps8BycpuxZH6SbS854Jm75KeYXs5J6FF8ECR_NWyF2wkeH035iO_r-co015N6uVhgGq2ulPUPahh9NWx5mMoSncQFRyVxD6VTX1x3A9hUS2jfx_NZ47i8tSwqCJ15RbZvDyg%3D%3D",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Anthropic",
+        "careers_url": "https://job-boards.greenhouse.io/anthropic/jobs",
+        "notes": "Needs AI extraction - none",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Asana",
+        "careers_url": "https://job-boards.greenhouse.io/asana",
+        "notes": "San Francisco - California - 1900 employees - Greenhouse ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Auctane",
+        "careers_url": "https://job-boards.greenhouse.io/auctane",
+        "notes": "Austin - Texas - 1400 employees - Greenhouse ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "AutoScout24",
+        "careers_url": "https://job-boards.greenhouse.io/autoscout24",
+        "notes": "Muenchen - Bayern - 810 employees -  - International - Greenhouse ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Automattic",
+        "careers_url": "https://automattic.com/jobs/",
+        "notes": "Custom WP + Greenhouse data - .job-card selectors verified - remote-only",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Axios",
+        "careers_url": "https://job-boards.greenhouse.io/axios",
+        "notes": "Greenhouse ATS board - standard selectors - 23+ open positions",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Blackthorn",
+        "careers_url": "https://blackthorn.io/careers/",
+        "notes": "Greenhouse ATS - iframe: https://boards.greenhouse.io/blackthorn",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Bringg",
+        "careers_url": "https://job-boards.greenhouse.io/bringg",
+        "notes": "Tel Aviv-Yafo - Tel Aviv District - 210 employees - Needs manual review - International",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Buildops",
+        "careers_url": "https://www.buildops.com/careers/",
+        "notes": "Los Angeles CA - Field service SaaS - Greenhouse ATS (custom page - selectors need manual verification)",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "CarOnSale",
+        "careers_url": "https://boards.eu.greenhouse.io/caronsale/jobs/4534304101",
+        "notes": "Berlin - Berlin - 230 employees - Auto-detected selectors - needs verification - International",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Chowbus",
+        "careers_url": "http://job-boards.greenhouse.io/chowbus",
+        "notes": "Greenhouse ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Circle",
+        "careers_url": "https://job-boards.greenhouse.io/circleso",
+        "notes": "Greenhouse ATS - standard selectors - 24+ open positions",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Climate Lead",
+        "careers_url": "http://job-boards.greenhouse.io/climatelead",
+        "notes": "Greenhouse ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "ConnectWise",
+        "careers_url": "https://job-boards.greenhouse.io/connectwise",
+        "notes": "Tampa - Florida - 1900 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Consensus Cloud Solutions",
+        "careers_url": "https://consensus.greenhouse.io/jobs",
+        "notes": "Los Angeles - California - 520 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Customer.io",
+        "careers_url": "https://job-boards.greenhouse.io/customerio",
+        "notes": "Greenhouse - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Doximity",
+        "careers_url": "https://job-boards.greenhouse.io/doximity",
+        "notes": "Greenhouse new React/Remix board - client-side rendered - AI extraction recommended",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Ebury",
+        "careers_url": "https://boards.greenhouse.io/embed/job_board?for=ebury",
+        "notes": "Greenhouse embed board - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "EngagedMD",
+        "careers_url": "https://boards.greenhouse.io/embed/job_board?for=engagedmd",
+        "notes": "Greenhouse embed board - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Fingerprint",
+        "careers_url": "https://boards.greenhouse.io/embed/job_board?for=fingerprint",
+        "notes": "Greenhouse embed - redirects to custom page - AI extraction as fallback",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Fleetio",
+        "careers_url": "https://job-boards.greenhouse.io/fleetio",
+        "notes": "Greenhouse new React/Remix board - client-side rendered - AI extraction recommended",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Foundation Risk Partners",
+        "careers_url": "https://job-boards.greenhouse.io/foundationriskpartners",
+        "notes": "Needs AI extraction - none",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "GitLab",
+        "careers_url": "https://job-boards.greenhouse.io/gitlab/jobs",
+        "notes": "Needs AI extraction - none",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "GiveWell",
+        "careers_url": "https://job-boards.greenhouse.io/givewell",
+        "notes": "Needs AI extraction - none",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "GoCardless",
+        "careers_url": "https://gocardless.greenhouse.io",
+        "notes": "London - England - 620 employees - Needs manual review - International",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "GuidePoint Security",
+        "careers_url": "https://boards.greenhouse.io/guidepointsecurity",
+        "notes": "Reston - Virginia - 1100 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "HubSpot",
+        "careers_url": "https://hubspot.greenhouse.io",
+        "notes": "Tech company - navigation timeout",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "IntelliDyne, LLC",
+        "careers_url": "https://intellidyne.greenhouse.io/",
+        "notes": "Vienna - Virginia - 380 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Intellum",
+        "careers_url": "https://job-boards.greenhouse.io/intelluminc",
+        "notes": "Greenhouse ATS (new Remix board) - dynamic CSS classes - AI extraction recommended",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Intercom",
+        "careers_url": "https://job-boards.greenhouse.io/intercom",
+        "notes": "San Francisco - California - 2000 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Knack",
+        "careers_url": "https://job-boards.greenhouse.io/knack",
+        "notes": "Greenhouse ATS - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Komodo Health",
+        "careers_url": "https://komodohealth.greenhouse.io/",
+        "notes": "New York - New York - 790 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Lattice",
+        "careers_url": "https://lattice.com/careers",
+        "notes": "Greenhouse ATS - iframe: https://job-boards.greenhouse.io/embed/job_board?for=lattice&validityToken=QInE3jrETIe6925Z7jhzlAhQIu_LAlpK8iMY6eczzwhRZIuHq_SVNyq_RK7qgcy9I4nohj_0RqdE6jk4LbGuPeXUldKoNEUAV6qxe3c06w7b3wTcmoTFQ0ZzLJK_pKNQGJ1NKoPz8MNs1jRm8vPsF9KjYjhrc5zqehnyRBCukxhnslj8ss74FKHmAOxbOqs3cLOl_-kXoazK3V6xUXa3ozfVLeGxu4Qw57HPFoTAYhdC1Jfq0UNfEl2u0Arukg-MfOqQ977QkfpKFzhLEmzjS64R1LunfxwbiR7x5807PhydLQPTHgzrz03zU5oLt-ehCQRHvTgn9NKHDMZoBpl_2w%3D%3D",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Level Access",
+        "careers_url": "https://job-boards.greenhouse.io/levelaccess",
+        "notes": "Stafford - Virginia - 530 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "LogicGate",
+        "careers_url": "https://boards.greenhouse.io/logicgate",
+        "notes": "Chicago - Illinois - 250 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Maddox Transformer",
+        "careers_url": "https://job-boards.greenhouse.io/maddoxindustrialtransformer",
+        "notes": "Manufacturing - uses Greenhouse external",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Medical University of South Carolina",
+        "careers_url": "https://job-boards.greenhouse.io/musc",
+        "notes": "Greenhouse ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Neocol",
+        "careers_url": "https://neocol.greenhouse.io/",
+        "notes": "Chicago - Illinois - 210 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Netradyne",
+        "careers_url": "https://netradyne.greenhouse.io/",
+        "notes": "San Diego - California - 950 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "NeuraFlash",
+        "careers_url": "https://job-boards.greenhouse.io/neuraflash",
+        "notes": "Burlington - Massachusetts - 500 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Nicer Studio",
+        "careers_url": "https://job-boards.greenhouse.io/medium",
+        "notes": "Needs AI extraction - none",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Oddball",
+        "careers_url": "https://job-boards.greenhouse.io/oddball",
+        "notes": "Greenhouse new React/Remix board - client-side rendered - gov tech focus",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Palmetto",
+        "careers_url": "https://boards.greenhouse.io/palmettocleantech",
+        "notes": "Charlotte - North Carolina - 630 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Payoneer",
+        "careers_url": "https://careers.payoneer.com",
+        "notes": "Greenhouse (custom domain) - heavy JS obfuscation - AI extraction recommended",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Perion",
+        "careers_url": "https://job-boards.greenhouse.io/perionnetworkltd/",
+        "notes": "New York - New York - 530 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Skedda",
+        "careers_url": "https://job-boards.greenhouse.io/skedda",
+        "notes": "Greenhouse board - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Tucows",
+        "careers_url": "https://www.tucows.com/careers/opportunities",
+        "notes": "Custom site consuming Greenhouse API - .job-item cards",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "TutorMe",
+        "careers_url": "https://job-boards.greenhouse.io/goguardian",
+        "notes": "Greenhouse ATS - TutorMe acquired by GoGuardian - redirects",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Upright Labs",
+        "careers_url": "https://job-boards.greenhouse.io/uprightlabs",
+        "notes": "Greenhouse board - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Warp",
+        "careers_url": "http://job-boards.greenhouse.io/warp",
+        "notes": "Greenhouse ATS",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "a16z Jobs",
+        "careers_url": "https://jobs.a16z.com/jobs",
+        "notes": "VC job board - Consider platform - links to external boards (Greenhouse/Lever/Ashby)",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "inKind",
+        "careers_url": "http://job-boards.greenhouse.io/inkind",
+        "notes": "Greenhouse ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "ília",
+        "careers_url": "https://ilia.greenhouse.io/jobs",
+        "notes": "Sao Paulo - State of Sao Paulo - 510 employees - Needs manual review - International",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      }
+    ],
+    "icims": [
+      {
+        "company_name": "Aetna Voluntary Plans",
+        "careers_url": "https://jobs.cvshealth.com/search/?q=salesforce&locationsearch=South+Carolina",
+        "notes": "Columbia SC - Parent CVS Health - iCIMS ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "BlueCross BlueShield SC",
+        "careers_url": "https://careers-bcbssc.icims.com/jobs/search?ss=1&searchKeyword=salesforce",
+        "notes": "Columbia/Myrtle Beach - iCIMS ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "EastWest BPO —MCI PHILIPPINES",
+        "careers_url": "https://careers-mci.icims.com/jobs/intro",
+        "notes": "San Fernando - Central Luzon - 410 employees - iCIMS ATS - International",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "GitHub",
+        "careers_url": "https://github.careers/jobs",
+        "notes": "iCIMS/Jibe SPA - client-side rendered - AI extraction recommended",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Insight Investments",
+        "careers_url": "https://careers-insightinvestments.icims.com/jobs/search",
+        "notes": "Irvine - California - 350 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      }
+    ],
+    "lever": [
+      {
+        "company_name": "Actian",
+        "careers_url": "https://jobs.lever.co/actian",
+        "notes": "Greenville SC - Database software - Lever ATS - also has JSON API",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Arcadia",
+        "careers_url": "https://jobs.lever.co/arcadia",
+        "notes": "Washington - District of Columbia - 770 employees - Lever ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "BPM LLP",
+        "careers_url": "https://jobs.lever.co/bpmcpa/",
+        "notes": "San Francisco - California - 1900 employees - Lever ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "CALSTART",
+        "careers_url": "https://jobs.lever.co/calstart",
+        "notes": "Needs AI extraction - none",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Clever Inc.",
+        "careers_url": "https://www.clever.com/about/careers",
+        "notes": "San Francisco - California - 340 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Eleos Technologies",
+        "careers_url": "https://jobs.lever.co/eleostech",
+        "notes": "Greenville SC - SaaS trucking - Lever ATS - also has JSON API",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "H1",
+        "careers_url": "https://jobs.lever.co/h1",
+        "notes": "New York - New York - 530 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Insomnia Cookies",
+        "careers_url": "https://jobs.lever.co/insomniacookies",
+        "notes": "Greenville SC - 1800 emp - Restaurant chain - Lever ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Restaurant365",
+        "careers_url": "https://jobs.lever.co/restaurant365",
+        "notes": "Lever ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Silverfin",
+        "careers_url": "https://jobs.eu.lever.co/silverfin",
+        "notes": "Lever EU instance - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Smile.io",
+        "careers_url": "https://jobs.lever.co/Smile.io",
+        "notes": "Lever ATS - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "XM",
+        "careers_url": "https://jobs.eu.lever.co/xm",
+        "notes": "Lever ATS board (EU instance)",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      }
+    ],
+    "smartrecruiters": [
+      {
+        "company_name": "ALTEN Germany",
+        "careers_url": "https://jobs.smartrecruiters.com/oneclick-ui/company/ALTEN/",
+        "notes": "Munich - Bavaria - 1700 employees - No careers page found - International",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "CapTech",
+        "careers_url": "https://smartrecruiters.com/careers",
+        "notes": "Richmond - Virginia - 1100 employees - Needs manual review | ATS URL found: https://join.smartrecruiters.com/ - retry needed",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Hitachi Solutions",
+        "careers_url": "https://global.hitachi-solutions.com/careers/",
+        "notes": "Greenville SC office - SmartRecruiters - 25 jobs",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Nagarro Digital Ventures",
+        "careers_url": "https://www.nagarro.com/en/careers/job-search",
+        "notes": "SmartRecruiters backend - custom page with dynamic rendering - AI extraction recommended",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      }
+    ],
+    "taleo": [
+      {
+        "company_name": "Apex IT",
+        "careers_url": "https://phe.tbe.taleo.net/phe01/ats/careers/v2/jobSearch?act=redirectCwsV2&cws=37&org=HKFQUN",
+        "notes": "Denver - Colorado - 320 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      }
+    ],
+    "workable": [
+      {
+        "company_name": "360 Degree Cloud",
+        "careers_url": "https://apply.workable.com/360degreecloud",
+        "notes": "Los Angeles - California - 650 employees - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "4CAD Group",
+        "careers_url": "https://apply.workable.com/4cadgroup",
+        "notes": "Bouguenais - Pays de la Loire - 600 employees -  - International - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Accelirate Inc.",
+        "careers_url": "https://apply.workable.com/accelirate",
+        "notes": "Sunrise - Florida - 510 employees - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Accellor",
+        "careers_url": "https://apply.workable.com/accellor",
+        "notes": "Fremont - California - 280 employees - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Aceolution",
+        "careers_url": "https://apply.workable.com/aceolution",
+        "notes": "Franklin Township - New Jersey - 320 employees - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Akraya, Inc.",
+        "careers_url": "https://apply.workable.com/akraya",
+        "notes": "San Francisco - California - 350 employees - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Alcumus",
+        "careers_url": "https://apply.workable.com/alcumus",
+        "notes": "Nantgarw - Wales - 520 employees -  - International - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Algoworks",
+        "careers_url": "https://apply.workable.com/algoworks",
+        "notes": "Ramsey - New Jersey - 630 employees - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Alpha Omega",
+        "careers_url": "https://apply.workable.com/alpha-omega",
+        "notes": "Vienna - Virginia - 580 employees - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Awesome Motive",
+        "careers_url": "https://apply.workable.com/awesomemotive/",
+        "notes": "Workable ATS - also embedded on awesomemotive.com/careers/",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Bloomfire",
+        "careers_url": "https://apply.workable.com/bloomfire/?lng=en",
+        "notes": "Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Booksy",
+        "careers_url": "https://apply.workable.com/booksy-1/",
+        "notes": "Poland - New York - 630 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "CDR Companies",
+        "careers_url": "https://apply.workable.com/cdr-companies/",
+        "notes": "Miami - Florida - 400 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "ChartMogul",
+        "careers_url": "https://apply.workable.com/chartmogul/",
+        "notes": "Workable ATS - chartmogul.com/jobs/ currently shows no openings",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Common-Unite",
+        "careers_url": "https://apply.workable.com/happyday/?lng=en",
+        "notes": "Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "CoreSite",
+        "careers_url": "https://apply.workable.com/coresite/",
+        "notes": "Denver - Colorado - 670 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "CoverGo",
+        "careers_url": "https://apply.workable.com/covergo/",
+        "notes": "Workable ATS - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "D-ploy GmbH",
+        "careers_url": "https://apply.workable.com/d-ploy/",
+        "notes": "Kaiseraugst - Aargau - 550 employees - No careers page found - International",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "DVI Solutions Asia",
+        "careers_url": "https://apply.workable.com/dvi-solution/",
+        "notes": "Singapore - 220 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "E-Solutions",
+        "careers_url": "https://apply.workable.com/e-solutions",
+        "notes": "San Jose - California - 1900 employees - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Expereo",
+        "careers_url": "https://apply.workable.com/expereo/",
+        "notes": "Amsterdam - Noord-Holland - 480 employees - Needs manual review - International",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Float",
+        "careers_url": "https://apply.workable.com/floatjobs/",
+        "notes": "Workable ATS - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Foodics",
+        "careers_url": "https://apply.workable.com/foodics/",
+        "notes": "Riyadh - Riyadh Province - 670 employees - Needs manual review - International",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Leadfeeder",
+        "careers_url": "https://apply.workable.com/dealfront/",
+        "notes": "Workable (Dealfront) - Leadfeeder acquired by Dealfront",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Methods",
+        "careers_url": "https://apply.workable.com/methods/?lng=en",
+        "notes": "London - England - 490 employees - Needs manual review - International",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Mindex",
+        "careers_url": "https://apply.workable.com/mindex/",
+        "notes": "Rochester - New York - 260 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Photobooth Supply Co",
+        "careers_url": "https://apply.workable.com/photoboothsuppplyco/",
+        "notes": "Workable ATS - note triple-p typo in subdomain is intentional",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Podia",
+        "careers_url": "https://apply.workable.com/podia/",
+        "notes": "Workable ATS - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Sierra Interactive",
+        "careers_url": "https://apply.workable.com/sierra-interactive/",
+        "notes": "Workable ATS - JS-rendered listings",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Stack Builders",
+        "careers_url": "https://apply.workable.com/stackbuilders/",
+        "notes": "Workable ATS - JS-rendered listings",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Teknei",
+        "careers_url": "https://apply.workable.com/teknei",
+        "notes": "Bilbao - Basque Country - 960 employees -  - International - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Teqfocus",
+        "careers_url": "https://apply.workable.com/teqfocus",
+        "notes": "Sacramento - California - 210 employees - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Trifecta Retail Ventures",
+        "careers_url": "https://apply.workable.com/trv/",
+        "notes": "Workable ATS (DealDash parent) - JS-rendered listings",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Whitespectre",
+        "careers_url": "https://apply.workable.com/whitespectre/",
+        "notes": "Workable ATS - also embedded on whitespectre.com/careers/",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Wordwall",
+        "careers_url": "https://apply.workable.com/wordwall/",
+        "notes": "Workable ATS - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "algoleap",
+        "careers_url": "https://apply.workable.com/algoleap",
+        "notes": "Hyderabad - Telangana - 520 employees -  - International - Workable ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "komoot",
+        "careers_url": "https://apply.workable.com/komoot/",
+        "notes": "Workable - standard selectors",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      }
+    ],
+    "workday": [
+      {
+        "company_name": "Abbott Laboratories",
+        "careers_url": "https://www.jobs.abbott/us/en/search-results?keywords=salesforce&location=South%20Carolina",
+        "notes": "Liberty SC - Medical devices - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Acronis",
+        "careers_url": "https://services1.wd502.myworkday.com",
+        "notes": "Schaffhausen - Schaffhausen - 2000 employees - Needs manual review - International | ATS URL found: https://services1.wd502.myworkday.com - retry needed",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Atlantic Technologies",
+        "careers_url": "https://eng.wd3.myworkdayjobs.com/it-IT/ExternalCareers",
+        "notes": "Milano - Lombardia - 310 employees - Needs manual review - International",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Azuga, Inc.",
+        "careers_url": "https://bridgestone.wd5.myworkdayjobs.com/external",
+        "notes": "San Jose - California - 1100 employees - Needs manual review | ATS URL found: https://bridgestone.wd5.myworkdayjobs.com/external - retry needed",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Bausch + Lomb",
+        "careers_url": "https://careers.bausch.com/search/?q=salesforce&locationsearch=Greenville",
+        "notes": "Greenville SC - Workday ATS - DNS not resolving",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "BorgWarner Inc",
+        "careers_url": "https://borgwarner.wd5.myworkdayjobs.com/BorgWarner_Careers?q=salesforce",
+        "notes": "Seneca SC - Auto parts mfg - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Buncombe County Service Foundation",
+        "careers_url": "https://buncombecounty.wd1.myworkdayjobs.com/Buncombe_County_Careers",
+        "notes": "Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Catalyte",
+        "careers_url": "https://catalyte.wd503.myworkdayjobs.com/catalyte",
+        "notes": "Baltimore - Maryland - 270 employees - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Comscore, Inc.",
+        "careers_url": "https://comscore.wd5.myworkdayjobs.com/en-US/External",
+        "notes": "Reston - Virginia - 1200 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Drake Software",
+        "careers_url": "https://taxwell.wd1.myworkdayjobs.com/taxwell",
+        "notes": "Franklin NC / Greenville - Tax software - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Duck Creek Technologies",
+        "careers_url": "https://duckcreek.wd1.myworkdayjobs.com/en-US/duckcreekcareers",
+        "notes": "Boston - Massachusetts - 1900 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.668Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "EROAD",
+        "careers_url": "https://eroadgroup.wd3.myworkdayjobs.com/en-US/EROAD",
+        "notes": "Auckland - Auckland - 540 employees - Needs manual review - International | ATS URL found: https://eroadgroup.wd3.myworkdayjobs.com/en-US/EROAD - retry needed",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Ensora Health",
+        "careers_url": "https://therapybrands.wd1.myworkdayjobs.com/EnsoraHealth",
+        "notes": "Greenville SC - Formerly Fusion Web Clinic - Healthcare SaaS - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "FUJIFILM Manufacturing USA",
+        "careers_url": "https://fujifilm.wd3.myworkdayjobs.com/FUJIFILM_Careers?q=salesforce",
+        "notes": "Greenwood SC - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Flex",
+        "careers_url": "https://flextronics.wd1.myworkdayjobs.com/Careers?q=salesforce&locations=West+Columbia",
+        "notes": "West Columbia SC - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Follow Up Boss",
+        "careers_url": "https://zillow.wd5.myworkdayjobs.com/Zillow_Group_External?q=%22Follow%20Up%20Boss%22",
+        "notes": "Workday (Zillow Group parent) - JS-rendered - AI extraction recommended",
+        "date_flagged": "2026-06-10T19:45:49.621Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Furman University",
+        "careers_url": "https://furman.wd5.myworkdayjobs.com/Furman_Careers",
+        "notes": "Greenville SC - Higher education - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Highpoint Univeristy",
+        "careers_url": "https://highpoint.wd1.myworkdayjobs.com/HighPoint",
+        "notes": "No careers page found",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "InterDigital, Inc.",
+        "careers_url": "https://interdigital.wd5.myworkdayjobs.com/InterDigital_Career",
+        "notes": "Wilmington - Delaware - 430 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Itron Inc",
+        "careers_url": "https://itron.wd5.myworkdayjobs.com/Itron_Careers?q=salesforce",
+        "notes": "West Union SC - Energy tech - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Johnson Controls",
+        "careers_url": "https://jobs.johnsoncontrols.com/search/?q=salesforce&locationsearch=South+Carolina",
+        "notes": "West Union SC - Fortune 500 - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Kimberly-Clark",
+        "careers_url": "https://www.kimberly-clark.com/en-us/careers/search-jobs?q=salesforce&location=South+Carolina",
+        "notes": "Beech Island SC - Fortune 500 - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Lytx, Inc.",
+        "careers_url": "https://lytx.wd1.myworkdayjobs.com/Lytx",
+        "notes": "San Diego - California - 820 employees - Needs manual review",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Maple Street Biscuit",
+        "careers_url": "https://cbrlgroup.wd5.myworkdayjobs.com/MapleStreetExternal",
+        "notes": "Greenville SC - 440 emp - Restaurant (Cracker Barrel) - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "MedCerts",
+        "careers_url": "https://strideinc.wd1.myworkdayjobs.com/MC",
+        "notes": "Needs AI extraction - none",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "National University",
+        "careers_url": "https://nus.wd1.myworkdayjobs.com/en-US/Careers",
+        "notes": "Needs AI extraction - error - Navigation timeout of 20000 ms exceeded",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "North Carolina School for the Deaf",
+        "careers_url": "https://nc.wd108.myworkdayjobs.com/NC_Careers?hiringCompany=4c5533ba0a02100160ee4aeb0cfb0000",
+        "notes": "Career",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "OOBE",
+        "careers_url": "https://workwear.wd503.myworkdayjobs.com/Careers",
+        "notes": "Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.697Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Resurgent Capital",
+        "careers_url": "https://resurgent.wd1.myworkdayjobs.com/en-US/Resurgent",
+        "notes": "Greenville SC - Financial services - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Servicetitan",
+        "careers_url": "https://servicetitan.wd1.myworkdayjobs.com/ServiceTitan",
+        "notes": "Glendale CA - Field service SaaS - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Sharecare",
+        "careers_url": "https://sharecare.wd1.myworkdayjobs.com/Sharecare_Careers",
+        "notes": "Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Sulzer USA",
+        "careers_url": "https://sulzer.wd502.myworkdayjobs.com/SulzerJobs",
+        "notes": "Greenville SC - Industrial mfg - Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      },
+      {
+        "company_name": "Wofford College",
+        "careers_url": "https://wofford.wd5.myworkdayjobs.com/Wofford",
+        "notes": "Workday ATS",
+        "date_flagged": "2026-06-10T19:45:50.730Z",
+        "source": "csv_import"
+      }
+    ]
+  }
+}

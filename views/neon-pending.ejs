@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Career Future — Pending Review</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    .nav-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .nav-bar a { font-size: 0.85rem; padding: 0.4rem 0.8rem; }
+    .company-row { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: start; padding: 0.9rem 1rem; border: 1px solid var(--pico-muted-border-color); border-radius: 8px; margin-bottom: 0.6rem; }
+    .company-row.approved { border-left: 4px solid #2ecc71; opacity: 0.6; }
+    .company-row.skipped  { border-left: 4px solid #e74c3c; opacity: 0.5; }
+    .co-name { font-weight: 600; margin: 0 0 0.2rem; }
+    .co-meta { font-size: 0.8rem; color: var(--pico-muted-color); margin: 0.15rem 0; }
+    .co-url  { font-size: 0.78rem; word-break: break-all; }
+    .co-actions { display: flex; flex-direction: column; gap: 6px; min-width: 100px; }
+    .co-actions button { font-size: 0.8rem; padding: 0.35rem 0.7rem; margin: 0; white-space: nowrap; }
+    .source-tag { font-size: 0.72rem; padding: 0.1rem 0.4rem; border-radius: 3px; background: var(--pico-muted-border-color); }
+    .pagination { display: flex; gap: 8px; justify-content: center; margin-top: 1.5rem; }
+    .progress-note { background: var(--pico-card-background-color); border: 1px solid var(--pico-muted-border-color); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+<main class="container">
+  <h1>Pending Review</h1>
+
+  <nav class="nav-bar">
+    <a href="/" role="button" class="outline">Job Postings</a>
+    <a href="/pending-review" role="button" class="outline contrast">Pending Review</a>
+    <a href="/ats-blocked" role="button" class="outline">ATS Blocked</a>
+    <a href="/scrape-status" role="button" class="outline">Scrape Status</a>
+  </nav>
+
+  <div class="progress-note">
+    <strong><%= total %> companies</strong> need selector verification before they can be scraped.
+    <strong>Approve</strong> to mark as active (will be scraped next run).
+    <strong>Skip</strong> to disable permanently.
+    Page <%= page %> of <%= pages %>.
+  </div>
+
+  <% if (companies.length === 0) { %>
+    <p>🎉 All companies have been reviewed!</p>
+  <% } %>
+
+  <% companies.forEach(co => { %>
+    <div class="company-row" id="row-<%= co.id %>">
+      <div>
+        <p class="co-name">
+          <%= co.company_name %>
+          <span class="source-tag"><%= co.source %></span>
+          <% if (co.hq_state) { %><span class="source-tag" style="background:#1a3a1a;color:#7fbf7f"><%= co.hq_state %></span><% } %>
+        </p>
+        <p class="co-url">
+          <a href="<%= co.careers_url %>" target="_blank"><%= co.careers_url %></a>
+        </p>
+        <% if (co.notes) { %>
+          <p class="co-meta"><%= co.notes %></p>
+        <% } %>
+        <% if (co.job_card_selector) { %>
+          <p class="co-meta" style="font-family:monospace; font-size:0.75rem;">
+            card: <code><%= co.job_card_selector %></code>
+            <% if (co.title_selector) { %> | title: <code><%= co.title_selector %></code><% } %>
+          </p>
+        <% } %>
+      </div>
+      <div class="co-actions">
+        <button onclick="approve(<%= co.id %>)" id="approve-<%= co.id %>">✅ Approve</button>
+        <button class="outline secondary" onclick="skip(<%= co.id %>)" id="skip-<%= co.id %>">⬜ Skip</button>
+      </div>
+    </div>
+  <% }) %>
+
+  <div class="pagination">
+    <% if (page > 1) { %>
+      <a href="/pending-review?page=<%= page - 1 %>" role="button" class="outline">← Prev</a>
+    <% } %>
+    <span style="align-self:center; color:var(--pico-muted-color); font-size:0.85rem;">
+      Page <%= page %> / <%= pages %>
+    </span>
+    <% if (page < pages) { %>
+      <a href="/pending-review?page=<%= page + 1 %>" role="button" class="outline">Next →</a>
+    <% } %>
+  </div>
+
+</main>
+
+<script>
+async function approve(id) {
+  const btn = document.getElementById(`approve-${id}`);
+  btn.setAttribute('aria-busy', 'true');
+  btn.setAttribute('disabled', true);
+  const res = await fetch(`/api/approve/${id}`, { method: 'POST' });
+  if (res.ok) {
+    document.getElementById(`row-${id}`).classList.add('approved');
+    btn.textContent = '✅ Approved';
+    document.getElementById(`skip-${id}`).setAttribute('disabled', true);
+  }
+}
+
+async function skip(id) {
+  const btn = document.getElementById(`skip-${id}`);
+  btn.setAttribute('aria-busy', 'true');
+  btn.setAttribute('disabled', true);
+  const res = await fetch(`/api/skip/${id}`, { method: 'POST' });
+  if (res.ok) {
+    document.getElementById(`row-${id}`).classList.add('skipped');
+    btn.textContent = '⬜ Skipped';
+    document.getElementById(`approve-${id}`).setAttribute('disabled', true);
+  }
+}
+</script>
+</body>
+</html>

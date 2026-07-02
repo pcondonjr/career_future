@@ -1,6 +1,6 @@
 {
-  "searchValue": "Salesforce Product Owner",
-  "matchMode": "exact",
+  "searchValue": "Salesforce",
+  "matchMode": "contains",
   "runName": "Daily Companies",
-  "timestamp": "2026-03-26T14:07:19.533Z"
+  "timestamp": "2026-06-29T12:50:20.724Z"
 }

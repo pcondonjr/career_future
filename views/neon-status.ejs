@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Career Future — Scrape Status</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <style>
+    .nav-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .nav-bar a { font-size: 0.85rem; padding: 0.4rem 0.8rem; }
+    .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 2rem; }
+    .status-card { background: var(--pico-card-background-color); border: 1px solid var(--pico-muted-border-color); border-radius: 8px; padding: 0.75rem 1rem; }
+    .status-card .num { font-size: 1.6rem; font-weight: 700; color: #4361ee; }
+    .status-card .lbl { font-size: 0.78rem; color: var(--pico-muted-color); }
+    .status-card .sublbl { font-size: 0.72rem; color: var(--pico-muted-color); margin-top: 0.2rem; }
+    .recent-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .recent-table th { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 2px solid var(--pico-muted-border-color); color: var(--pico-muted-color); }
+    .recent-table td { padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--pico-muted-border-color); }
+    .status-pill { font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 3px; font-weight: 600; }
+    .pill-active   { background: #d4edda; color: #155724; }
+    .pill-error    { background: #f8d7da; color: #721c24; }
+    .pill-js       { background: #fff3cd; color: #856404; }
+    .pill-dead     { background: #f8d7da; color: #721c24; }
+    .pill-other    { background: var(--pico-muted-border-color); color: var(--pico-color); }
+    .run-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+<main class="container">
+  <h1>Scrape Status</h1>
+
+  <nav class="nav-bar">
+    <a href="/" role="button" class="outline">Job Postings</a>
+    <a href="/pending-review" role="button" class="outline">Pending Review</a>
+    <a href="/ats-blocked" role="button" class="outline">ATS Blocked</a>
+    <a href="/scrape-status" role="button" class="outline contrast">Scrape Status</a>
+  </nav>
+
+  <%
+    // Aggregate status totals across sources
+    const totals = {};
+    statusBreakdown.forEach(r => {
+      if (!totals[r.scrape_status]) totals[r.scrape_status] = { curated: 0, weekly: 0 };
+      totals[r.scrape_status][r.source] = parseInt(r.count);
+    });
+    const allStatuses = Object.keys(totals);
+  %>
+
+  <div class="status-grid">
+    <% allStatuses.forEach(status => { %>
+      <div class="status-card">
+        <div class="num"><%= (totals[status].curated || 0) + (totals[status].weekly || 0) %></div>
+        <div class="lbl"><%= status.replace(/_/g, ' ') %></div>
+        <div class="sublbl">
+          curated: <%= totals[status].curated || 0 %> &nbsp;|&nbsp; weekly: <%= totals[status].weekly || 0 %>
+        </div>
+      </div>
+    <% }) %>
+    <div class="status-card">
+      <div class="num"><%= neverScraped %></div>
+      <div class="lbl">active, never scraped</div>
+      <div class="sublbl">queued for next run</div>
+    </div>
+  </div>
+
+  <div class="run-bar">
+    <button id="run-btn" class="outline" onclick="runScraper()">Run Scraper Now</button>
+    <span id="scraper-status" style="font-size:0.85rem; color:var(--pico-muted-color);">
+      <%= scraperRunning ? '⏳ Scraper running...' : '' %>
+    </span>
+  </div>
+
+  <h3>Recently Scraped (last 50)</h3>
+  <table class="recent-table">
+    <thead>
+      <tr>
+        <th>Company</th>
+        <th>Status</th>
+        <th>Source</th>
+        <th>Last Scraped</th>
+        <th>Last Job Found</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% recentlyScrapped.forEach(co => { %>
+        <tr>
+          <td>
+            <a href="<%= co.careers_url %>" target="_blank" style="text-decoration:none; color:inherit;">
+              <%= co.company_name %>
+            </a>
+          </td>
+          <td>
+            <%
+              let pillClass = 'pill-other';
+              if (co.scrape_status === 'active')      pillClass = 'pill-active';
+              else if (co.scrape_status === 'error')  pillClass = 'pill-error';
+              else if (co.scrape_status === 'js_required') pillClass = 'pill-js';
+              else if (co.scrape_status === 'no_careers')  pillClass = 'pill-dead';
+            %>
+            <span class="status-pill <%= pillClass %>"><%= co.scrape_status %></span>
+          </td>
+          <td style="font-size:0.78rem; color:var(--pico-muted-color);"><%= co.source %></td>
+          <td style="font-size:0.78rem;">
+            <%= co.last_scraped ? new Date(co.last_scraped).toLocaleDateString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : '—' %>
+          </td>
+          <td style="font-size:0.78rem;">
+            <%= co.last_job_found ? new Date(co.last_job_found).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—' %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+</main>
+
+<script>
+async function runScraper() {
+  const btn    = document.getElementById('run-btn');
+  const status = document.getElementById('scraper-status');
+  btn.setAttribute('disabled', true);
+  btn.setAttribute('aria-busy', 'true');
+  const res  = await fetch('/api/run-scraper', { method: 'POST' });
+  const data = await res.json();
+  status.textContent = res.ok ? '⏳ Scraper running...' : '⚠️ ' + (data.error || 'Error');
+  if (res.ok) {
+    const poll = setInterval(async () => {
+      const s = await fetch('/api/scraper-status').then(r => r.json());
+      if (!s.running) { clearInterval(poll); window.location.reload(); }
+    }, 5000);
+  }
+}
+<% if (scraperRunning) { %>
+const poll = setInterval(async () => {
+  const s = await fetch('/api/scraper-status').then(r => r.json());
+  if (!s.running) { clearInterval(poll); window.location.reload(); }
+}, 5000);
+<% } %>
+</script>
+</body>
+</html>
