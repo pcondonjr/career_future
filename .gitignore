@@ -13,3 +13,4 @@ release/
 docs/ADMIN_GUIDE.md
 files_apify/
 **/compan*.csv
+.claude-results-processed.json
