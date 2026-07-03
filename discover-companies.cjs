@@ -15,6 +15,13 @@
  *   node discover-companies.cjs --dry-run    # preview only, no DB writes
  *   node discover-companies.cjs --sample 5  # stop after 5 validated inserts
  *   node discover-companies.cjs --queries 3 # use first N query groups only
+ *   node discover-companies.cjs --rescan-days 30 # re-check domains older than N days (default 30)
+ *
+ * Every candidate domain — accepted OR rejected — is recorded in the
+ * discovery_seen table (see db/migrate.cjs) so a domain that keeps
+ * resurfacing from the same Serper query doesn't burn a Firecrawl scrape +
+ * Haiku call on every single run. Domains "age out" of the ledger after
+ * --rescan-days so a company that later becomes relevant can still be found.
  *
  * Env: CAREER_NEON_URL (or DATABASE_URL), SERPER_API_KEY, FIRECRAWL_API_KEY, ANTHROPIC_API_KEY
  */
@@ -40,6 +47,7 @@ function getArg(name) {
 const DRY_RUN    = process.argv.includes('--dry-run');
 const SAMPLE     = parseInt(getArg('sample')  || '0') || 0;
 const MAX_QUERIES = parseInt(getArg('queries') || '0') || 0;
+const RESCAN_DAYS = parseInt(getArg('rescan-days') || '0') || 30;
 
 const DELAY_MS           = 2500;  // between Firecrawl calls
 const SERPER_DELAY_MS    = 1500;  // between Serper pages
@@ -161,6 +169,26 @@ async function loadExistingDomains() {
     if (d) domains.add(d);
   }
   return domains;
+}
+
+// Domains already scraped+validated (accepted OR rejected) within the rescan
+// window — skips re-spending Firecrawl/Haiku on a candidate that keeps
+// resurfacing from the same Serper query every run.
+async function loadSeenDomains(maxAgeDays) {
+  const { rows } = await pool.query(`
+    SELECT domain, verdict, reason FROM discovery_seen
+    WHERE checked_at > NOW() - INTERVAL '1 day' * $1
+  `, [maxAgeDays]);
+  return new Map(rows.map(r => [r.domain, r]));
+}
+
+async function markDomainSeen(domain, verdict, reason) {
+  if (DRY_RUN) return;
+  await pool.query(`
+    INSERT INTO discovery_seen (domain, checked_at, verdict, reason)
+    VALUES ($1, NOW(), $2, $3)
+    ON CONFLICT (domain) DO UPDATE SET checked_at = NOW(), verdict = EXCLUDED.verdict, reason = EXCLUDED.reason
+  `, [domain, verdict, reason || null]);
 }
 
 async function insertCompany({ company_name, careers_url, hq_city, hq_state, reason }) {
@@ -355,7 +383,9 @@ async function main() {
   // Load existing data to avoid duplicates
   const existingNames   = await loadExistingNames();
   const existingDomains = await loadExistingDomains();
-  console.log(`Existing DB: ${existingNames.size} companies, ${existingDomains.size} unique domains\n`);
+  const discoverySeen   = await loadSeenDomains(RESCAN_DAYS);
+  console.log(`Existing DB: ${existingNames.size} companies, ${existingDomains.size} unique domains`);
+  console.log(`Discovery ledger: ${discoverySeen.size} domains checked within the last ${RESCAN_DAYS} days\n`);
 
   // Shared seen-domains set (existing + discovered this run)
   const seenDomains = new Set(existingDomains);
@@ -367,13 +397,14 @@ async function main() {
   console.log(`${'─'.repeat(55)}\n`);
 
   const candidates = []; // { link, domain, queryId, snippet }
+  let totalLedgerSkipped = 0;
 
   for (const q of queries) {
     console.log(`[${q.id}]`);
     const results = await searchSerper(q.query);
     console.log(`  ${results.length} results from Serper`);
 
-    let added = 0, atsSkipped = 0;
+    let added = 0, atsSkipped = 0, ledgerSkipped = 0;
 
     for (const item of results) {
       const link = item.link;
@@ -384,12 +415,15 @@ async function main() {
       const domain = extractDomain(link);
       if (!domain || seenDomains.has(domain)) continue;
 
+      if (discoverySeen.has(domain)) { ledgerSkipped++; continue; }
+
       seenDomains.add(domain);
       candidates.push({ link, domain, queryId: q.id, snippet: item.snippet || '' });
       added++;
     }
 
-    console.log(`  → ${added} new candidate domains (${atsSkipped} ATS/board results skipped)`);
+    totalLedgerSkipped += ledgerSkipped;
+    console.log(`  → ${added} new candidate domains (${atsSkipped} ATS/board skipped, ${ledgerSkipped} already checked recently)`);
     await sleep(SERPER_DELAY_MS);
   }
 
@@ -425,12 +459,14 @@ async function main() {
         } catch (err2) {
           console.log(`  SKIP (both URLs failed): ${err2.message.slice(0, 70)}`);
           scrapeFailures++;
+          await markDomainSeen(domain, 'rejected_scrape_failed', err2.message.slice(0, 200));
           await sleep(DELAY_MS);
           continue;
         }
       } else {
         console.log(`  SKIP (scrape failed): ${err.message.slice(0, 70)}`);
         scrapeFailures++;
+        await markDomainSeen(domain, 'rejected_scrape_failed', err.message.slice(0, 200));
         await sleep(DELAY_MS);
         continue;
       }
@@ -447,12 +483,14 @@ async function main() {
     // Filter checks
     if (result.confidence === 'failed') {
       parseFailures++;
+      await markDomainSeen(domain, 'rejected_parse_failed', result.reason);
       await sleep(DELAY_MS);
       continue;
     }
 
     if (!result.salesforce_relevant) {
       skippedNotSF++;
+      await markDomainSeen(domain, 'rejected_not_salesforce', result.reason);
       await sleep(DELAY_MS);
       continue;
     }
@@ -460,6 +498,7 @@ async function main() {
     if (!result.hq_state || !EST_STATES.has(result.hq_state.toLowerCase())) {
       console.log(`  SKIP (not EST: ${stateLabel})`);
       skippedNotEST++;
+      await markDomainSeen(domain, 'rejected_not_est', `hq_state=${stateLabel}`);
       await sleep(DELAY_MS);
       continue;
     }
@@ -467,6 +506,7 @@ async function main() {
     if (!result.company_name) {
       console.log(`  SKIP (company name unknown)`);
       parseFailures++;
+      await markDomainSeen(domain, 'rejected_parse_failed', 'company name unknown');
       await sleep(DELAY_MS);
       continue;
     }
@@ -474,6 +514,7 @@ async function main() {
     // Name dedup (Haiku may have normalized the name differently from the domain)
     if (existingNames.has(result.company_name.toLowerCase())) {
       console.log(`  SKIP (already in DB as "${result.company_name}")`);
+      await markDomainSeen(domain, 'rejected_duplicate_name', `matches existing "${result.company_name}"`);
       await sleep(DELAY_MS);
       continue;
     }
@@ -491,8 +532,10 @@ async function main() {
       console.log(`  ✅ ADDED: ${result.company_name} (${result.hq_city || '?'}, ${result.hq_state})`);
       existingNames.add(result.company_name.toLowerCase());
       inserted++;
+      await markDomainSeen(domain, 'inserted', result.company_name);
     } else {
       console.log(`  ⚠️  Duplicate (ON CONFLICT DO NOTHING)`);
+      await markDomainSeen(domain, 'rejected_duplicate_name', `ON CONFLICT: "${result.company_name}"`);
     }
 
     await sleep(DELAY_MS);
@@ -508,6 +551,7 @@ async function main() {
   console.log(`  Skipped (no Salesforce): ${skippedNotSF}`);
   console.log(`  Scrape failures:         ${scrapeFailures}`);
   console.log(`  Parse/confidence fails:  ${parseFailures}`);
+  console.log(`  Skipped (seen <${RESCAN_DAYS}d ago): ${totalLedgerSkipped}`);
   printCostEstimate(candidates.length);
   console.log(`${'='.repeat(55)}\n`);
 

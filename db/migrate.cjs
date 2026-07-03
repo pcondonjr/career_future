@@ -137,6 +137,15 @@ const DDL = `
 
   CREATE INDEX IF NOT EXISTS idx_claude_search_seen_checked ON claude_search_seen(checked_at);
 
+  CREATE TABLE IF NOT EXISTS discovery_seen (
+    domain      TEXT PRIMARY KEY,
+    checked_at  TIMESTAMPTZ DEFAULT NOW(),
+    verdict     TEXT NOT NULL,  -- 'inserted' | 'rejected_not_est' | 'rejected_not_salesforce' | 'rejected_scrape_failed' | 'rejected_parse_failed' | 'rejected_duplicate_name'
+    reason      TEXT
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_discovery_seen_checked ON discovery_seen(checked_at);
+
   CREATE TABLE IF NOT EXISTS ats_blocked (
     id            SERIAL PRIMARY KEY,
     company_name  TEXT NOT NULL UNIQUE,
