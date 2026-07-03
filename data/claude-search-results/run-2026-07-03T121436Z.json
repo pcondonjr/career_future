@@ -1,0 +1,17 @@
+[
+  {
+    "url": "https://careers.workwithflux.com/",
+    "verdict": "rejected_other",
+    "reason": "Flux Technologies (Greenville, SC) had a 'Junior Salesforce Administrator' posting referenced via an aggregator (career.com), but the company's own careers site (careers.workwithflux.com) and main site (flux.tech) both return HTTP 403 Forbidden to automated fetch tooling, so the posting could not be verified as currently live. The aggregator listing's URL slug is dated September 2024 (~2 years old as of this run), strongly suggesting it has expired."
+  },
+  {
+    "url": "https://www.panopto.com/careers/",
+    "verdict": "rejected_other",
+    "reason": "Panopto was mentioned in search results as hiring a 'Salesforce Administrator' for CPQ environment work, but panopto.com/careers returns HTTP 403 Forbidden to automated fetch tooling, so the posting's live status, exact title, and location/remote eligibility could not be verified."
+  },
+  {
+    "url": "https://careers.labcorp.com/global/en/search-results?keywords=Salesforce%20Administrator",
+    "verdict": "rejected_other",
+    "reason": "Labcorp was mentioned in search results as recruiting a 'Senior Salesforce Administrator' for a remote US position, but careers.labcorp.com returns HTTP 403 Forbidden to automated fetch tooling. Additionally, Labcorp's careers portal is typically Workday-powered, which is an excluded ATS aggregator platform under the sourcing rules even if it were accessible."
+  }
+]
