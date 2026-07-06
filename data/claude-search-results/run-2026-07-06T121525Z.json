@@ -1,0 +1,32 @@
+[
+  {
+    "url": "https://careers.tdsynnex.com/global/en/search-results?keywords=Salesforce%20Administrator",
+    "verdict": "rejected_other",
+    "reason": "TD SYNNEX (HQ Greenville, SC) has a 'Senior Salesforce Administrator' role in Greenville, SC referenced via aggregator sites (Ladders, ZipRecruiter), but the company's own careers portal returned HTTP 403 Forbidden to WebFetch, so it could not be verified as currently live. Note: WebFetch failed with 403 on every URL attempted this run, including control checks against https://example.com and https://www.anthropic.com, indicating the fetch tool itself was non-functional for this session rather than these sites specifically blocking automated access."
+  },
+  {
+    "url": "https://restaurant365.com/careers/",
+    "verdict": "rejected_other",
+    "reason": "Restaurant365 was reported (via up2staff.com aggregator) to have an open remote 'Salesforce Administrator' role, but both the aggregator page and the company's own careers page returned HTTP 403 Forbidden to WebFetch, so live status/details could not be verified. Same tool-wide 403 issue noted above."
+  },
+  {
+    "url": "https://www.eleos.health/careers",
+    "verdict": "rejected_wrong_role",
+    "reason": "Search results describe this as a 'Salesforce Administrator/Developer' hybrid role (per BuiltIn Boston listing), which mixes in Developer responsibilities and would not count as a pure Administrator role per this run's scope; additionally the company's own careers page returned HTTP 403 Forbidden to WebFetch so the exact title/location could not be independently confirmed."
+  },
+  {
+    "url": "https://www.idealist.org/en/business-job/75608192919b478eb80e7d5217a54ca5-virtual-salesforce-administrator-galaxy-digital-asheville",
+    "verdict": "rejected_wrong_location",
+    "reason": "Galaxy Digital's 'Virtual Salesforce Administrator' posting is based in Asheville, NC per the listing title, not remote-unrestricted or Greenville, SC; also both this niche board page and the company's own careers page (galaxydigital.com/careers) returned HTTP 403 Forbidden to WebFetch, so remote eligibility could not be independently confirmed."
+  },
+  {
+    "url": "https://www.scansource.com/careers/job-listings",
+    "verdict": "rejected_other",
+    "reason": "ScanSource (HQ Greenville, SC, heavy Salesforce user) careers page was checked as a candidate employer but returned HTTP 403 Forbidden to WebFetch before any specific Salesforce Administrator posting could be located or verified. Same tool-wide 403 issue noted above."
+  },
+  {
+    "url": "https://trailblazercommunitygroups.com/salesforce-admin-group-greenville-united-states/",
+    "verdict": "rejected_other",
+    "reason": "Checked as a potential source of direct company job links shared within the Greenville Salesforce Admin Trailblazer community group, but the page returned HTTP 403 Forbidden to WebFetch. Same tool-wide 403 issue noted above."
+  }
+]
