@@ -1,0 +1,37 @@
+[
+  {
+    "url": "https://jobs.apcinc.com/jb/Salesforce-Administrator-Jobs-in-Greenville-SC/11831080",
+    "verdict": "rejected_other",
+    "reason": "APC Inc (IT staffing recruiter) lists a Salesforce Administrator contract role, hybrid in Greenville, SC per search snippet, but the page returned HTTP 403 Forbidden to WebFetch, so live status could not be verified. Also this is a staffing-agency listing, not the hiring employer's own careers page."
+  },
+  {
+    "url": "https://careers.insidehighered.com/job/3475600/salesforce-administrator/",
+    "verdict": "rejected_other",
+    "reason": "Search snippet titled 'Salesforce Administrator - Greenville job with East Carolina University' -- likely Greenville, NC (ECU's home city) rather than Greenville, SC, which would make it wrong-location, but the page returned HTTP 403 Forbidden to WebFetch so this could not be confirmed either way."
+  },
+  {
+    "url": "https://www.remoterocketship.com/us/company/bloomerang/jobs/salesforce-administrator-united-states-remote/",
+    "verdict": "rejected_other",
+    "reason": "Aggregator listing pointing to a Bloomerang (nonprofit CRM company) remote Salesforce Administrator role in the United States, but the page returned HTTP 403 Forbidden to WebFetch, so the original/apply URL on Bloomerang's own site could not be extracted or verified."
+  },
+  {
+    "url": "https://bloomerang.co/careers/",
+    "verdict": "rejected_other",
+    "reason": "Attempted to check Bloomerang's own careers page directly for the Salesforce Administrator role referenced via remoterocketship.com, but it returned HTTP 403 Forbidden to WebFetch."
+  },
+  {
+    "url": "https://www.sbpusa.org/careers/",
+    "verdict": "rejected_other",
+    "reason": "SBP (disaster recovery nonprofit) was reported via search snippet to have a 'Senior Salesforce Administrator' opening, but their careers page returned HTTP 403 Forbidden to WebFetch, so it could not be verified."
+  },
+  {
+    "url": "https://www.vibrant.org/careers/",
+    "verdict": "rejected_other",
+    "reason": "Vibrant Emotional Health was reported via search snippet to have a Salesforce Administrator role for CRM/contact-center support, but their careers page returned HTTP 403 Forbidden to WebFetch, so it could not be verified."
+  },
+  {
+    "url": "https://www.centivo.com/careers/",
+    "verdict": "rejected_other",
+    "reason": "Centivo (health company) was reported via search snippet to have a 'Senior Salesforce Administrator' opening, but their careers page returned HTTP 403 Forbidden to WebFetch, so it could not be verified."
+  }
+]
