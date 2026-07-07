@@ -23,10 +23,15 @@
     "enrich:stats": "node scripts/enrich-companies.js --stats",
     "neon:scheduler": "node src/backend/neon-scheduler.cjs",
     "neon:run": "node src/backend/neon-scheduler.cjs --now",
+    "neon:discovery": "node src/backend/neon-scheduler.cjs --discovery",
     "neon:dashboard": "node neon-dashboard-server.cjs",
     "neon:match": "node src/backend/match-harness.cjs",
     "neon:match:dry": "node src/backend/match-harness.cjs --dry-run --batch 5",
-    "neon:import-legacy": "node scripts/import-legacy-jobs.cjs"
+    "neon:import-legacy": "node scripts/import-legacy-jobs.cjs",
+    "discover:press-releases": "node discover-press-releases.cjs",
+    "discover:press-releases:dry": "node discover-press-releases.cjs --dry-run",
+    "enrich:careers-url": "node enrich-careers-url.cjs",
+    "enrich:careers-url:dry": "node enrich-careers-url.cjs --dry-run"
   },
   "keywords": [
     "career",

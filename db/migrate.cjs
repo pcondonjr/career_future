@@ -140,7 +140,7 @@ const DDL = `
   CREATE TABLE IF NOT EXISTS discovery_seen (
     domain      TEXT PRIMARY KEY,
     checked_at  TIMESTAMPTZ DEFAULT NOW(),
-    verdict     TEXT NOT NULL,  -- 'inserted' | 'rejected_not_est' | 'rejected_not_salesforce' | 'rejected_scrape_failed' | 'rejected_parse_failed' | 'rejected_duplicate_name'
+    verdict     TEXT NOT NULL,  -- 'inserted' | 'rejected_not_est' | 'rejected_not_salesforce' | 'rejected_not_new_expansion' | 'rejected_scrape_failed' | 'rejected_parse_failed' | 'rejected_duplicate_name' | 'rejected_api_error'
     reason      TEXT
   );
 

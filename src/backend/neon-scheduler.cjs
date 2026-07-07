@@ -8,14 +8,16 @@
  * Schedule (Eastern Time):
  *   Weekdays 7:00 AM  — batch of 50 companies
  *   Weekdays 2:00 PM  — batch of 50 companies
+ *   Sunday   9:00 PM  — company discovery (career pages + press releases + careers-url enrichment)
  *
  * At this rate: 100 companies/day × 5 days = 500/week.
  * Full ~540 active companies cycle completes in ~5 days.
  *
  * Usage:
- *   node src/backend/neon-scheduler.cjs          -- start scheduler (blocks)
- *   node src/backend/neon-scheduler.cjs --now    -- run once immediately, then exit
- *   node src/backend/neon-scheduler.cjs --status -- show next scheduled runs
+ *   node src/backend/neon-scheduler.cjs             -- start scheduler (blocks)
+ *   node src/backend/neon-scheduler.cjs --now       -- run scrape once immediately, then exit
+ *   node src/backend/neon-scheduler.cjs --discovery -- run discovery pipeline once immediately, then exit
+ *   node src/backend/neon-scheduler.cjs --status    -- show next scheduled runs
  *
  * To run as a background process on Windows:
  *   Start-Process -WindowStyle Hidden node -ArgumentList "src/backend/neon-scheduler.cjs"
@@ -29,14 +31,21 @@
 'use strict';
 
 require('dotenv').config();
+const path = require('path');
+const { execFile } = require('child_process');
+const { promisify } = require('util');
+const execFileAsync = promisify(execFile);
 const cron = require('node-cron');
 const { run } = require('./direct-scraper.cjs');
 const { run: runMatchHarness } = require('./match-harness.cjs');
 
+const REPO_ROOT = path.join(__dirname, '..', '..');
+
 // ── Config ────────────────────────────────────────────────────────────────────
 
-const RUN_NOW  = process.argv.includes('--now');
-const STATUS   = process.argv.includes('--status');
+const RUN_NOW    = process.argv.includes('--now');
+const RUN_DISCOVERY_NOW = process.argv.includes('--discovery');
+const STATUS     = process.argv.includes('--status');
 const BATCH_OVERRIDE = parseInt(
   process.argv.find(a => a.startsWith('--batch'))?.split('=')[1]
   || (process.argv.indexOf('--batch') > -1
@@ -53,6 +62,15 @@ const AFTERNOON_CRON = '0 14 * * 1-5';
 // Match harness runs 30 min after each scrape, mirroring index.js's dork-search offset pattern
 const MATCH_MORNING_CRON   = '30 7  * * 1-5';
 const MATCH_AFTERNOON_CRON = '30 14 * * 1-5';
+
+// New-company discovery — Sunday 9pm ET. Weekly (not daily) because company
+// signals don't turn over as fast as job postings, which keeps Serper/
+// Firecrawl cost down. Deliberately clear of the weekday 7/7:30/14/14:30 ET
+// slots above so this never competes with those jobs for the same Anthropic
+// account's rate-limit budget at the same time — that's the real efficiency
+// gain here, not "off-peak" in the traditional low-server-load sense (the
+// Anthropic API's own rate limits are tier-based, not time-of-day based).
+const DISCOVERY_CRON = '0 21 * * 0';
 
 const TIMEZONE       = 'America/New_York';
 
@@ -103,6 +121,49 @@ async function runMatchWithGuard(label) {
   }
 }
 
+let isDiscoveryRunning = false;
+
+// Each discovery script runs as its own child process (not required
+// in-process like direct-scraper.cjs/match-harness.cjs above) because all
+// three call process.exit() on error — in-process that would kill this
+// whole long-running scheduler daemon, not just the one failed script.
+async function runDiscoveryScript(scriptName) {
+  const scriptPath = path.join(REPO_ROOT, scriptName);
+  try {
+    const { stdout } = await execFileAsync('node', [scriptPath], { cwd: REPO_ROOT, maxBuffer: 1024 * 1024 * 20 });
+    console.log(`[neon-scheduler] ${scriptName}:\n${stdout}`);
+  } catch (err) {
+    console.error(`[neon-scheduler] ${scriptName} failed: ${err.message}`);
+    if (err.stdout) console.log(`[neon-scheduler] ${scriptName} stdout before failure:\n${err.stdout}`);
+  }
+}
+
+async function runDiscoveryWithGuard(label) {
+  if (isDiscoveryRunning) {
+    console.log(`[neon-scheduler] ${label} — skipped, previous discovery run still in progress`);
+    return;
+  }
+
+  isDiscoveryRunning = true;
+  console.log(`\n[neon-scheduler] Starting ${label} — ${new Date().toLocaleString('en-US', { timeZone: TIMEZONE })} ET`);
+
+  try {
+    // Sequential, not parallel: enrich-careers-url.cjs depends on whatever
+    // discover-press-releases.cjs just inserted (null careers_url rows), and
+    // running one at a time keeps Anthropic/Serper/Firecrawl load spread out
+    // rather than tripling up on rate-limit usage at once. A failure in any
+    // one script (caught inside runDiscoveryScript) doesn't stop the next
+    // from running — each already writes its own results incrementally, so
+    // there's nothing to lose by continuing.
+    await runDiscoveryScript('discover-companies.cjs');
+    await runDiscoveryScript('discover-press-releases.cjs');
+    await runDiscoveryScript('enrich-careers-url.cjs');
+  } finally {
+    isDiscoveryRunning = false;
+    console.log(`[neon-scheduler] ${label} complete — ${new Date().toLocaleString('en-US', { timeZone: TIMEZONE })} ET\n`);
+  }
+}
+
 // ── Status mode ───────────────────────────────────────────────────────────────
 
 function showStatus() {
@@ -116,6 +177,8 @@ function showStatus() {
   console.log(`Scraper      : src/backend/direct-scraper.cjs`);
   console.log(`Match cron   : ${MATCH_MORNING_CRON} / ${MATCH_AFTERNOON_CRON}  (30 min after each scrape)`);
   console.log(`Match harness: src/backend/match-harness.cjs`);
+  console.log(`Discovery    : ${DISCOVERY_CRON}  (Sunday 9:00 PM ET, weekly)`);
+  console.log(`Discovery run: discover-companies.cjs -> discover-press-releases.cjs -> enrich-careers-url.cjs`);
   console.log('═'.repeat(40) + '\n');
 }
 
@@ -129,6 +192,10 @@ if (STATUS) {
 if (RUN_NOW) {
   // Run once immediately and exit
   runWithGuard('manual --now').then(() => process.exit(0));
+
+} else if (RUN_DISCOVERY_NOW) {
+  // Run the discovery pipeline once immediately and exit
+  runDiscoveryWithGuard('manual --discovery').then(() => process.exit(0));
 
 } else {
   // Start scheduler
@@ -151,14 +218,19 @@ if (RUN_NOW) {
     runMatchWithGuard('match harness — afternoon (2:30 PM ET)');
   }, { timezone: TIMEZONE });
 
+  const discoveryTask = cron.schedule(DISCOVERY_CRON, () => {
+    runDiscoveryWithGuard('company discovery (Sunday 9:00 PM ET)');
+  }, { timezone: TIMEZONE });
+
   console.log('✅ Scheduled:');
   console.log('   7:00 AM ET  Mon–Fri  (morning scrape batch)');
   console.log('   2:00 PM ET  Mon–Fri  (afternoon scrape batch)');
   console.log('   7:30 AM ET  Mon–Fri  (morning match harness)');
-  console.log('   2:30 PM ET  Mon–Fri  (afternoon match harness)\n');
+  console.log('   2:30 PM ET  Mon–Fri  (afternoon match harness)');
+  console.log('   9:00 PM ET  Sunday   (company discovery: career pages + press releases + careers-url enrichment)\n');
 
   // Graceful shutdown
-  const stopAll = () => { morningTask.stop(); afternoonTask.stop(); matchMorningTask.stop(); matchAfternoonTask.stop(); };
+  const stopAll = () => { morningTask.stop(); afternoonTask.stop(); matchMorningTask.stop(); matchAfternoonTask.stop(); discoveryTask.stop(); };
   process.on('SIGINT',  () => { stopAll(); console.log('\nScheduler stopped.'); process.exit(0); });
   process.on('SIGTERM', () => { stopAll(); process.exit(0); });
 }

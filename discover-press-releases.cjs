@@ -1,29 +1,34 @@
 /**
- * discover-companies.cjs
+ * discover-press-releases.cjs
  *
- * Discovers new companies likely to hire Salesforce talent by:
- *   1. Running Serper queries targeting company-owned career pages (no ATS)
- *   2. Using Firecrawl to render each candidate page
- *   3. Using Claude Haiku to validate: EST timezone + Salesforce relevance
- *   4. Inserting confirmed companies into Neon as scrape_status='pending_review'
+ * A second, earlier-signal discovery worker alongside discover-companies.cjs.
+ * Instead of finding companies already showing Salesforce hiring signals,
+ * this one finds companies BEFORE they hire — via economic-development
+ * press releases ("X Corp announces 200 new jobs in Greenville County").
+ * Confirmed new/expanding companies go into the same Neon `companies` table
+ * as scrape_status='pending_review', so direct-scraper.cjs starts watching
+ * their career page from day one.
  *
- * Intentionally skips ATS-hosted boards (Greenhouse, Lever, Workday, etc.) —
- * the goal is "hidden" postings on company-owned career pages only.
+ * Pipeline (mirrors discover-companies.cjs, shares its helpers):
+ *   1. Serper queries targeting county economic-development announcements
+ *   2. Firecrawl renders each candidate article
+ *   3. Claude Haiku validates: is this a genuine new/expanding company (not
+ *      generic county news)? Deliberately does NOT ask about Salesforce
+ *      relevance — that's unknowable from a press release and is instead
+ *      left to the normal triage.cjs step once/if the company posts a job.
+ *   4. Confirmed companies inserted into Neon as scrape_status='pending_review'
+ *
+ * Shares the discovery_seen ledger with discover-companies.cjs — a domain
+ * either worker has already checked recently won't get re-scraped by the
+ * other one either.
  *
  * Usage:
- *   node discover-companies.cjs              # run all 8 query groups
- *   node discover-companies.cjs --dry-run    # preview only, no DB writes
- *   node discover-companies.cjs --sample 5  # stop after 5 validated inserts
- *   node discover-companies.cjs --queries 3 # use first N query groups only
- *   node discover-companies.cjs --rescan-days 30 # re-check domains older than N days (default 30)
- *   node discover-companies.cjs --no-email  # skip the end-of-run digest email
- *
- * Every candidate domain — accepted OR rejected — is recorded in the
- * discovery_seen table (see db/migrate.cjs) so a domain that keeps
- * resurfacing from the same Serper query doesn't burn a Firecrawl scrape +
- * Haiku call on every single run. Domains "age out" of the ledger after
- * --rescan-days so a company that later becomes relevant can still be found.
- * This ledger is shared with discover-press-releases.cjs.
+ *   node discover-press-releases.cjs                # run all query groups
+ *   node discover-press-releases.cjs --dry-run       # preview only, no DB writes
+ *   node discover-press-releases.cjs --sample 5      # stop after 5 validated inserts
+ *   node discover-press-releases.cjs --queries 2     # use first N query groups only
+ *   node discover-press-releases.cjs --rescan-days 30 # re-check domains older than N days (default 30)
+ *   node discover-press-releases.cjs --no-email      # skip the end-of-run digest email
  *
  * Env: CAREER_NEON_URL (or DATABASE_URL), SERPER_API_KEY, FIRECRAWL_API_KEY, ANTHROPIC_API_KEY
  */
@@ -34,9 +39,8 @@ require('dotenv').config();
 const { Pool }      = require('pg');
 const { Firecrawl } = require('@mendable/firecrawl-js');
 const Anthropic     = require('@anthropic-ai/sdk');
-const { BLOCKED_DOMAINS } = require('./src/backend/blocked-domains.cjs');
 const {
-  EST_STATES, sleep, extractDomain, isATSDomain, buildCareersUrl, searchSerper, scrapeWithFirecrawl,
+  EST_STATES, sleep, extractDomain, searchSerper, scrapeWithFirecrawl,
   loadExistingNames, loadExistingDomains, loadSeenDomains, markDomainSeen, insertCompany,
   sendDigestEmail,
 } = require('./src/backend/discovery-shared.cjs');
@@ -51,9 +55,9 @@ function getArg(name) {
   return null;
 }
 
-const DRY_RUN    = process.argv.includes('--dry-run');
-const NO_EMAIL   = process.argv.includes('--no-email');
-const SAMPLE     = parseInt(getArg('sample')  || '0') || 0;
+const DRY_RUN     = process.argv.includes('--dry-run');
+const NO_EMAIL    = process.argv.includes('--no-email');
+const SAMPLE      = parseInt(getArg('sample')  || '0') || 0;
 const MAX_QUERIES = parseInt(getArg('queries') || '0') || 0;
 const RESCAN_DAYS = parseInt(getArg('rescan-days') || '0') || 30;
 
@@ -62,63 +66,33 @@ const SERPER_DELAY_MS    = 1500;  // between Serper pages
 const MAX_MARKDOWN_CHARS = 8000;
 const HAIKU_MODEL        = 'claude-haiku-4-5-20251001';
 
-// ─── ATS & job board domains to exclude ──────────────────────────────────────
-
-const ATS_DOMAINS = BLOCKED_DOMAINS;
-
-// ─── Discovery query groups ──────────────────────────────────────────────────
-// Each query targets company-owned career pages mentioning Salesforce.
-// ATS platforms and job boards are excluded inline via -site: operators.
-// Serper returns up to 20 results per query (2 pages × 10).
-
-const ATS_EXCL = [
-  '-site:greenhouse.io', '-site:lever.co', '-site:workday.com',
-  '-site:myworkdayjobs.com', '-site:bamboohr.com', '-site:ashby.com',
-  '-site:smartrecruiters.com', '-site:icims.com', '-site:taleo.net',
-  '-site:linkedin.com', '-site:indeed.com', '-site:glassdoor.com',
-  '-site:ziprecruiter.com', '-site:wellfound.com', '-site:builtin.com',
-].join(' ');
+// ─── Discovery query groups — county economic-development announcements ─────
+// Target region: Greenville + Spartanburg + Anderson County, SC.
 
 const DISCOVERY_QUERIES = [
-  // Remote-friendly Salesforce roles on company-owned pages
   {
-    id: 'sf-remote',
-    query: `"salesforce" inurl:careers "remote" ${ATS_EXCL}`,
+    id: 'greenville-ed',
+    query: `"Greenville County" (economic development OR EDC) (announces OR "new jobs" OR expansion OR "to create")`,
   },
-  // Southeast EST: NC, SC, GA, TN
   {
-    id: 'sf-southeast',
-    query: `"salesforce" careers ("North Carolina" OR "South Carolina" OR "Georgia" OR "Tennessee") ${ATS_EXCL}`,
+    id: 'greenville-ed-2',
+    query: `"Greenville County" (announces OR "to invest") ("new facility" OR "new jobs" OR relocating OR relocate) South Carolina`,
   },
-  // Mid-Atlantic: VA, MD, DC, DE
   {
-    id: 'sf-midatlantic',
-    query: `"salesforce" careers ("Virginia" OR "Maryland" OR "Washington DC" OR "Delaware") ${ATS_EXCL}`,
+    id: 'spartanburg-ed',
+    query: `"Spartanburg County" (economic development OR EDC) (announces OR "new jobs" OR expansion)`,
   },
-  // Northeast: PA, NJ, NY, CT
   {
-    id: 'sf-northeast',
-    query: `"salesforce" careers ("Pennsylvania" OR "New Jersey" OR "New York" OR "Connecticut") ${ATS_EXCL}`,
+    id: 'spartanburg-ed-2',
+    query: `"Spartanburg County" (announces OR "to invest") ("new facility" OR "new jobs" OR relocating OR relocate) South Carolina`,
   },
-  // New England: MA, RI, NH, VT, ME
   {
-    id: 'sf-newengland',
-    query: `"salesforce" careers ("Massachusetts" OR "Rhode Island" OR "New Hampshire" OR "Maine") ${ATS_EXCL}`,
+    id: 'anderson-ed',
+    query: `"Anderson County" South Carolina (economic development OR EDC) (announces OR expansion OR "new jobs")`,
   },
-  // Midwest EST: OH, MI, IN, KY
   {
-    id: 'sf-midwest',
-    query: `"salesforce" careers ("Ohio" OR "Michigan" OR "Indiana" OR "Kentucky") ${ATS_EXCL}`,
-  },
-  // South EST: FL, WV
-  {
-    id: 'sf-south',
-    query: `"salesforce" careers ("Florida" OR "West Virginia") ${ATS_EXCL}`,
-  },
-  // Role-specific: admin / BA titles on company pages
-  {
-    id: 'sf-admin-role',
-    query: `"salesforce administrator" OR "salesforce admin" ("open positions" OR "current openings" OR "join our team") ${ATS_EXCL}`,
+    id: 'anderson-ed-2',
+    query: `"Anderson County" South Carolina (announces OR "to invest") ("new facility" OR relocating OR relocate)`,
   },
 ];
 
@@ -129,9 +103,8 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-async function ensureHqStateColumn() {
-  await pool.query(`ALTER TABLE companies ADD COLUMN IF NOT EXISTS hq_state TEXT`);
-}
+// Press-release URLs are articles, not career pages — scrape the URL as-is
+// (no /careers guess-and-fallback like discover-companies.cjs does).
 
 // ─── Firecrawl / Haiku clients ────────────────────────────────────────────────
 
@@ -139,9 +112,12 @@ const firecrawl = new Firecrawl({ apiKey: process.env.FIRECRAWL_API_KEY });
 const claude    = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // ─── Haiku validation ────────────────────────────────────────────────────────
+// Deliberately does NOT ask about Salesforce relevance — unknowable from a
+// press release. This worker's only job: is this a real, growing company in
+// the target region?
 
-async function validateWithHaiku(markdown, sourceUrl) {
-  const prompt = `Analyze this content from a company's website and return JSON.
+async function validatePressRelease(markdown, sourceUrl) {
+  const prompt = `Analyze this news/press-release content and return JSON.
 
 Source URL: ${sourceUrl}
 
@@ -150,19 +126,19 @@ ${markdown}
 
 Return ONLY valid JSON — no explanation outside the braces:
 {
-  "company_name": "official company name, or null if unclear",
-  "hq_city": "headquarters city, or null",
-  "hq_state": "2-letter US state abbreviation (e.g. NC, OH), or null if international or unknown",
-  "salesforce_relevant": true or false,
+  "company_name": "official company name being written about, or null if unclear",
+  "hq_city": "city where the new/expanded facility or office is located, or null",
+  "hq_state": "2-letter US state abbreviation (e.g. SC), or null if unknown",
+  "is_new_or_expanding": true or false,
   "confidence": "high | medium | low | failed",
-  "reason": "one sentence: where the company is based and why salesforce_relevant is true/false"
+  "reason": "one sentence: what the company is doing (opening/expanding/relocating) and where"
 }
 
 Rules:
-- salesforce_relevant=true if: the page shows Salesforce admin/BA/analyst/consultant job listings, OR mentions Salesforce as part of their tech stack
-- hq_state: 2-letter abbreviation only. null if the company is outside the US or location is truly unknown
-- confidence=failed if: page is a login wall, blank, 404, or completely unrelated to the company's careers
-- Do NOT infer state from timezone alone — require an explicit city or state mention`;
+- is_new_or_expanding=true ONLY if this specific article announces a company creating jobs, opening a new facility/office, expanding operations, or relocating into the area. Generic county economic-development news with no specific company named does NOT count.
+- hq_state: 2-letter abbreviation only. null if unknown.
+- confidence=failed if: page is a login wall, blank, 404, a list/index page with no single article, or completely unrelated content.
+- Do NOT infer state from timezone alone — require an explicit city or state mention.`;
 
   const response = await claude.messages.create({
     model:      HAIKU_MODEL,
@@ -172,7 +148,6 @@ Rules:
 
   const text = response.content[0]?.text?.trim() || '';
 
-  // Track tokens for cost estimate
   inputTokensEstimate  += Math.ceil((prompt.length + 100) / 4);
   outputTokensEstimate += Math.ceil(text.length / 4);
 
@@ -183,7 +158,7 @@ Rules:
   } catch {
     return {
       company_name: null, hq_city: null, hq_state: null,
-      salesforce_relevant: false, confidence: 'failed',
+      is_new_or_expanding: false, confidence: 'failed',
       reason: `Parse error: ${text.slice(0, 80)}`,
     };
   }
@@ -194,9 +169,8 @@ Rules:
 let inputTokensEstimate  = 0;
 let outputTokensEstimate = 0;
 
-function printCostEstimate(candidateCount) {
+function printCostEstimate() {
   const haiku = (inputTokensEstimate / 1e6) * 0.80 + (outputTokensEstimate / 1e6) * 4.00;
-  // Serper: $50 / 1000 queries; each query group = 2 pages = 2 Serper calls
   const serperCalls = Math.min(DISCOVERY_QUERIES.length, MAX_QUERIES || DISCOVERY_QUERIES.length) * 2;
   const serper = (serperCalls / 1000) * 50;
   console.log(`\n  Estimated cost:`);
@@ -209,7 +183,6 @@ function printCostEstimate(candidateCount) {
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
-  // Validate env
   const missing = ['SERPER_API_KEY', 'FIRECRAWL_API_KEY', 'ANTHROPIC_API_KEY'].filter(k => !process.env[k]);
   if (missing.length) { console.error(`\nMissing env vars: ${missing.join(', ')}\n`); process.exit(1); }
   if (!process.env.CAREER_NEON_URL && !process.env.DATABASE_URL) {
@@ -219,26 +192,21 @@ async function main() {
   const queries = MAX_QUERIES ? DISCOVERY_QUERIES.slice(0, MAX_QUERIES) : DISCOVERY_QUERIES;
 
   console.log(`\n${'='.repeat(55)}`);
-  console.log(`Company Discovery  —  Serper → Firecrawl → Haiku → Neon`);
+  console.log(`Press-Release Discovery  —  Serper → Firecrawl → Haiku → Neon`);
   console.log(`${'='.repeat(55)}`);
   console.log(`Mode:    ${DRY_RUN ? 'DRY RUN (no writes)' : 'LIVE'}`);
   console.log(`Sample:  ${SAMPLE || 'unlimited'} inserts`);
   console.log(`Queries: ${queries.length} of ${DISCOVERY_QUERIES.length}\n`);
 
-  // Schema: ensure hq_state column exists
-  await ensureHqStateColumn();
-
-  // Load existing data to avoid duplicates
   const existingNames   = await loadExistingNames(pool);
   const existingDomains = await loadExistingDomains(pool);
   const discoverySeen   = await loadSeenDomains(pool, RESCAN_DAYS);
   console.log(`Existing DB: ${existingNames.size} companies, ${existingDomains.size} unique domains`);
   console.log(`Discovery ledger: ${discoverySeen.size} domains checked within the last ${RESCAN_DAYS} days\n`);
 
-  // Shared seen-domains set (existing + discovered this run)
   const seenDomains = new Set(existingDomains);
 
-  // ── Phase 1: Serper — collect candidate domains ───────────────────────────
+  // ── Phase 1: Serper — collect candidate articles ──────────────────────────
 
   console.log(`${'─'.repeat(55)}`);
   console.log(`Phase 1: Serper search (${queries.length} queries)`);
@@ -252,13 +220,11 @@ async function main() {
     const results = await searchSerper(q.query, process.env.SERPER_API_KEY, { delayMs: SERPER_DELAY_MS });
     console.log(`  ${results.length} results from Serper`);
 
-    let added = 0, atsSkipped = 0, ledgerSkipped = 0;
+    let added = 0, ledgerSkipped = 0;
 
     for (const item of results) {
       const link = item.link;
       if (!link) continue;
-
-      if (isATSDomain(link, ATS_DOMAINS)) { atsSkipped++; continue; }
 
       const domain = extractDomain(link);
       if (!domain || seenDomains.has(domain)) continue;
@@ -271,7 +237,7 @@ async function main() {
     }
 
     totalLedgerSkipped += ledgerSkipped;
-    console.log(`  → ${added} new candidate domains (${atsSkipped} ATS/board skipped, ${ledgerSkipped} already checked recently)`);
+    console.log(`  → ${added} new candidate articles (${ledgerSkipped} already checked recently)`);
     await sleep(SERPER_DELAY_MS);
   }
 
@@ -283,51 +249,34 @@ async function main() {
   console.log(`Phase 2: Validate via Firecrawl + Haiku`);
   console.log(`${'─'.repeat(55)}\n`);
 
-  let inserted = 0, skippedNotEST = 0, skippedNotSF = 0, scrapeFailures = 0, parseFailures = 0, apiFailures = 0;
+  let inserted = 0, skippedNotEST = 0, skippedNotExpanding = 0, scrapeFailures = 0, parseFailures = 0, apiFailures = 0;
   const insertedNames = [];
 
-  for (const { link, domain, queryId, snippet } of candidates) {
+  for (const { link, domain, queryId } of candidates) {
     if (SAMPLE && inserted >= SAMPLE) {
       console.log(`\nSample limit reached (${SAMPLE} inserts). Stopping.`);
       break;
     }
 
-    const careersUrl = buildCareersUrl(link);
     console.log(`\n[${domain}]  (${queryId})`);
-    console.log(`  Scraping: ${careersUrl}`);
+    console.log(`  Scraping: ${link}`);
 
-    // Scrape with Firecrawl — fall back to original link if /careers 404s
     let markdown;
     try {
-      markdown = await scrapeWithFirecrawl(firecrawl, careersUrl, MAX_MARKDOWN_CHARS);
+      markdown = await scrapeWithFirecrawl(firecrawl, link, MAX_MARKDOWN_CHARS);
     } catch (err) {
-      if (careersUrl !== link) {
-        console.log(`  Fallback to original: ${link}`);
-        try {
-          markdown = await scrapeWithFirecrawl(firecrawl, link, MAX_MARKDOWN_CHARS);
-        } catch (err2) {
-          console.log(`  SKIP (both URLs failed): ${err2.message.slice(0, 70)}`);
-          scrapeFailures++;
-          await markDomainSeen(pool, domain, 'rejected_scrape_failed', err2.message.slice(0, 200), DRY_RUN);
-          await sleep(DELAY_MS);
-          continue;
-        }
-      } else {
-        console.log(`  SKIP (scrape failed): ${err.message.slice(0, 70)}`);
-        scrapeFailures++;
-        await markDomainSeen(pool, domain, 'rejected_scrape_failed', err.message.slice(0, 200), DRY_RUN);
-        await sleep(DELAY_MS);
-        continue;
-      }
+      console.log(`  SKIP (scrape failed): ${err.message.slice(0, 70)}`);
+      scrapeFailures++;
+      await markDomainSeen(pool, domain, 'rejected_scrape_failed', err.message.slice(0, 200), DRY_RUN);
+      await sleep(DELAY_MS);
+      continue;
     }
 
-    // Haiku validation — a single candidate's API failure (e.g. rate limit
-    // exhausted after the SDK's built-in retries) must not kill the whole
-    // run. Everything already written stays written; just skip this one and
-    // keep going so the run still finishes and sends its digest email.
+    // A single candidate's API failure must not kill the whole run —
+    // everything already written stays written; skip this one and continue.
     let result;
     try {
-      result = await validateWithHaiku(markdown, careersUrl);
+      result = await validatePressRelease(markdown, link);
     } catch (err) {
       console.log(`  SKIP (Haiku call failed): ${err.message.slice(0, 100)}`);
       apiFailures++;
@@ -337,11 +286,10 @@ async function main() {
     }
 
     const stateLabel = result.hq_state || '?';
-    const sfLabel    = result.salesforce_relevant ? 'SF✓' : 'SF✗';
-    console.log(`  → ${result.company_name || 'unknown'} | ${result.hq_city || '?'}, ${stateLabel} | ${sfLabel} | ${result.confidence}`);
+    const expLabel    = result.is_new_or_expanding ? 'NEW/EXPANDING✓' : 'NOT-EXPANDING✗';
+    console.log(`  → ${result.company_name || 'unknown'} | ${result.hq_city || '?'}, ${stateLabel} | ${expLabel} | ${result.confidence}`);
     console.log(`    ${result.reason}`);
 
-    // Filter checks
     if (result.confidence === 'failed') {
       parseFailures++;
       await markDomainSeen(pool, domain, 'rejected_parse_failed', result.reason, DRY_RUN);
@@ -349,9 +297,9 @@ async function main() {
       continue;
     }
 
-    if (!result.salesforce_relevant) {
-      skippedNotSF++;
-      await markDomainSeen(pool, domain, 'rejected_not_salesforce', result.reason, DRY_RUN);
+    if (!result.is_new_or_expanding) {
+      skippedNotExpanding++;
+      await markDomainSeen(pool, domain, 'rejected_not_new_expansion', result.reason, DRY_RUN);
       await sleep(DELAY_MS);
       continue;
     }
@@ -372,7 +320,6 @@ async function main() {
       continue;
     }
 
-    // Name dedup (Haiku may have normalized the name differently from the domain)
     if (existingNames.has(result.company_name.toLowerCase())) {
       console.log(`  SKIP (already in DB as "${result.company_name}")`);
       await markDomainSeen(pool, domain, 'rejected_duplicate_name', `matches existing "${result.company_name}"`, DRY_RUN);
@@ -380,14 +327,15 @@ async function main() {
       continue;
     }
 
-    // Insert into Neon
+    // No careers_url yet — press release doesn't give us one. direct-scraper.cjs
+    // / a future enrichment pass can fill it in once promoted from pending_review.
     const ok = await insertCompany(pool, {
       company_name: result.company_name,
-      careers_url:  careersUrl,
+      careers_url:  null,
       hq_city:      result.hq_city,
       hq_state:     result.hq_state,
-      source:       'serper_discovery',
-      sourceLabel:  'Serper discovery',
+      source:       'press_release_discovery',
+      sourceLabel:  `Press release: ${link}`,
       dryRun:       DRY_RUN,
     });
 
@@ -409,20 +357,20 @@ async function main() {
 
   console.log(`\n${'='.repeat(55)}`);
   console.log(`Discovery complete`);
-  console.log(`  Candidates from Serper:  ${candidates.length}`);
-  console.log(`  Added to Neon:           ${inserted}${DRY_RUN ? '  (DRY RUN — nothing written)' : ''}`);
-  console.log(`  Skipped (not EST):       ${skippedNotEST}`);
-  console.log(`  Skipped (no Salesforce): ${skippedNotSF}`);
-  console.log(`  Scrape failures:         ${scrapeFailures}`);
-  console.log(`  Parse/confidence fails:  ${parseFailures}`);
-  console.log(`  API call failures:       ${apiFailures}`);
-  console.log(`  Skipped (seen <${RESCAN_DAYS}d ago): ${totalLedgerSkipped}`);
-  const cost = printCostEstimate(candidates.length);
+  console.log(`  Candidates from Serper:     ${candidates.length}`);
+  console.log(`  Added to Neon:              ${inserted}${DRY_RUN ? '  (DRY RUN — nothing written)' : ''}`);
+  console.log(`  Skipped (not EST):          ${skippedNotEST}`);
+  console.log(`  Skipped (not expanding):    ${skippedNotExpanding}`);
+  console.log(`  Scrape failures:            ${scrapeFailures}`);
+  console.log(`  Parse/confidence fails:     ${parseFailures}`);
+  console.log(`  API call failures:          ${apiFailures}`);
+  console.log(`  Skipped (seen <${RESCAN_DAYS}d ago):    ${totalLedgerSkipped}`);
+  const cost = printCostEstimate();
   console.log(`${'='.repeat(55)}\n`);
 
   if (!DRY_RUN && !NO_EMAIL) {
     const lines = [
-      `Company Discovery (career pages) — ${new Date().toLocaleString()}`,
+      `Press-Release Discovery — ${new Date().toLocaleString()}`,
       '',
       `TRIED: ${queries.length} query group(s), ${candidates.length} candidates from Serper, ${totalLedgerSkipped} skipped as already-checked.`,
       '',
@@ -430,15 +378,15 @@ async function main() {
       ...insertedNames.map(n => `  - ${n}`),
       '',
       'MISSED (rejection breakdown):',
-      `  - Not EST:            ${skippedNotEST}`,
-      `  - Not Salesforce:     ${skippedNotSF}`,
-      `  - Scrape failures:    ${scrapeFailures}`,
-      `  - Parse/confidence:   ${parseFailures}`,
-      `  - API call failures:  ${apiFailures}`,
+      `  - Not EST:              ${skippedNotEST}`,
+      `  - Not new/expanding:    ${skippedNotExpanding}`,
+      `  - Scrape failures:      ${scrapeFailures}`,
+      `  - Parse/confidence:     ${parseFailures}`,
+      `  - API call failures:    ${apiFailures}`,
       '',
       `Est. cost: Haiku ~$${cost.haiku.toFixed(4)}, Serper ~$${cost.serper.toFixed(4)}`,
     ];
-    await sendDigestEmail(`Company Discovery: ${inserted} added, ${candidates.length} checked`, lines);
+    await sendDigestEmail(`Press-Release Discovery: ${inserted} added, ${candidates.length} checked`, lines);
   }
 
   await pool.end();

@@ -79,8 +79,11 @@ app.get('/api/stats', async (req, res) => {
 
 app.post('/api/approve/:id', async (req, res) => {
   try {
+    // enabled must be set alongside scrape_status — direct-scraper.cjs only
+    // scrapes WHERE scrape_status='active' AND enabled=true. Approving
+    // without this left companies silently unscraped (found 2026-07-05).
     await pool.query(
-      `UPDATE companies SET scrape_status = 'active', updated_at = NOW() WHERE id = $1`,
+      `UPDATE companies SET scrape_status = 'active', enabled = true, updated_at = NOW() WHERE id = $1`,
       [req.params.id]
     );
     res.json({ ok: true });
