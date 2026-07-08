@@ -1,0 +1,27 @@
+[
+  {
+    "url": "https://talents.vaia.com/companies/accruent/salesforce-systems-lead-gordian-greenville-sc-united-states-1-more-posted-a-month-ago-43838024/",
+    "verdict": "rejected_other",
+    "reason": "Search surfaced a 'Salesforce Systems Lead' role at Accruent/Gordian in Greenville, SC via an aggregator (talents.vaia.com/StudySmarter). Title is 'Systems Lead', not 'Administrator', which would likely be out of scope anyway (too senior/lead-tier), but could not be confirmed either way because the page returned HTTP 403 Forbidden to WebFetch."
+  },
+  {
+    "url": "https://www.accruent.com/careers",
+    "verdict": "rejected_other",
+    "reason": "Attempted to check Accruent's own careers page directly for the Salesforce Systems Lead / Administrator role referenced via talents.vaia.com, but it returned HTTP 403 Forbidden to WebFetch."
+  },
+  {
+    "url": "https://everythingtogain.com/careers",
+    "verdict": "rejected_other",
+    "reason": "Search snippet (via Jooble aggregator) mentioned 'Everything To Gain' hiring a remote Salesforce Administrator with unlimited PTO and a remote-first culture, but the company's own careers page returned HTTP 403 Forbidden to WebFetch, so it could not be verified as currently live."
+  },
+  {
+    "url": "https://example.com",
+    "verdict": "rejected_other",
+    "reason": "Control check to determine whether WebFetch itself was functioning this session. Returned HTTP 403 Forbidden on a page with no anti-bot protection, confirming the WebFetch tool was broadly non-functional for this entire run (same issue observed in the 2026-07-06 run) rather than individual target sites blocking automated access."
+  },
+  {
+    "url": "https://www.anthropic.com",
+    "verdict": "rejected_other",
+    "reason": "Second control check confirming WebFetch tool-wide failure (HTTP 403 Forbidden) on a well-known, non-bot-protected domain. All candidate URLs fetched this run failed identically, so no postings could be verified despite several promising leads surfaced by search (Accruent/Gordian Salesforce Systems Lead in Greenville SC; Everything To Gain remote Salesforce Administrator)."
+  }
+]
