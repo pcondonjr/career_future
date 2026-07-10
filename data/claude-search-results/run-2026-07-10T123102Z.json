@@ -1,0 +1,17 @@
+[
+  {
+    "url": "https://jobs.insightglobal.com/find_a_job/south-carolina/job-377010/",
+    "verdict": "rejected_other",
+    "reason": "WebFetch tool returned HTTP 403 Forbidden for this URL. Diagnostic checks (fetching example.com, wikipedia.org, and anthropic.com) also returned 403, confirming this is a systemic WebFetch outage for this run, not a site-specific block. Could not verify posting status, role, or location."
+  },
+  {
+    "url": "https://www.workingnomads.com/remote-salesforce-administrator-jobs",
+    "verdict": "rejected_other",
+    "reason": "WebFetch tool returned HTTP 403 Forbidden for this URL. Diagnostic checks (fetching example.com, wikipedia.org, and anthropic.com) also returned 403, confirming this is a systemic WebFetch outage for this run, not a site-specific block. Could not extract company-specific postings from this niche job board listing page."
+  },
+  {
+    "url": "https://www.crossover.com/jobs/salesforce-administrator",
+    "verdict": "rejected_other",
+    "reason": "WebFetch tool returned HTTP 403 Forbidden for this URL. Diagnostic checks (fetching example.com, wikipedia.org, and anthropic.com) also returned 403, confirming this is a systemic WebFetch outage for this run, not a site-specific block. Could not verify posting status, role, or location."
+  }
+]
