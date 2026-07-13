@@ -1,0 +1,27 @@
+[
+  {
+    "url": "https://thecne.org/job/salesforce-administrator-3/",
+    "verdict": "rejected_other",
+    "reason": "Network/proxy gateway returned 403 on CONNECT for this domain (policy denial), so the page content could not be fetched or verified this run."
+  },
+  {
+    "url": "https://ncnonprofits.org/job-postings/salesforce-administrator",
+    "verdict": "rejected_other",
+    "reason": "Network/proxy gateway returned 403 on CONNECT for this domain (policy denial), so the page content could not be fetched or verified this run."
+  },
+  {
+    "url": "https://app.trinethire.com/companies/17210-washington-nonprofits/jobs/28170-part-time-salesforce-administrator",
+    "verdict": "rejected_other",
+    "reason": "Network/proxy gateway returned 403 on CONNECT for this domain (policy denial), so the page content could not be fetched or verified this run."
+  },
+  {
+    "url": "https://supportcrm.com/115/Senior-Salesforce-Administrator",
+    "verdict": "rejected_other",
+    "reason": "Network/proxy gateway returned 403 on CONNECT for this domain (policy denial), so the page content could not be fetched or verified this run."
+  },
+  {
+    "url": "https://universalgiving.org/jobdescription?jobId=10",
+    "verdict": "rejected_other",
+    "reason": "Network/proxy gateway returned 403 on CONNECT for this domain (policy denial), so the page content could not be fetched or verified this run."
+  }
+]
