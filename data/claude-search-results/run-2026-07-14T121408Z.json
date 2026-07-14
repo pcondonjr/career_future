@@ -1,0 +1,7 @@
+[
+  {
+    "url": "https://canonical.com/careers/6371231",
+    "verdict": "rejected_other",
+    "reason": "WebFetch returned HTTP 403 Forbidden on repeated attempts; could not verify page content, role match, location, or open status."
+  }
+]
