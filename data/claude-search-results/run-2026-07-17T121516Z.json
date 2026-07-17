@@ -1,0 +1,58 @@
+[
+  {
+    "url": "https://www.anthropic.com",
+    "verdict": "rejected_other",
+    "reason": "Control check to determine whether WebFetch itself was functioning this session. Returned HTTP 403 Forbidden on a well-known, non-bot-protected domain, confirming the WebFetch tool was broadly non-functional for this entire run rather than individual target sites blocking automated access. Same systemic outage previously observed and logged in the 2026-07-06, 2026-07-08, and 2026-07-10 runs."
+  },
+  {
+    "url": "https://example.com",
+    "verdict": "rejected_other",
+    "reason": "Second control check confirming WebFetch tool-wide failure (HTTP 403 Forbidden) on a page with no anti-bot protection whatsoever. Confirms systemic outage, not site-specific blocking."
+  },
+  {
+    "url": "https://asuprep.asu.edu/careers/",
+    "verdict": "rejected_other",
+    "reason": "Search surfaced a possible Salesforce Administrator posting at ASU Preparatory Academy (Tempe, AZ), referenced via career.arizona.edu and careers.herbert.miami.edu (university career-board mirrors). WebFetch returned HTTP 403 Forbidden on the company's own careers page, so the posting's live status, exact title, and location (in-person Tempe AZ vs. remote) could not be verified. Same tool-wide 403 issue affecting every URL this run."
+  },
+  {
+    "url": "https://asuprep.asu.edu/careers",
+    "verdict": "rejected_other",
+    "reason": "Retry of ASU Preparatory Academy careers page without trailing slash. Also returned HTTP 403 Forbidden due to the systemic WebFetch outage this run."
+  },
+  {
+    "url": "https://career.arizona.edu/jobs/asu-preparatory-academy-salesforce-administrator/",
+    "verdict": "rejected_other",
+    "reason": "University career-board mirror of the ASU Preparatory Academy Salesforce Administrator posting. WebFetch returned HTTP 403 Forbidden; could not confirm role details or location. Likely Tempe, AZ (not remote/Greenville) based on search snippet, but unverified."
+  },
+  {
+    "url": "https://careers.herbert.miami.edu/jobs/asu-preparatory-academy-salesforce-administrator/",
+    "verdict": "rejected_other",
+    "reason": "Another university career-board mirror of the same ASU Preparatory Academy posting. WebFetch returned HTTP 403 Forbidden; could not verify."
+  },
+  {
+    "url": "https://jobsearcher.com/j/digital-salesforce-administrator-at-asu-preparatory-academy-in-tempe-az-0DA0AVa",
+    "verdict": "rejected_other",
+    "reason": "Aggregator listing for the same ASU Preparatory Academy posting, explicitly showing Tempe, AZ location in the URL slug. WebFetch returned HTTP 403 Forbidden so location could not be independently confirmed, but URL strongly suggests wrong location (not remote/Greenville SC) regardless of the fetch failure."
+  },
+  {
+    "url": "https://www.hhs1.com/careers",
+    "verdict": "rejected_other",
+    "reason": "Search surfaced a 'SalesForce Administrator' role at HHS, LLC described as fully remote ($120,000/yr), originally posted on the company's Workday ATS (excluded per instructions) and mirrored on remoterocketship.com and lensa.com aggregators. Attempted to find the role on HHS's own corporate domain (hhs1.com) as a non-aggregator source, but WebFetch returned HTTP 403 Forbidden, so it could not be confirmed whether HHS maintains a non-Workday careers page with this listing."
+  },
+  {
+    "url": "https://www.idealist.org/en/nonprofit-job/f924139e03de4796a4b3131883888f3c-part-time-salesforce-and-data-administrator-family-legal-care-new-york",
+    "verdict": "rejected_other",
+    "reason": "Niche nonprofit job board (Idealist) listing for a part-time 'Salesforce and Data Administrator' role at Family Legal Care (New York, primarily remote with some in-person presence). WebFetch returned HTTP 403 Forbidden so live status and exact title/scope could not be verified. Also likely wrong role variant (data administrator, part-time) and wrong location (NY, not remote-qualifying/Greenville per search snippet) pending verification.",
+    "note": "Role/location appear to be a poor match even if verified: NY-based with required in-person presence, not purely remote."
+  },
+  {
+    "url": "https://wattslist.info/salesforce-nonprofit-jobs",
+    "verdict": "rejected_other",
+    "reason": "Niche curated list of Salesforce nonprofit job postings. WebFetch returned HTTP 403 Forbidden, so no individual listings could be extracted or verified this run."
+  },
+  {
+    "url": "https://wattslist.info",
+    "verdict": "rejected_other",
+    "reason": "Retry of the wattslist.info root domain to check for an alternate access path to its Salesforce job listings. Also returned HTTP 403 Forbidden due to the systemic WebFetch outage."
+  }
+]
