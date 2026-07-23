@@ -1,0 +1,12 @@
+[
+  {
+    "url": "https://www.volunteermatch.org/search/opp3695960.jsp",
+    "verdict": "rejected_other",
+    "reason": "Found via web search as a remote 'Salesforce Platform Administrator' opportunity for YAMM (Youth Achieving Moral Maturity), but WebFetch returned HTTP 403 Forbidden so live status, exact title, and whether it's a paid position vs. volunteer role could not be verified. Also unclear if this is a paid employment posting or a volunteer opportunity, since it's listed on VolunteerMatch."
+  },
+  {
+    "url": "https://careers-appliedsystems.icims.com/jobs/7669/associate-salesforce-administrator/job",
+    "verdict": "rejected_other",
+    "reason": "Applied Systems' own careers portal (iCIMS-hosted, not a third-party aggregator) lists an 'Associate Salesforce Administrator' role, but WebFetch returned HTTP 403 Forbidden so live status, exact location (remote vs. onsite), and full description could not be verified."
+  }
+]
