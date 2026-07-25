@@ -31,7 +31,6 @@ export async function loadSitesFromCSV(csvPath = './data/companies.csv', onlyEna
     const records = parse(fileContent, {
       columns: true,
       skip_empty_lines: true,
-      comment: '#',
       relax_column_count: true,
       relax_quotes: true
     });
@@ -109,7 +108,6 @@ export async function validateCSV(csvPath = './data/companies.csv') {
     const records = parse(fileContent, {
       columns: true,
       skip_empty_lines: true,
-      comment: '#',
       relax_column_count: true,
       relax_quotes: true
     });
