@@ -114,6 +114,10 @@
       "WebFetch(domain:www.challenger.org)",
       "WebFetch(*)",
       "Bash(npm run test:dorks:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(**/.env)"
     ]
   }
 }
