@@ -1,0 +1,37 @@
+[
+  {
+    "url": "https://bb-demo.southpole.com/blogs/news/salesforce-administrator-u-s-remote-hiring-now",
+    "verdict": "rejected_other",
+    "reason": "WebFetch returned HTTP 403 Forbidden this run (confirmed systemic: control fetches to https://example.com and https://www.anthropic.com also returned 403, and the agent proxy status showed no relay failures, indicating the outage is in the WebFetch tool/backend itself, not this specific host). Could not retrieve page content to verify if this is a live posting."
+  },
+  {
+    "url": "https://sforcejobs.com/job/3518",
+    "verdict": "rejected_other",
+    "reason": "WebFetch returned HTTP 403 Forbidden this run (systemic tool outage, see note on southpole entry). Could not verify this ScanSource Salesforce Administrator II listing."
+  },
+  {
+    "url": "https://sforcejobs.com/job/2666",
+    "verdict": "rejected_other",
+    "reason": "WebFetch returned HTTP 403 Forbidden this run (systemic tool outage, see note on southpole entry). Could not verify this COMPLY Salesforce Administrator listing."
+  },
+  {
+    "url": "https://sforcejobs.com/job/2035/",
+    "verdict": "rejected_other",
+    "reason": "WebFetch returned HTTP 403 Forbidden this run (systemic tool outage, see note on southpole entry). Could not verify this Zearn Salesforce Administrator listing."
+  },
+  {
+    "url": "https://online-distance.ncsu.edu/career/salesforce-administrator/",
+    "verdict": "rejected_other",
+    "reason": "WebFetch returned HTTP 403 Forbidden this run (systemic tool outage, see note on southpole entry). Could not verify whether this is an actual job posting or a training/career-path page."
+  },
+  {
+    "url": "https://www.trycomply.com/careers",
+    "verdict": "rejected_other",
+    "reason": "WebFetch returned HTTP 403 Forbidden this run (systemic tool outage, see note on southpole entry). Could not verify if a Salesforce Administrator role is currently posted."
+  },
+  {
+    "url": "https://www.zearn.org/careers",
+    "verdict": "rejected_other",
+    "reason": "WebFetch returned HTTP 403 Forbidden this run (systemic tool outage, see note on southpole entry). Could not verify if a Salesforce Administrator role is currently posted."
+  }
+]
