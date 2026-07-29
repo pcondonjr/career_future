@@ -1,0 +1,17 @@
+[
+  {
+    "url": "https://www.jobilize.com/amp/job/us-sc-greenville-salesforce-administrator-ii-scansource-hiring-now",
+    "verdict": "rejected_other",
+    "reason": "Aggregator mirror referencing a Salesforce Administrator II role at ScanSource (Greenville, SC HQ). Page returned HTTP 403 Forbidden on fetch, and ScanSource's own careers page (scansource.com/careers) also returned 403, so the posting could not be verified as live or located on the company's own site within this run's budget."
+  },
+  {
+    "url": "https://jobs.apcinc.com/Salesforce-Administrator-Jobs-in-Greenville-SC/11831080",
+    "verdict": "rejected_other",
+    "reason": "IT staffing recruiter listing page (App/Dev Job Recruiters) for Salesforce Administrator roles in Greenville SC. Returned HTTP 403 Forbidden on fetch; could not verify listing content, open status, or underlying hiring company."
+  },
+  {
+    "url": "https://www.quietcannon.com/library/job/salesforce-admin-at-insight-global-greenville-sc-ZDY4NG1ySFFUMHJ1djZlNnYrdTJwVGw0YXc9PQ==",
+    "verdict": "rejected_other",
+    "reason": "Third-party job listing mirror for an Insight Global-posted Salesforce Admin role in Greenville SC. Returned HTTP 403 Forbidden on fetch; could not verify content. Insight Global is a staffing agency, not the hiring company's own careers page, and an Insight Global Greenville SC listing was already recorded (rejected) in a prior run."
+  }
+]
