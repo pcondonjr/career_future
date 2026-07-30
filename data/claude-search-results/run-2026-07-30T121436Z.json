@@ -1,0 +1,7 @@
+[
+  {
+    "url": "https://jobs.dukecapitalpartners.duke.edu/companies/teamworks/jobs/44357843-salesforce-administrator-remote",
+    "verdict": "rejected_other",
+    "reason": "WebFetch returned HTTP 403 Forbidden for this candidate posting (Teamworks, remote Salesforce Administrator, surfaced via a Duke Capital Partners portfolio-company job board). Could not verify live/open status or full posting text. Attempted to locate the employer's own careers page (teamworks.com/careers) as an alternative but it also returned 403 Forbidden (bot protection)."
+  }
+]
