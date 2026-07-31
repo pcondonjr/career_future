@@ -1,0 +1,17 @@
+[
+  {
+    "url": "https://www.scansource.com/about/careers",
+    "verdict": "rejected_other",
+    "reason": "ScanSource (HQ Greenville, SC) has an open 'Salesforce Administrator II' role per search snippets, but this careers page and every other URL fetched this run (including sanity checks against https://www.anthropic.com and https://example.com) returned HTTP 403 Forbidden from the WebFetch tool itself, not from proxy/org policy (proxy status endpoint shows zero recentRelayFailures). This is a tool-wide WebFetch outage this run, not a site-specific block."
+  },
+  {
+    "url": "https://startup.jobs/salesforce-administrator-remote-fractional-revopsforce-7008289",
+    "verdict": "rejected_other",
+    "reason": "Candidate could not be fetched due to a tool-wide WebFetch 403 outage this run (confirmed via sanity-check fetches of anthropic.com and example.com, both also 403). Role/location/legitimacy unverified."
+  },
+  {
+    "url": "https://startup.jobs/salesforce-administrator-remote-us-based-togetherwork-5764513",
+    "verdict": "rejected_other",
+    "reason": "Candidate could not be fetched due to a tool-wide WebFetch 403 outage this run (confirmed via sanity-check fetches of anthropic.com and example.com, both also 403). Role/location/legitimacy unverified."
+  }
+]
